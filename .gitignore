@@ -1,0 +1,26 @@
+# Ignorar carpetas de módulos de Node.js
+pedidos-backend/node_modules/
+pedidos-frontend/node_modules/
+
+# Ignorar archivos de entorno local
+pedidos-backend/.env
+pedidos-frontend/.env
+
+# Archivos de logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Directorios de builds (si aplicable para frontend)
+pedidos-frontend/build/
+pedidos-frontend/dist/
+
+# Dependencias de npm
+.npm/
+
+# Otros archivos de sistema o IDE
+.DS_Store
+.vscode/
+*.swp
+.idea/

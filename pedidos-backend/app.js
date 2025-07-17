@@ -8,7 +8,7 @@ const db = require('./models'); // Importa tu configuración de Sequelize
 const bodyParser = require('body-parser');
 // Importa tus rutas de autenticación
 const authRoutes = require('./routes/authRoutes');
-
+const typeVehiclesRouter = require('./routes/typeVehicles'); 
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -37,9 +37,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ** 4. Rutas de la API **
 // Agrega tus rutas de autenticación con un prefijo
 app.use('/api/auth', authRoutes);
-
+app.use('/api/type-vehicles', typeVehiclesRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

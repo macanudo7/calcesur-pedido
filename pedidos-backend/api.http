@@ -1,0 +1,60 @@
+###LISTAR TIPOS DE VEHICULO
+GET http://localhost:3000/api/type-vehicles
+
+###GUARDAR TIPO DE VEHICULO
+POST http://localhost:3000/api/type-vehicles
+Content-Type: application/json
+
+{
+    "name": "Camioneta 4x4",
+    "code": "C-4X4"
+}
+
+###Obtener Tipo de Vehículo por ID
+GET http://localhost:3000/api/type-vehicles/2
+
+###EDITAR TIPO DE VEHICULO
+PUT http://localhost:3000/api/type-vehicles/2
+Content-Type: application/json
+
+{
+    "name": "Camioneta Pickup 4x4"
+}
+
+###ELIMINAR TIPO DE VEHICULO
+DELETE http://localhost:3000/api/type-vehicles/1
+
+
+
+###CREAR PRODUCTO 
+POST http://localhost:3000/api/products
+Content-Type: application/json
+
+{
+    "name": "Gas GLP Industrial",
+    "code": 1001,
+    "type_vehicle_id": 2,
+    "type_unit": "KG"
+}
+
+###LISTAR PRODUCTOS
+GET http://localhost:3000/api/products
+
+
+###LISTAR PRODUCTOS CON TYPO DE VEHICULO INCLUIDO
+GET http://localhost:3000/api/products?includeTypeVehicle=true
+
+###OBTENER UN PRODUCTO POR ID
+GET http://localhost:3000/api/products/1
+
+###MODIFICAR PRODUCTO
+PUT http://localhost:3000/api/products/1
+Content-Type: application/json
+
+{
+    "name": "Gas GLP Residencial",
+    "type_unit": "Litro"
+}
+
+###ELIMINAR PRODUCTO 
+DELETE http://localhost:3000/api/products/1

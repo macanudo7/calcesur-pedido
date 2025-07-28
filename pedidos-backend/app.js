@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 // Importa tus rutas de autenticación
 const authRoutes = require('./routes/authRoutes');
 const typeVehiclesRouter = require('./routes/typeVehicles'); 
-
+const productsRouter = require('./routes/products');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -38,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Agrega tus rutas de autenticación con un prefijo
 app.use('/api/auth', authRoutes);
 app.use('/api/type-vehicles', typeVehiclesRouter);
+app.use('/api/products', productsRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

@@ -8,7 +8,7 @@ const userService = {
    * @returns {Promise<User>} El objeto User creado.
    */
   async createUser(userData) {
-    const { password, ...otherData } = userData;
+    const { password, userType, ...otherData } = userData;
 
     console.log('Password in userService before hash:', password); // <-- AÑADE ESTA LÍNEA
 
@@ -16,13 +16,13 @@ const userService = {
     const hashedPassword = await bcrypt.hash(password, 10); // 10 es el costo del hash
 
     console.log('Hashed Password:', hashedPassword); // <-- AÑADE ESTA LÍNEA
-
+    console.log('Tipo de usuario:', userType); // <-- AÑADE ESTA LÍNEA
     // Crear el usuario en la DB
     const user = await User.create({
       ...otherData,
       passwordHash: hashedPassword, // Asegúrate de que coincida con el nombre de columna en la DB
       // Establecer user_type por defecto si no viene en userData, o según tu lógica de registro
-      user_type: otherData.user_type || 'client',
+      userType: userType,
       status: otherData.status || 'active',
       // No pasar ruc si es un admin, y viceversa si es un cliente
       ruc: otherData.ruc || null,
@@ -64,6 +64,49 @@ const userService = {
    */
   async validatePassword(plainPassword, hashedPassword) {
     return bcrypt.compare(plainPassword, hashedPassword);
+  },
+
+  async getAllUsers() {
+    return await User.findAll({
+      attributes: { exclude: ['passwordHash'] } // Excluye el hash de la contraseña por seguridad
+    });
+  },
+
+  /**
+   * Busca un usuario por su ID.
+   * @param {number} userId - El ID del usuario.
+   * @returns {Promise<User|null>} El objeto User o null si no se encuentra.
+   */
+  async findUserById(userId) {
+    return await User.findByPk(userId, {
+      attributes: { exclude: ['passwordHash'] }
+    });
+  },
+
+  /**
+   * Actualiza los datos de un usuario.
+   * @param {number} userId - El ID del usuario.
+   * @param {object} updatedData - Los datos a actualizar.
+   * @returns {Promise<User|null>} El usuario actualizado o null.
+   */
+  async updateUser(userId, updatedData) {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return null;
+    }
+    await user.update(updatedData);
+    return user;
+  },
+
+  /**
+   * Elimina un usuario por su ID.
+   * @param {number} userId - El ID del usuario a eliminar.
+   * @returns {Promise<number>} El número de filas eliminadas (0 o 1).
+   */
+  async deleteUser(userId) {
+    return await User.destroy({
+      where: { user_id: userId }
+    });
   }
 };
 

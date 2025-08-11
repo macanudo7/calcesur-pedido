@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Product extends Model {
+  class OrderChangeRequests extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,47 +11,36 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Product.belongsTo(models.TypeVehicle, {
-        foreignKey: 'type_vehicle_id',
-        as: 'typeVehicle' // Alias opcional para la relación
-      });
-
-      Product.hasMany(models.Order, {
-        foreignKey: 'product_id',
-        as: 'orders'
+      OrderChangeRequests.belongsTo(models.OrderDates, {
+        foreignKey: 'order_date_id',
+        as: 'orderDate'
       });
     }
   }
-  Product.init({
-    product_id: {
+  OrderChangeRequests.init({
+    request_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    code: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true
-    },
-    type_vehicle_id: {
+    order_date_id: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    type_unit: {
+    request_type: {
       type: DataTypes.STRING,
-      allowNull: true
-    }
+      allowNull: false
+    },
+    change_quantity: DataTypes.INTEGER,
+    requested_at: DataTypes.DATE,
+    admin_response_at: DataTypes.DATE
   }, {
     sequelize,
-    modelName: 'Product',
-    tableName: 'Products',
+    modelName: 'OrderChangeRequests',
+    tableName: 'OrderChangeRequests',
     timestamps: true,
     underscored: true
   });
-  return Product;
+  return OrderChangeRequests;
 };

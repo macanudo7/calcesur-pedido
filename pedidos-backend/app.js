@@ -10,6 +10,8 @@ const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 const typeVehiclesRouter = require('./routes/typeVehicles'); 
 const productsRouter = require('./routes/products');
+const orderRoutes = require('./routes/orderRoutes');
+const orderDatesRoutes = require('./routes/orderDatesRoutes');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -29,8 +31,10 @@ app.set('view engine', 'jade');
 // Middleware
 app.use(cors()); // Habilita CORS para todas las rutas
 app.use(logger('dev'));
-app.use(bodyParser.json()); // Para parsear el body de las peticiones en JSON
-app.use(bodyParser.urlencoded({ extended: true })); // Para parsear URLs codificadas
+//app.use(bodyParser.json()); // Para parsear el body de las peticiones en JSON
+//app.use(bodyParser.urlencoded({ extended: true })); // Para parsear URLs codificadas
+app.use(express.json()); // <--- Middleware para analizar JSON (Reemplaza a body-parser)
+app.use(express.urlencoded({ extended: true })); // Para URLs codificadas
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -39,8 +43,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/auth', authRoutes);
 app.use('/api/type-vehicles', typeVehiclesRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/orders', orderRoutes);
+app.use('/api/orderDates', orderDatesRoutes);
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/users', usersRouter);
 
 
 

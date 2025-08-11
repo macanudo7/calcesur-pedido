@@ -4,7 +4,7 @@ module.exports = {
 
   development: {
     username: process.env.DB_USER || 'postgres', // Usa variable de entorno, con fallback
-    password: process.env.DB_PASSWORD || 'postgress', // Usa variable de entorno, con fallback
+    password: process.env.DB_PASSWORD || '123456', // Usa variable de entorno, con fallback
     database: process.env.DB_NAME || 'calcesur_pedido_db', // Usa variable de entorno, con fallback
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,

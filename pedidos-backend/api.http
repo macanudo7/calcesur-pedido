@@ -1,8 +1,74 @@
+###REGISTRAR USUARIO
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "cliente-mina-xyz",
+  "ruc": "10012345678",
+  "password": "PasswordSeguro123",
+  "email": "cliente.xyz@example.com",
+  "name": "Mina XYZ S.A.C.",
+  "phone": "987654321",
+  "userType": "client",
+  "status": "active",
+  "observations": "Nuevo cliente potencial",
+  "usualProductsNotes": "Necesita explosivos y aditivos",
+  "ccEmails": "gerencia.mina@example.com",
+  "leadTimeDays": 1
+}
+
+# {
+#   "username": "super.admin",
+#   "password": "UnaContraseñaFuerte1235",
+#   "email": "admin@empresa.com",
+#   "name": "Juan Pérez",
+#   "phone": "999888777",
+#   "userType": "admin",
+#   "status": "active"
+# }
+
+
+
+
+###LISTAR USUARIOS
+GET http://localhost:3000/api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDgwNTQzOSwiZXhwIjoxNzU0ODA5MDM5fQ.U-_VkQXu8dqah5qkbHRuYV7J02DM7uQds-gI3Uc_vEM
+
+
+###EDITAR USUARIO
+PUT http://localhost:3000/api/users/9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDgwNTQzOSwiZXhwIjoxNzU0ODA5MDM5fQ.U-_VkQXu8dqah5qkbHRuYV7J02DM7uQds-gI3Uc_vEM
+Content-Type: application/json
+
+{
+  "name": "Juanjo",
+  "phone": "999888778"
+}
+
+###ELIMINAR USUARIO
+DELETE http://localhost:3000/api/users/10
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDgwNTQzOSwiZXhwIjoxNzU0ODA5MDM5fQ.U-_VkQXu8dqah5qkbHRuYV7J02DM7uQds-gI3Uc_vEM
+
+
+###LOGEARSE
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "cliente-mina-xyz", 
+  "password": "PasswordSeguro123",
+  "userType": "client"
+}
+
+
+
 ###LISTAR TIPOS DE VEHICULO
 GET http://localhost:3000/api/type-vehicles
 
 ###GUARDAR TIPO DE VEHICULO
 POST http://localhost:3000/api/type-vehicles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDg1NDA4NSwiZXhwIjoxNzU0ODU3Njg1fQ.dx6IuE2mPsy3FVmhqsyqnpoqcD3zg8P9VpKc2BQ1cjs
+
 Content-Type: application/json
 
 {

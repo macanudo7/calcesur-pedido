@@ -7,7 +7,7 @@ const { protect, restrictTo } = require('../middlewares/authMiddleware');
 /* GET users listing. */
 router.route('/')
   .get(protect, restrictTo('admin'), userController.getAllUsers)
-  .post(protect, authController.register);
+  .post(authController.register);
 
 router.route('/:id')
   .get(protect, restrictTo('admin'), userController.getUserById)

@@ -1,31 +1,33 @@
 ###REGISTRAR USUARIO
-POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "username": "cliente-mina-xyz",
-  "ruc": "10012345678",
-  "password": "PasswordSeguro123",
-  "email": "cliente.xyz@example.com",
-  "name": "Mina XYZ S.A.C.",
-  "phone": "987654321",
-  "userType": "client",
-  "status": "active",
-  "observations": "Nuevo cliente potencial",
-  "usualProductsNotes": "Necesita explosivos y aditivos",
-  "ccEmails": "gerencia.mina@example.com",
-  "leadTimeDays": 1
+  "username": "super.admin",
+  "password": "UnaContraseñaFuerte1235",
+  "email": "admin@empresa.com",
+  "name": "Juan Pérez",
+  "phone": "999888777",
+  "userType": "admin",
+  "status": "active"
 }
 
 # {
-#   "username": "super.admin",
-#   "password": "UnaContraseñaFuerte1235",
-#   "email": "admin@empresa.com",
-#   "name": "Juan Pérez",
-#   "phone": "999888777",
-#   "userType": "admin",
-#   "status": "active"
+#   "username": "cliente-mina-xyz",
+#   "ruc": "10012345678",
+#   "password": "PasswordSeguro123",
+#   "email": "cliente.xyz@example.com",
+#   "name": "Mina XYZ S.A.C.",
+#   "phone": "987654321",
+#   "userType": "client",
+#   "status": "active",
+#   "observations": "Nuevo cliente potencial",
+#   "usualProductsNotes": "Necesita explosivos y aditivos",
+#   "ccEmails": "gerencia.mina@example.com",
+#   "leadTimeDays": 1
 # }
+
+
 
 
 
@@ -55,9 +57,9 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "identifier": "cliente-mina-xyz", 
-  "password": "PasswordSeguro123",
-  "userType": "client"
+  "identifier": "super.admin", 
+  "password": "UnaContraseñaFuerte1235",
+  "userType": "admin"
 }
 
 
@@ -67,7 +69,7 @@ GET http://localhost:3000/api/type-vehicles
 
 ###GUARDAR TIPO DE VEHICULO
 POST http://localhost:3000/api/type-vehicles
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5LCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU0ODU0MjI2LCJleHAiOjE3NTQ4NTc4MjZ9.ln97n18LfmU_j45LnEEpGnAfPFVlzubQVpiibIpK04w
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU0OTQ3ODE0LCJleHAiOjE3NTQ5NTE0MTR9.FH91trveog8KG3mLUDqSCygRCTppccDemHDfEyyABQ0
 Content-Type: application/json
 
 {
@@ -94,13 +96,15 @@ DELETE http://localhost:3000/api/type-vehicles/1
 
 ###CREAR PRODUCTO 
 POST http://localhost:3000/api/products
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU0OTQ3ODE0LCJleHAiOjE3NTQ5NTE0MTR9.FH91trveog8KG3mLUDqSCygRCTppccDemHDfEyyABQ0
 Content-Type: application/json
 
 {
     "name": "Gas GLP Industrial",
     "code": 1001,
-    "type_vehicle_id": 2,
-    "type_unit": "KG"
+    "type_vehicle_id": 1,
+    "type_unit": "KG",
+    "spec_sheet_url": "https://example.com/especificaciones/gas-glp-industrial.pdf"
 }
 
 ###LISTAR PRODUCTOS

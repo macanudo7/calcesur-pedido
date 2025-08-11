@@ -1,0 +1,46 @@
+<section class="container mx-auto">
+    <div class="up-page py-2 px-6 section40">
+        <h2>Lista de vehículos</h2>
+        <div>Bienvenido, User</div>
+    </div>
+    <div class="main-page py-1">
+        <div class="text-right up-table section40">
+            <div class="btn-generate">
+                <button 
+                    (click)="irAgregarVehiculo()" 
+                    class="text-white font-semibold py-2 px-6 rounded-md">
+                        + Agregar vehículo
+                </button>
+            </div>
+        </div>
+        <div class="main-table">
+            <table class="table-auto w-full border-collapse text-center">
+                <thead>
+                    <tr class="text-white font-bold">
+                        <th class="p-[15px]">Código</th>
+                        <th class="p-[15px]">Tipo de vehículo</th>
+                        <th class="p-[15px]">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor="let vehicle of (vehicles$ | async)">
+                        <td>{{ vehicle.code }}</td>
+                        <td>{{ vehicle.name }}</td>
+                        <td class="table-actions">
+                            <a (click)="editAVehicle(vehicle.type_vehicle_id)">Editar</a>
+                            <a (click)="deleteVehicle(vehicle.type_vehicle_id)">Eliminar</a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <app-modal-confirmacion [mostrar]="mostrarModalEliminacion"
+        [mensaje]="'¿Seguro que deseas eliminar este vehículo?'" (confirmar)="confirmarEliminar()"
+        (cancelar)="cancelarEliminacion()">
+    </app-modal-confirmacion>
+
+</section>

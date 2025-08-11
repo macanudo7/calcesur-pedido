@@ -1,0 +1,36 @@
+.bottom-table.bottom-table.bottom-table{
+    background: #454D58;
+}
+.bottom-table.bottom-table.bottom-table td{
+    color: #fff;
+    border: none;
+}
+
+.up-page{
+    background: #ECEFF6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.up-page h2{
+    color: #0D3F3B;
+    font-size: 1.8em;
+}
+.section40{
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.date{
+    color: #0D3F3B;
+    font-size: 1.4em;
+    text-align: center;
+    font-weight: 700;
+}
+.btn-generate button{
+    background: #0D3F3B;
+    cursor: pointer;
+}
+.table-actions a{
+    display: block;
+    margin: 5px;
+}

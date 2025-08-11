@@ -1,0 +1,74 @@
+<section class="container mx-auto">
+    <div class="up-page py-2 px-6 section40">
+        <h2>Pedidos aprobados y por entregar</h2>
+        <div>Bienvenido, User</div>
+    </div>
+    <div class="main-page py-1">
+
+    <h3 class="date">Julio 2025</h3>
+
+        <div class="text-right up-table section40">
+            <div class="btn-generate">
+                <button 
+                    (click)="descargarTabla()" 
+                    class="text-white font-semibold py-2 px-6 rounded-md">
+                        Descargar
+                </button>
+            </div>
+        </div>
+        <div class="main-table">
+            <table class="table-auto w-full border-collapse text-center">
+                <thead>
+                    <tr class="text-white font-bold">
+                        <th class="p-[15px]">Código</th>
+                        <th class="p-[15px]">Día de solicitud</th>
+                        <th class="p-[15px]">Cliente</th>
+                        <th class="p-[15px]">Producto</th>
+                        <th class="p-[15px]">Cumplimiento a la fecha</th>
+                        <th class="p-[15px]">Avance del cronograma</th>
+                        <th class="p-[15px]">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0001</td>
+                        <td>05 de Julio</td>
+                        <td>Empresa A</td>
+                        <td>Cal granulada - Bombona</td>
+                        <td>100%</td>
+                        <td>20%</td>
+                        <td class="table-actions">
+                            <a>Ver detalles</a>
+                            <a>Editar solicitud</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>0001</td>
+                        <td>05 de Julio</td>
+                        <td>Empresa A</td>
+                        <td>Cal granulada - Bombona</td>
+                        <td>100%</td>
+                        <td>20%</td>
+                        <td class="table-actions">
+                            <a>Ver detalles</a>
+                            <a>Editar solicitud</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>0001</td>
+                        <td>05 de Julio</td>
+                        <td>Empresa A</td>
+                        <td>Cal granulada - Bombona</td>
+                        <td>100%</td>
+                        <td>20%</td>
+                        <td class="table-actions">
+                            <a>Ver detalles</a>
+                            <a>Editar solicitud</a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

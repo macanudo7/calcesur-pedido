@@ -1,0 +1,67 @@
+<section class="container mx-auto">
+    <div class="up-page py-2 px-6 section40">
+        <h2>Lista de productos</h2>
+        <div>Bienvenido, User</div>
+    </div>
+    <div class="main-page py-1">
+        <div class="text-right up-table section40">
+            <div class="btn-generate">
+                <button 
+                    (click)="irAgregarProducto()" 
+                    class="text-white font-semibold py-2 px-6 rounded-md">
+                        + Agregar producto
+                </button>
+            </div>
+        </div>
+        <div class="main-table">
+            <table class="table-auto w-full border-collapse text-center">
+                <thead>
+                    <tr class="text-white font-bold">
+                        <th class="p-[15px]">Código</th>
+                        <th class="p-[15px]">Nombre del producto</th>
+                        <th class="p-[15px]">Unidad de medida</th>
+                        <th class="p-[15px]">Vehículo</th>
+                        <th class="p-[15px]">Ficha técnica</th>
+                        <th class="p-[15px]">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>001</td>
+                        <td>Cal granulada</td>
+                        <td>Tonelada(Tm)</td>
+                        <td>Bombona</td>
+                        <td>cal_granulada.pdf</td>
+                        <td class="table-actions">
+                            <a>Editar</a>
+                            <a>Eliminar</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>001</td>
+                        <td>Cal granulada</td>
+                        <td>Tonelada(Tm)</td>
+                        <td>Bombona</td>
+                        <td>cal_granulada.pdf</td>
+                        <td class="table-actions">
+                            <a>Editar</a>
+                            <a>Eliminar</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>001</td>
+                        <td>Cal granulada</td>
+                        <td>Tonelada(Tm)</td>
+                        <td>Bombona</td>
+                        <td>cal_granulada.pdf</td>
+                        <td class="table-actions">
+                            <a>Editar</a>
+                            <a>Eliminar</a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

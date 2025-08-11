@@ -1,0 +1,10 @@
+<div *ngIf="mostrarExito" class="fixed inset-0 flex items-center justify-center z-50 open-modal">
+  <div class="bg-white p-6 rounded shadow-md w-full max-w-md text-center">
+    <p class="mb-6">{{ mensajeExito }}</p>
+    <div class="flex justify-center space-x-4 container-btns">
+      <button (click)="onExitoso()" class="btn">
+        Volver a la lista de {{ destino }}
+      </button>
+    </div>
+  </div>
+</div>

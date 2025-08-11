@@ -20,7 +20,8 @@ const productController = {
         name,
         code,
         type_vehicle_id,
-        type_unit
+        type_unit,
+        spec_sheet_url 
       });
       res.status(201).json(product);
     } catch (error) {

@@ -12,6 +12,7 @@ const typeVehiclesRouter = require('./routes/typeVehicles');
 const productsRouter = require('./routes/products');
 const orderRoutes = require('./routes/orderRoutes');
 const orderDatesRoutes = require('./routes/orderDatesRoutes');
+const orderChangeRequestsRouter = require('./routes/orderChangeRequestsRoutes'); // Asegúrate de tener esta ruta
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -47,6 +48,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/orderDates', orderDatesRoutes);
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/change-requests', orderChangeRequestsRouter)
 
 
 

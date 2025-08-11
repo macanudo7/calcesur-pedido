@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
     type_unit: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    spec_sheet_url: { 
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     sequelize,

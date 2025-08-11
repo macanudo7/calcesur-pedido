@@ -34,6 +34,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true // Asumo que la unidad de medida puede ser nula inicialmente
       },
+      spec_sheet_url: {
+        type: Sequelize.STRING,
+        allowNull: true // El link puede ser nulo si no hay ficha técnica
+      },
       // Campos de timestamp (es buena práctica incluirlos)
       created_at: {
         allowNull: false,

@@ -67,8 +67,7 @@ GET http://localhost:3000/api/type-vehicles
 
 ###GUARDAR TIPO DE VEHICULO
 POST http://localhost:3000/api/type-vehicles
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDg1NDA4NSwiZXhwIjoxNzU0ODU3Njg1fQ.dx6IuE2mPsy3FVmhqsyqnpoqcD3zg8P9VpKc2BQ1cjs
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5LCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU0ODU0MjI2LCJleHAiOjE3NTQ4NTc4MjZ9.ln97n18LfmU_j45LnEEpGnAfPFVlzubQVpiibIpK04w
 Content-Type: application/json
 
 {
@@ -77,10 +76,11 @@ Content-Type: application/json
 }
 
 ###Obtener Tipo de Vehículo por ID
-GET http://localhost:3000/api/type-vehicles/2
+GET http://localhost:3000/api/type-vehicles/1
 
 ###EDITAR TIPO DE VEHICULO
-PUT http://localhost:3000/api/type-vehicles/2
+PUT http://localhost:3000/api/type-vehicles/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDk0MDg3NywiZXhwIjoxNzU0OTQ0NDc3fQ.B4DtA4hOFGkGiGvhi8mjw4Rf1bj8lJbMpRgpLtdCd10
 Content-Type: application/json
 
 {

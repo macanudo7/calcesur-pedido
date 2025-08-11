@@ -1,0 +1,58 @@
+<section class="container mx-auto">
+    <div class="up-page py-2 px-6 section40">
+        <h2>OTIF x Día</h2>
+        <div>Bienvenido, User</div>
+    </div>
+    <div class="main-page py-1">
+
+        <div class="text-right up-table section40">
+            <div class="btn-generate">
+                <button 
+                    (click)="descargarTabla()" 
+                    class="text-white font-semibold py-2 px-6 rounded-md">
+                        Descargar reporte
+                </button>
+            </div>
+        </div>
+        <div class="main-table">
+            <table class="table-auto w-full border-collapse text-center">
+                <thead>
+                    <tr class="text-white font-bold">
+                        <th class="p-[15px]">Fecha</th>
+                        <th class="p-[15px]">Suma de PLAN</th>                        
+                        <th class="p-[15px]">Suma Carga Real</th>
+                        <th class="p-[15px]">Cumplimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01/04/2025</td>
+                        <td>27</td>
+                        <td>27</td>
+                        <td>100%</td>
+                        
+                    </tr>
+                    <tr>
+                        <td>01/04/2025</td>
+                        <td>27</td>
+                        <td>27</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td>01/04/2025</td>
+                        <td>27</td>
+                        <td>27</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr class="bottom-table">
+                        <td>Total general</td>
+                        <td>106</td>
+                        <td>94</td>
+                        <td>94%</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      TypeVehicle.hasMany(models.Product, {
+        foreignKey: 'type_vehicle_id',
+        as: 'products' // Alias opcional para la relación
+      });
     }
   }
   TypeVehicle.init({

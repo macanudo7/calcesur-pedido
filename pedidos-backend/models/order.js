@@ -3,55 +3,54 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Product extends Model {
+  class Order extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      Product.belongsTo(models.TypeVehicle, {
-        foreignKey: 'type_vehicle_id',
-        as: 'typeVehicle' // Alias opcional para la relación
+      Order.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'user'
       });
-
-      Product.hasMany(models.Order, {
+      Order.belongsTo(models.Product,{
         foreignKey: 'product_id',
-        as: 'orders'
+        as: 'product'
       });
+      Order.hasMany(models.OrderDates, {
+        foreignKey: 'order_id',
+        as: 'orderDates'
+      });
+      // define association here
     }
   }
-  Product.init({
-    product_id: {
+  Order.init({
+    order_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false
     },
-    name: {
-      type: DataTypes.STRING,
+    user_id: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
-    code: {
+    product_id: {
       type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    status: {
+      type: DataTypes.STRING, // ¡CAMBIO A STRING EN EL MODELO!
       allowNull: false,
-      unique: true
-    },
-    type_vehicle_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    type_unit: {
-      type: DataTypes.STRING,
-      allowNull: true
+      defaultValue: 'pending'
     }
   }, {
     sequelize,
-    modelName: 'Product',
-    tableName: 'Products',
+    modelName: 'Order',
+    tableName: 'Orders',
     timestamps: true,
     underscored: true
   });
-  return Product;
+  return Order;
 };

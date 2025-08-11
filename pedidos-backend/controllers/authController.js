@@ -72,7 +72,7 @@ const authController = {
         email,
         name,
         phone: phone || null,
-        user_type: userType, // Asegúrate de que coincida con el nombre de columna en la DB
+        userType: userType, // Asegúrate de que coincida con el nombre de columna en la DB
         status: status || 'active',
         observations: observations || null,
         usual_products_notes: usualProductsNotes || null,

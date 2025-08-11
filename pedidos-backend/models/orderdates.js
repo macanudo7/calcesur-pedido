@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Product extends Model {
+  class OrderDates extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,47 +11,43 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Product.belongsTo(models.TypeVehicle, {
-        foreignKey: 'type_vehicle_id',
-        as: 'typeVehicle' // Alias opcional para la relación
+      OrderDates.belongsTo(models.Order, {
+        foreignKey: 'order_id',
+        as: 'order'
       });
-
-      Product.hasMany(models.Order, {
-        foreignKey: 'product_id',
-        as: 'orders'
+      OrderDates.hasMany(models.OrderChangeRequests, {
+        foreignKey: 'order_date_id',
+        as: 'changeRequests'
       });
     }
   }
-  Product.init({
-    product_id: {
+  OrderDates.init({
+    order_date_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false
     },
-    name: {
-      type: DataTypes.STRING,
+    order_id: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
-    code: {
-      type: DataTypes.INTEGER,
+    delivery_date: DataTypes.DATE,
+    quantity: DataTypes.INTEGER,
+    rating: DataTypes.INTEGER,
+    is_delivered: DataTypes.STRING,
+    status: {
+      type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      defaultValue: 'pending'
     },
-    type_vehicle_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    type_unit: {
-      type: DataTypes.STRING,
-      allowNull: true
-    }
+    assigment_date: DataTypes.DATE
   }, {
     sequelize,
-    modelName: 'Product',
-    tableName: 'Products',
+    modelName: 'OrderDates',
+    tableName: 'OrderDates',
     timestamps: true,
     underscored: true
   });
-  return Product;
+  return OrderDates;
 };

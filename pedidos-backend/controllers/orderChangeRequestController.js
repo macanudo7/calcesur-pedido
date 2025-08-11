@@ -37,3 +37,5 @@ const OrderChangeRequestsController = {
         }
     }
 }
+
+module.exports = OrderChangeRequestsController;

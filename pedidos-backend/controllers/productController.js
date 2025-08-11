@@ -9,7 +9,7 @@ const productController = {
    */
   async createProduct(req, res) {
     try {
-      const { name, code, type_vehicle_id, type_unit } = req.body;
+      const { name, code, type_vehicle_id, type_unit, spec_sheet_url} = req.body;
 
       // Validación básica
       if (!name || !code || !type_vehicle_id) {

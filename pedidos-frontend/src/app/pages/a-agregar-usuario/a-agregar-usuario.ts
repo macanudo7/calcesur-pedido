@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/modal-confirmacion';
+import { User } from '../../services/user';
 
 @Component({
   selector: 'app-a-agregar-usuario',
@@ -13,32 +14,65 @@ import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/mo
 })
 export class AAgregarUsuario {
 
-  productoForm: FormGroup;
+  userForm: FormGroup;
+  isEditMode = false;
+  userId?: number;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private userService: User,
   ) {
-    this.productoForm = this.fb.group({
-      usuario: ['', Validators.required],
-      nombre: ['', Validators.required],
-      observaciones: [''],
-      productosSolicitados: ['', Validators.required],
-      ccCorreos: ['', Validators.required],
-      password: ['', Validators.required],
-      tel: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      typeuser: ['', Validators.required],
-      estado: ['', Validators.required],
+    this.userForm = this.fb.group({
+      username: ['', [Validators.required, Validators.maxLength(100)]],
+      name: ['', [Validators.required, Validators.maxLength(255)]],
+      observations: [''],
+      usualProductsNotes: [''],
+      ccEmails: [''],
+      password: ['', [Validators.required, Validators.maxLength(255)]],
+      phone: ['', Validators.maxLength(50)],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+      userType: ['', Validators.required],
+      status: ['', Validators.required],
+      ruc: ['', Validators.maxLength(11)],
+      leadTimeDays: [''],
     });
   }
 
+  mostrarModalExito:boolean = false;
+
   submit() {
-    if (this.productoForm.valid) {
-      console.log('Producto enviado:', this.productoForm.value);
+    if (this.userForm.valid) {
+      const vUsers = {
+        username: this.userForm.value.username,
+        name: this.userForm.value.name,
+        observations: this.userForm.value.observations,
+        usualProductsNotes: this.userForm.value.usualProductsNotes,
+        ccEmails: this.userForm.value.ccEmails,
+        password: this.userForm.value.password,
+        phone: this.userForm.value.phone,
+        email: this.userForm.value.email,
+        userType: this.userForm.value.userType,
+        status: this.userForm.value.status,
+        ruc: this.userForm.value.ruc,
+        leadTimeDays: this.userForm.value.leadTimeDays,
+      };
+
+      const action = this.isEditMode 
+        ? this.userService.updateUser(this.userId!, vUsers) // <-- Llama a update
+        : this.userService.createUser(vUsers);
+
+      action.subscribe({
+        next: (res) => {
+          console.log('guardado:', res);
+        },
+        error: (err) => {
+          console.error('Error al guardar el vehículo', err);
+        }
+      });
 
     } else {
-      this.productoForm.markAllAsTouched();
+      this.userForm.markAllAsTouched();
     }
   }
 
@@ -47,8 +81,8 @@ export class AAgregarUsuario {
 
   mostrarModalConfirmacion = false;
 
-  volverListaProductos() {
-    if (this.productoForm.dirty || this.productoForm.touched) {
+  volverListaUsuarios() {
+    if (this.userForm.dirty || this.userForm.touched) {
       console.log('Mostrando modal de confirmación');
       this.mostrarModalConfirmacion = true;
     } else {

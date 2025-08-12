@@ -4,15 +4,19 @@
     <div class="form-login">
         <img src="/logos-calcesur-intical.png" alt="Logo de Intical y de Calcesur">
         <div class="flex items-center justify-center w-full">
-            <form class="w-full space-y-5">
+            <form [formGroup]="authForm" class="w-full space-y-5" novalidate>
 
-                <!-- Campo de RUC -->
+                <!-- Campo de Usuario -->
                 <div class="mt-4">
                     <label for="codigo" class="block font-black mb-1">
                         Nombre de usuario
                     </label>
-                    <input id="codigo" type="text" required placeholder="administrador1"
+                    <input id="codigo" type="text" formControlName="username" required placeholder="administrador1"
                         class="w-full px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <p *ngIf="authForm.get('username')?.touched && authForm.get('username')?.invalid"
+                        class="text-red-600 text-sm mt-1 txt-validate">
+                        El usuario de ingreso es obligatorio.
+                    </p>
                 </div>
 
                 <!-- Campo de contraseña -->
@@ -20,13 +24,17 @@
                     <label for="password" class="block font-black mb-1">
                         Contraseña
                     </label>
-                    <input id="password" type="password" required placeholder="***********"
+                    <input id="password" type="password" formControlName="password" required placeholder="***********"
                         class="w-full px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <p *ngIf="authForm.get('password')?.touched && authForm.get('password')?.invalid"
+                        class="text-red-600 text-sm mt-1 txt-validate">
+                        La contraseña es obligatoria.
+                    </p>
                 </div>
 
                 <!-- Botón de envío -->
                 <div class="mt-4 block" style="margin-top: 60px;">
-                    <button type="submit"
+                    <button type="button" (click)="login()"
                         class="hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition-colors duration-200">
                         Acceder
                     </button>
@@ -34,7 +42,7 @@
 
                 <!-- Link para recuperar contraseña -->
                 <div class="forgot-pass">
-                    <a href="#" class="text-sm hover:underline">
+                    <a (click)="abrirModal()" class="text-sm hover:underline">
                         ¿Olvidaste tu contraseña?
                     </a>
                 </div>

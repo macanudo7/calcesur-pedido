@@ -5,7 +5,7 @@ body{
     font-family: "Roboto", sans-serif;
 }
 
-section{
+.section{
   padding-bottom: 80px;
 }
 
@@ -15,7 +15,7 @@ table tbody tr:nth-child(even) {
 }
 
 table tbody tr:nth-child(odd) {
-  background-color: #ffffff;
+  background-color: #fff;
 }
 
 table tbody th,

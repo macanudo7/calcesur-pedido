@@ -13,11 +13,12 @@ import { of } from 'rxjs';
   templateUrl: './a-agregar-vehiculo.html',
   styleUrl: './a-agregar-vehiculo.scss'
 })
-export class AAgregarVehiculo implements OnInit{
+export class AAgregarVehiculo implements OnInit {
 
   vehicleForm: FormGroup;
   isEditMode = false;
   vehicleId?: number;
+  nameOfUser: string = localStorage.getItem('userName') || '';
 
   constructor(
     private fb: FormBuilder,
@@ -25,10 +26,19 @@ export class AAgregarVehiculo implements OnInit{
     private route: ActivatedRoute,
     private vehicleService: Vehicle,
   ) {
+    // Inicializar el formulario
     this.vehicleForm = this.fb.group({
       name: ['', Validators.required],
       code: ['', Validators.required],
     });
+
+    // Verificar si hay token
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.router.navigate(['/ingreso']);
+      return;
+    };
+
 
   }
 
@@ -47,7 +57,7 @@ export class AAgregarVehiculo implements OnInit{
   }
 
 
-  mostrarModalExito:boolean = false;
+  mostrarModalExito: boolean = false;
 
   submit() {
     if (this.vehicleForm.valid) {
@@ -56,7 +66,7 @@ export class AAgregarVehiculo implements OnInit{
         code: this.vehicleForm.value.code,
       };
 
-      const action = this.isEditMode 
+      const action = this.isEditMode
         ? this.vehicleService.updateVehicle(this.vehicleId!, v) // <-- Llama a update
         : this.vehicleService.createVehicle(v);
 

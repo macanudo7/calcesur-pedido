@@ -21,22 +21,36 @@ const productService = {
 
   /**
    * Obtiene todos los productos, opcionalmente con su tipo de vehículo asociado.
-   * @param {boolean} includeTypeVehicle - Si es true, incluye los datos del tipo de vehículo.
-   * @returns {Promise<Array<Product>>} Lista de productos.
+   * @returns {Promise<Array>} Lista de productos en el formato deseado.
    */
-  async getAllProducts(includeTypeVehicle = false) {
+  async getAllProducts() {
     try {
-      const options = {
-        include: []
-      };
-      if (includeTypeVehicle) {
-        options.include.push({
-          model: TypeVehicle,
-          as: 'typeVehicle' // Usa el alias definido en el modelo Product.js
-        });
-      }
-      const products = await Product.findAll(options);
-      return products;
+      const products = await Product.findAll({
+        include: [
+          {
+            model: TypeVehicle,
+            as: 'typeVehicle', // Usa el alias definido en el modelo Product.js
+            attributes: ['type_vehicle_id', 'name'] // Solo incluye el campo 'name' del tipo de vehículo
+
+          }
+
+        ]
+      });
+      
+      return products.map(product => ({
+        id: product.product_id,
+        code: product.code,
+        name: product.name,
+        type_unit: product.type_unit,
+        type_vehicle: product.typeVehicle
+          ? {
+              type_vehicle_id: product.typeVehicle.type_vehicle_id,
+              name: product.typeVehicle.name
+            }
+          : null,
+        spec_sheet_url: product.spec_sheet_url
+      }));
+      
     } catch (error) {
       console.error('Error al obtener productos en el servicio:', error);
       throw new Error('No se pudieron obtener los productos.');

@@ -26,3 +26,24 @@
     display: block;
     margin: 5px;
 }
+// MODAL DE CREADO CON EXITO
+.open-modal-exito{
+    background: #0000007d;
+}
+.open-modal-exito svg{
+    width: 60px;
+    height: 60px;
+    opacity: .7;
+}
+.open-modal-exito svg path{
+    fill: #0D3F3B;
+}
+.open-modal-exito .modal-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.open-modal-exito .modal-icon h3{
+    color: #0D3F3B;
+    font-size: 28px;
+}

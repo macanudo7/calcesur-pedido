@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/modal-confirmacion';
 import { Vehicle } from '../../services/vehicle';
-import { of } from 'rxjs';
 
 @Component({
   selector: 'app-a-agregar-vehiculo',
@@ -18,7 +17,8 @@ export class AAgregarVehiculo implements OnInit {
   vehicleForm: FormGroup;
   isEditMode = false;
   vehicleId?: number;
-  nameOfUser: string = localStorage.getItem('userName') || '';
+  nameOfUser: string = sessionStorage.getItem('userName') || '';
+  titleModalExito: string = "";
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +33,7 @@ export class AAgregarVehiculo implements OnInit {
     });
 
     // Verificar si hay token
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/ingreso']);
       return;
@@ -54,6 +54,8 @@ export class AAgregarVehiculo implements OnInit {
         });
       }
     });
+
+    this.titleModalExito = this.isEditMode ? 'Se actualizó el vehículo con éxito' : 'Se agregó el vehículo con éxito';
   }
 
 
@@ -67,19 +69,19 @@ export class AAgregarVehiculo implements OnInit {
       };
 
       const action = this.isEditMode
-        ? this.vehicleService.updateVehicle(this.vehicleId!, v) // <-- Llama a update
+        ? this.vehicleService.updateVehicle(this.vehicleId!, v)
         : this.vehicleService.createVehicle(v);
 
       action.subscribe({
         next: (res) => {
           console.log('guardado:', res);
+          console.log(this.isEditMode ,this.titleModalExito);
+          this.mostrarModalExitoso();
         },
         error: (err) => {
           console.error('Error al guardar el vehículo', err);
         }
       });
-
-      this.mostrarModalExitoso();
 
     } else {
       this.vehicleForm.markAllAsTouched();

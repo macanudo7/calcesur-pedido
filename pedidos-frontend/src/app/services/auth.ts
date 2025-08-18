@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable,} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, tap, Observable } from 'rxjs';
+import { loginDate } from '../shared/interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -8,18 +9,19 @@ import { BehaviorSubject, tap, Observable } from 'rxjs';
 export class Auth {
 
   private baseUrl = 'http://localhost:3000/api/auth/login';
+
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
   }
 
   
-    login(credentials: { identifier: string, password: string, userType: string }): Observable < any > {
+    login(credentials: loginDate): Observable < any > {
       return this.http.post(this.baseUrl, credentials).pipe(
         tap((response: any) => {
           if (response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userName', credentials.identifier);
+            sessionStorage.setItem('token', response.token);
+            sessionStorage.setItem('userName', credentials.identifier);
             this.isAuthenticatedSubject.next(true);
           }
         })
@@ -31,8 +33,8 @@ export class Auth {
     }
 
     logout(): void {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userName');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('userName');
       this.isAuthenticatedSubject.next(false);
     }
 

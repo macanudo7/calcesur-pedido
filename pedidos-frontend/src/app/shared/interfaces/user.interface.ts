@@ -1,15 +1,16 @@
 export interface UserForm {
-  username: String;
-  ruc?: String;
-  password: String;
-  email: String;
-  name: String;
-  phone?: String;
-  userType: String;
-  status: String;
-  observations?: String;
-  usualProductsNotes?: String;
-  ccEmails?: String;
+  user_id?: number;
+  username: string;
+  ruc?: string;
+  password: string;
+  email: string;
+  name: string;
+  phone?: string;
+  userType: string;
+  status: string;
+  observations?: string;
+  usualProductsNotes?: string;
+  ccEmails?: string;
   leadTimeDays?: number;
 }
 
@@ -25,3 +26,9 @@ export interface UserForm {
 // #   "usualProductsNotes": "Necesita explosivos y aditivos",
 // #   "ccEmails": "gerencia.mina@example.com",
 // #   "leadTimeDays": 1
+
+export interface loginDate {
+  identifier: string, 
+  password: string,
+  userType: string
+}

@@ -9,8 +9,14 @@
 .header-client nav{
     column-gap: 40px;
 }
+.header-client nav a{
+    cursor: pointer;
+} 
 .header-client nav a img{
     height: 30px;
     width: auto;
     margin-bottom: 8px;
+}
+.header-client hr{
+    color: #0000002e;
 }

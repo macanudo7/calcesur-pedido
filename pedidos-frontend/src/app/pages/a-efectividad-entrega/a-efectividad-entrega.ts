@@ -9,6 +9,8 @@ import { Component } from '@angular/core';
 })
 export class AEfectividadEntrega {
 
+  nameOfUser: string = sessionStorage.getItem('userName') || '';
+
   descargarTabla() {
     console.log(':)')
   }

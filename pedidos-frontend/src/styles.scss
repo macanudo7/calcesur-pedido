@@ -4,9 +4,22 @@
 body{
     font-family: "Roboto", sans-serif;
 }
-
+section{
+  min-height: 90vh;
+}
 .section{
-  padding-bottom: 80px;
+  padding-bottom: 120px;
+}
+button{
+  cursor: pointer;
+}
+
+body app-admin-layout, body app-client-layout{
+  position: relative;
+  min-height: 100vh
+}
+body app-admin-layout router-outlet, body app-client-layout router-outlet{
+  padding-bottom: 100px; 
 }
 
 // ---------------------> Tablas
@@ -52,7 +65,9 @@ table .table-actions a:hover{
   border-radius: 0.375rem;
   font-weight: 600;
   padding: 10px 30px;
-  margin-right: 25px;
+}
+.btn:hover{
+    background: #062220;
 }
 .btn-secondary{
   background: #DFDFDF;
@@ -60,7 +75,10 @@ table .table-actions a:hover{
   border-radius: 0.375rem;
   font-weight: 600;
   padding: 10px 30px;
-  margin-right: 25px;
+  margin-left: 25px;
+}
+.btn-secondary:hover{
+    background: #cecece;
 }
 
 // ---------------------> Formulario
@@ -81,4 +99,28 @@ form .columns-form>div{
 }
 form .txt-validate{
   position: absolute;
+}
+form input::placeholder, form option::placeholder{
+  color:#3a3a3a4b;
+}
+form em{
+  font-size: 14px;
+  font-weight: 300;
+}
+form .txt-validate{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+form .txt-error{
+  display: flex;
+  align-items: center;
+}
+form .txt-validate svg, form .txt-error svg{
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+form .txt-validate svg path, form .txt-error svg path{
+  fill: #dc2626;
 }

@@ -9,8 +9,26 @@
 .header-admin nav{
     column-gap: 40px;
 }
-.header-admin nav a img{
+.header-admin nav a, .header-admin nav>div{
+    cursor: pointer;
+}
+.header-admin nav a img, .header-admin nav>div img{
     height: 30px;
     width: auto;
     margin-bottom: 8px;
+}
+.header-admin nav a span, .header-admin nav>div span{
+    display: flex;
+}
+.header-admin nav a span svg, .header-admin nav>div span svg{
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    fill: #fff;
+}
+.header-admin nav a span svg path, .header-admin nav>div span svg path{
+    fill: #fff;
+}
+.header-admin hr{
+    color: #0000002e;
 }

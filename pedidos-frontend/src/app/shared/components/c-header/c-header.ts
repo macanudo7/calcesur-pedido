@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { Auth } from '../../../services/auth';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-c-header',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './c-header.html',
-  styleUrl: './c-header.scss'
+  styleUrl: './c-header.scss',
+  standalone: true
 })
 export class CHeader {
 

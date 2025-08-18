@@ -17,7 +17,7 @@ export class Vehicle {
 
   // ================== Auth Token
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'

@@ -5,11 +5,42 @@ const orderService = {
     async createOrderwithDates(orderData, orderDatesData){
         const t = await sequelize.transaction();
         try {
+            // 1. Validar si el usuario ya tiene un pedido para ese mes
+            if (orderDatesData && orderDatesData.length > 0) {
+                // Tomamos el primer orderDate como referencia
+                const deliveryDate = new Date(orderDatesData[0].delivery_date);
+                const year = deliveryDate.getFullYear();
+                const month = deliveryDate.getMonth() + 1; // getMonth() es base 0
+
+                // Buscar si ya existe un pedido del usuario para ese mes y año
+                const existingOrder = await Order.findOne({
+                    where: { user_id: orderData.user_id },
+                    include: [{
+                        model: OrderDates,
+                        as: 'orderDates',
+                        where: sequelize.where(
+                            sequelize.fn('EXTRACT', sequelize.literal('YEAR FROM "delivery_date"')), year
+                        ),
+                        required: true
+                    }]
+                });
+
+                if (existingOrder) {
+                    // Verificar si alguna fecha de ese pedido coincide en mes y año
+                    const hasSameMonth = existingOrder.orderDates.some(od => {
+                        const d = new Date(od.delivery_date);
+                        return d.getFullYear() === year && (d.getMonth() + 1) === month;
+                    });
+                    if (hasSameMonth) {
+                        throw new Error('Ya existe un pedido para este usuario en el mismo mes.');
+                    }
+                }
+            }
 
             //1. Crear el pedido
             const newOrder = await Order.create(orderData, { transaction: t});
             //2. Asociar cada orderDates con el nuevo pedido y crearlos
-            if(orderDatesData && orderDatesData.lengt >0){
+            if(orderDatesData && orderDatesData.length >0){
                 const orderDatesToCreate = orderDatesData.map(date => ({
                     ...date,
                     order_id: newOrder.order_id
@@ -22,7 +53,7 @@ const orderService = {
 
         } catch (error) {
             await t.rollback();
-            throw new Error('Eorr al crear el pedido y sus fechas:' . error.message);
+            throw new Error('Error al crear el pedido y sus fechas:' + error.message);
         }
 
     },

@@ -5,7 +5,7 @@ const orderController = {
         try {
             const { orderDates, ...orderData } = req.body;
         
-            const newOrder = await orderService.createOrderWithDates(orderData, orderDates);
+            const newOrder = await orderService.createOrderwithDates(orderData, orderDates);
             res.status(201).json(newOrder);
         } catch (error) {
             res.status(400).json({ error: error.message});

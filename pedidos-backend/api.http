@@ -2,16 +2,6 @@
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
-{
-  "username": "super.admin",
-  "password": "UnaContraseñaFuerte1235",
-  "email": "admin@empresa.com",
-  "name": "Juan Pérez",
-  "phone": "999888777",
-  "userType": "admin",
-  "status": "active"
-}
-
 # {
 #   "username": "cliente-mina-xyz",
 #   "ruc": "10012345678",
@@ -27,8 +17,15 @@ Content-Type: application/json
 #   "leadTimeDays": 1
 # }
 
-
-
+{
+  "username": "super.admin",
+  "password": "UnaContraseñaFuerte1235",
+  "email": "admin@empresa.com",
+  "name": "Juan Pérez",
+  "phone": "999888777",
+  "userType": "admin",
+  "status": "active"
+}
 
 
 
@@ -119,6 +116,7 @@ GET http://localhost:3000/api/products/1
 
 ###MODIFICAR PRODUCTO
 PUT http://localhost:3000/api/products/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU0OTQ3ODE0LCJleHAiOjE3NTQ5NTE0MTR9.FH91trveog8KG3mLUDqSCygRCTppccDemHDfEyyABQ0
 Content-Type: application/json
 
 {
@@ -128,3 +126,39 @@ Content-Type: application/json
 
 ###ELIMINAR PRODUCTO 
 DELETE http://localhost:3000/api/products/1
+
+
+
+###CREAR PEDIDO
+POST http://localhost:3000/api/orders
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "product_id": 1,
+  "status": "pending",
+  "orderDates": [
+    {
+      "delivery_date": "2025-08-20",
+      "quantity": 10,
+      "status": "pending"
+    },
+    {
+      "delivery_date": "2025-08-25",
+      "quantity": 5,
+      "status": "pending"
+    }
+  ]
+}
+
+###LISTAR PEDIDOS
+GET http://localhost:3000/api/orders
+
+
+###LISTAR PEDIDOS
+GET http://localhost:3000/api/orders
+
+###OBTENER PEDIDO POR ID
+GET http://localhost:3000/api/orders/6
+
+###EDITAR PEDIDO

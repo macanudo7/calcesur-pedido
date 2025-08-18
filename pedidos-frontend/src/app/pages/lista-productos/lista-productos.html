@@ -1,7 +1,7 @@
-<section class="container mx-auto">
+<section class="container mx-auto section">
     <div class="up-page py-2 px-6 section40">
         <h2>Lista de productos</h2>
-        <div>Bienvenido, User</div>
+        <div>Bienvenido, {{nameOfUser}}</div>
     </div>
     <div class="main-page py-1">
         <div class="text-right up-table section40">
@@ -26,37 +26,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>Cal granulada</td>
-                        <td>Tonelada(Tm)</td>
-                        <td>Bombona</td>
-                        <td>cal_granulada.pdf</td>
-                        <td class="table-actions">
-                            <a>Editar</a>
-                            <a>Eliminar</a>
+
+                    <tr *ngFor="let product of (products$ | async)">
+                        <td>{{ product.code }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.type_unit }}</td>
+                        <td>{{ product.type_vehicle_id}}</td>
+                        <td>
+                            <a *ngIf="product.spec_sheet_url" [href]="product.spec_sheet_url" target="_blank" class="underline">
+                                Ver ficha técnica
+                            </a>
+                            <span *ngIf="!product.spec_sheet_url">No disponible</span>
                         </td>
-                    </tr>
-                    <tr>
-                        <td>001</td>
-                        <td>Cal granulada</td>
-                        <td>Tonelada(Tm)</td>
-                        <td>Bombona</td>
-                        <td>cal_granulada.pdf</td>
                         <td class="table-actions">
-                            <a>Editar</a>
-                            <a>Eliminar</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>001</td>
-                        <td>Cal granulada</td>
-                        <td>Tonelada(Tm)</td>
-                        <td>Bombona</td>
-                        <td>cal_granulada.pdf</td>
-                        <td class="table-actions">
-                            <a>Editar</a>
-                            <a>Eliminar</a>
+                            <a (click)="editProduct(product.product_id!)">Editar</a>
+                            <a (click)="deleteProduct(product.product_id!)">Eliminar</a>
                         </td>
                     </tr>
                     
@@ -64,4 +48,10 @@
             </table>
         </div>
     </div>
+
+    <app-modal-confirmacion [mostrar]="mostrarModalEliminacion"
+        [mensaje]="'¿Seguro que deseas eliminar este vehículo?'" (confirmar)="confirmarEliminar()"
+        (cancelar)="cancelarEliminacion()">
+    </app-modal-confirmacion>
+
 </section>

@@ -1,66 +1,62 @@
-<section class="container mx-auto">
+<section class="container mx-auto section">
     <div class="up-page py-2 px-6 section40">
         <h2>Lista de usuarios</h2>
-        <div>Bienvenido, User</div>
+        <div>Bienvenido, {{nameOfUser}}</div>
     </div>
     <div class="main-page py-1">
-        <div class="text-right up-table section40">
-            <div class="btn-generate">
-                <button 
-                    (click)="irAgregarUsuario()" 
-                    class="text-white font-semibold py-2 px-6 rounded-md">
+        <div class="flex justify-between items-center">
+            <div>
+                <input type="text" class="search-input" placeholder="🔍︎ Buscar por nombre" [(ngModel)]="searchTerm"
+                    (ngModelChange)="filterUsers()">
+
+                <select [(ngModel)]="selectedUserType" (ngModelChange)="filterUsers()" class="search-input">
+                    <option value="">Tipo de usuario</option>
+                    <option *ngFor="let type of userTypes" [value]="type.value">
+                        {{ type.label }}
+                    </option>
+                </select>
+            </div>
+            <div class="text-right up-table section40">
+                <div class="btn-generate">
+                    <button (click)="irAgregarUsuario()" class="text-white font-semibold py-2 px-6 rounded-md">
                         + Agregar usuario
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="main-table">
             <table class="table-auto w-full border-collapse text-center">
                 <thead>
                     <tr class="text-white font-bold">
-                        <th class="p-[15px]">Código</th>
                         <th class="p-[15px]">Usuario</th>
+                        <th class="p-[15px] w-1/3">Email</th>
                         <th class="p-[15px]">Tipo de usuario</th>
                         <th class="p-[15px]">Estado</th>
                         <th class="p-[15px]">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>administrador1</td>
-                        <td>Administrador</td>
-                        <td>Activo</td>
+
+                    <!-- <tr *ngFor="let user of (users$ | async)"> -->
+                    <tr *ngFor="let user of filteredUsers">
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ userTypeMap[user.userType] || '' }}</td>
+                        <td>{{ user.status }}</td>
                         <td class="table-actions">
-                            <a>Ver detalles</a>
-                            <a>Editar</a>
-                            <a>Eliminar</a>
+                            <a (click)="verUser(user.user_id)">Ver detalles</a>
+                            <a (click)="editUser(user.user_id)">Editar</a>
+                            <a (click)="deleteUser(user.user_id)">Eliminar</a>
                         </td>
                     </tr>
-                    <tr>
-                        <td>0567</td>
-                        <td>Empresa A</td>
-                        <td>Cliente</td>
-                        <td>Activo</td>
-                        <td class="table-actions">
-                            <a>Ver detalles</a>
-                            <a>Editar</a>
-                            <a>Eliminar</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>089</td>
-                        <td>Empresa B</td>
-                        <td>Cliente</td>
-                        <td>Activo</td>
-                        <td class="table-actions">
-                            <a>Ver detalles</a>
-                            <a>Editar</a>
-                            <a>Eliminar</a>
-                        </td>
-                    </tr>
-                    
+
                 </tbody>
             </table>
         </div>
     </div>
+
+    <app-modal-confirmacion [mostrar]="mostrarModalEliminacion" [mensaje]="'¿Seguro que deseas eliminar este usuario?'"
+        (confirmar)="confirmarEliminar()" (cancelar)="cancelarEliminacion()">
+    </app-modal-confirmacion>
+
 </section>

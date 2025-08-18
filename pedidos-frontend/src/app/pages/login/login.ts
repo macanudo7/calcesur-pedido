@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth';
@@ -14,11 +14,15 @@ import { Router } from '@angular/router';
 export class Login {
 
   authForm: FormGroup;
+  typeError: string | null = null;
+  showError: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private authService: Auth,
+    private cd: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
     this.authForm = this.fb.group({
       username: ['', [Validators.required, Validators.maxLength(100)]],
@@ -41,6 +45,10 @@ export class Login {
 
   login() {
 
+    this.showError = false;
+    this.typeError = null;
+    this.cd.detectChanges();
+
     if (this.authForm.valid) {
       const credentials = {
         identifier: this.authForm.value.username,
@@ -51,10 +59,17 @@ export class Login {
       this.authService.login(credentials).subscribe({
         next: (response) => {
           console.log('Login exitoso', response);
+          this.showError = false;
           this.router.navigate(['/admin/pedidos-por-entregar']);
+          this.cd.detectChanges();
         },
-        error: (error) => {
-          console.error('Error en login', error);
+        error: (err) => {
+          this.showError = true;
+          this.typeError = err.error?.message || 'Las credenciales no existen o son inválidas.';
+
+          this.cd.detectChanges();
+
+          console.error('Error en login', err)
         }
       });
     } else {

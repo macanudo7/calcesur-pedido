@@ -18,6 +18,10 @@ import { ADetallePorCliente } from './pages/a-detalle-por-cliente/a-detalle-por-
 import { CHistorialPedidos } from './pages/c-historial-pedidos/c-historial-pedidos';
 import { AListaVehiculos } from './pages/a-lista-vehiculos/a-lista-vehiculos';
 import { AAgregarVehiculo } from './pages/a-agregar-vehiculo/a-agregar-vehiculo';
+import { APedidosConfirmadoEntregado } from './pages/a-pedidos-confirmado-entregado/a-pedidos-confirmado-entregado';
+import { AListaClientes } from './pages/a-lista-clientes/a-lista-clientes';
+import { AProgramacionMes } from './pages/a-programacion-mes/a-programacion-mes';
+import { AVerDetalles } from './pages/a-ver-detalles/a-ver-detalles';
 
 export const routes: Routes = [
     {
@@ -61,12 +65,24 @@ export const routes: Routes = [
                 component: AAgregarProducto
             },
             { 
+                path: 'editar-producto/:id', 
+                component: AAgregarProducto 
+            },
+            { 
                 path: 'agregar-usuario',
                 component: AAgregarUsuario
             },
             { 
                 path: 'lista-usuarios',
                 component: AListaUsuarios
+            },
+            { 
+                path: 'ver-detalles-usuario/:id', 
+                component: AVerDetalles 
+            },
+            { 
+                path: 'editar-usuario/:id', 
+                component: AAgregarUsuario 
             },
             { 
                 path: 'lista-vehiculos',
@@ -76,7 +92,8 @@ export const routes: Routes = [
                 path: 'agregar-vehiculo',
                 component: AAgregarVehiculo
             },
-            { path: 'editar-vehiculo/:id', 
+            { 
+                path: 'editar-vehiculo/:id', 
                 component: AAgregarVehiculo 
             },
             { 
@@ -92,8 +109,20 @@ export const routes: Routes = [
                 component: APedidosPorEditarEliminar
             },
             { 
+                path: 'pedidos-confirmados-entregados',
+                component: APedidosConfirmadoEntregado
+            },
+            { 
+                path: 'lista-clientes',
+                component: AListaClientes
+            },
+            { 
                 path: 'programacion-semanal',
                 component: AProgramacionSemanal
+            },
+            { 
+                path: 'programacion-mes',
+                component: AProgramacionMes
             },
             { 
                 path: 'efectividad-por-entrega',

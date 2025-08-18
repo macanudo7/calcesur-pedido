@@ -16,6 +16,8 @@ import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/mo
 })
 export class AListaVehiculos implements OnInit {
 
+  nameOfUser: string = sessionStorage.getItem('userName') || '';
+
   vehicles$: Observable<VehicleForm[]>;
 
   constructor(
@@ -44,6 +46,8 @@ export class AListaVehiculos implements OnInit {
     this.idVehiculo = id;
   }
 
+  // ELIMINAR VEHICULO
+
   confirmarEliminar() {
     if (this.idVehiculo) {
       this.vehicleService.deleteVehicle(this.idVehiculo).subscribe({
@@ -68,11 +72,9 @@ export class AListaVehiculos implements OnInit {
   // EDITAR EL VEHICULO
 
   editAVehicle(id?: number) {
-    console.log('ttrtrtrtrtrt', id);
-    // if (id) {
-    //   console.log('aaaaaaa', id);
-    //   this.router.navigate(['/admin/editar-vehiculo', id]);
-    // }
+    if (id) {
+      this.router.navigate(['/admin/editar-vehiculo', id]);
+    }
   }
 
 }

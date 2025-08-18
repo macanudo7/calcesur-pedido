@@ -1,0 +1,26 @@
+<section class="container mx-auto section">
+    <div class="up-page py-2 px-6 section40">
+        <h2>Detalles de {{nameOfBusiness}}</h2>
+        <div>Bienvenido, {{nameOfUser}}</div>
+    </div>
+    <div class="main-page py-1">
+
+        <ul *ngIf="detallesList.length" class="detalles-list">
+            <li *ngFor="let i of detallesList">
+                <strong>{{ i.label}}:</strong> {{ i.value || '-' }}
+            </li>
+        </ul>
+
+        <div class="container-btns">
+            <button (click)="irAEditarUsuario()" class="btn">
+                Editar usuario
+            </button>
+            <button (click)="volverListaUsuarios()" class="btn-secondary">
+                Volver
+            </button>
+        </div>
+
+
+    </div>
+
+</section>

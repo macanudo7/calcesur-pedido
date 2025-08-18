@@ -8,6 +8,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './c-generate-order.scss'
 })
 export class CGenerateOrder {
+
+  nameOfUser: string = sessionStorage.getItem('userName') || '';
+
   solicitarPedido() {
     console.log(':3')
   }

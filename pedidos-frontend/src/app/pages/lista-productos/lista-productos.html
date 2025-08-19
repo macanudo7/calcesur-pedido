@@ -31,7 +31,7 @@
                         <td>{{ product.code }}</td>
                         <td>{{ product.name }}</td>
                         <td>{{ product.type_unit }}</td>
-                        <td>{{ product.type_vehicle_id}}</td>
+                        <td>{{ product.type_vehicle.name}}</td>
                         <td>
                             <a *ngIf="product.spec_sheet_url" [href]="product.spec_sheet_url" target="_blank" class="underline">
                                 Ver ficha técnica
@@ -39,8 +39,8 @@
                             <span *ngIf="!product.spec_sheet_url">No disponible</span>
                         </td>
                         <td class="table-actions">
-                            <a (click)="editProduct(product.product_id!)">Editar</a>
-                            <a (click)="deleteProduct(product.product_id!)">Eliminar</a>
+                            <a (click)="editProduct(product.id!)">Editar</a>
+                            <a (click)="deleteProduct(product.id!)">Eliminar</a>
                         </td>
                     </tr>
                     

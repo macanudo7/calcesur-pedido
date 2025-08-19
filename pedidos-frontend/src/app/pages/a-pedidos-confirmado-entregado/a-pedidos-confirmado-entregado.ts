@@ -11,4 +11,8 @@ export class APedidosConfirmadoEntregado {
 
   nameOfUser: string = sessionStorage.getItem('userName') || '';
 
+  descargarTabla() {
+    console.log(':)')
+  }
+
 }

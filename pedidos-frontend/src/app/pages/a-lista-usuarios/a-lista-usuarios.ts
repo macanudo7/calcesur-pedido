@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, signal, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../services/user';
 import { UserForm } from '../../shared/interfaces/user.interface';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/modal-confirmacion';
 
 @Component({
@@ -19,18 +18,15 @@ export class AListaUsuarios implements OnInit {
 
   nameOfUser: string = sessionStorage.getItem('userName') || '';
 
-  // users$: Observable<UserForm[]>;
+  users$: Observable<UserForm[]>;
 
-  users$: Observable<UserForm[]> = new Observable<UserForm[]>();
-  allUsers: UserForm[] = [];
-  filteredUsers: UserForm[] = [];
-
-  searchTerm: string = '';
-  selectedUserType: string = '';
+  searchTerm = signal('');
+  selectedUserType = signal('');
+  allUsers = signal<UserForm[]>([]);
 
   userTypes = [
     { value: 'client', label: 'Cliente' },
-    { value: 'admin',  label: 'Administrador' },
+    { value: 'admin', label: 'Administrador' },
     { value: 'editor', label: 'Editor' },
   ];
 
@@ -42,7 +38,8 @@ export class AListaUsuarios implements OnInit {
 
   constructor(
     private router: Router,
-    private userService: User
+    private userService: User,
+    private cd: ChangeDetectorRef,
   ) {
     this.users$ = this.userService.users$;
   }
@@ -51,8 +48,7 @@ export class AListaUsuarios implements OnInit {
     this.userService.getUsers();
 
     this.users$.subscribe(users => {
-      this.allUsers = users;
-      this.filteredUsers = users;
+      this.allUsers.set(users);
     });
 
   }
@@ -61,18 +57,16 @@ export class AListaUsuarios implements OnInit {
     this.router.navigate(['/admin/agregar-usuario']);
   }
 
-  // FILTRAR USUARIOS (buscador + tipo)
+  filteredUsers = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const type = this.selectedUserType();
 
-  filterUsers() {
-    const term = this.searchTerm.trim().toLowerCase();
-    const type = this.selectedUserType;
-
-    this.filteredUsers = this.allUsers.filter(u => {
+    return this.allUsers().filter(u => {
       const matchesName = term ? u.username.toLowerCase().includes(term) : true;
       const matchesType = type ? u.userType === type : true;
       return matchesName && matchesType;
     });
-  }
+  });
 
   // MODAL DE CONFIRMACIÓN
 
@@ -121,4 +115,6 @@ export class AListaUsuarios implements OnInit {
       this.router.navigate(['/admin/ver-detalles-usuario', id]);
     }
   }
+
+
 }

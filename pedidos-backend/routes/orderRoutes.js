@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
+const { protect, restrictTo } = require('../middlewares/authMiddleware');
 
 router.post('/', orderController.create);
-router.get('/', orderController.findAll);
+router.get('/', protect, restrictTo('admin'), orderController.findAll);
 router.get('/:id', orderController.findOne);
-router.put('/:id', orderController.update);
-router.delete('/:id', orderController.delete);
+router.put('/:id',protect, restrictTo('admin'), orderController.update);
+router.delete('/:id', protect, restrictTo('admin'), orderController.delete);
 
 module.exports = router;

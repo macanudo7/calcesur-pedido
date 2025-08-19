@@ -22,6 +22,7 @@ export class Auth {
           if (response.token) {
             sessionStorage.setItem('token', response.token);
             sessionStorage.setItem('userName', credentials.identifier);
+            sessionStorage.setItem('userId', response.user.user_id);
             this.isAuthenticatedSubject.next(true);
           }
         })
@@ -35,6 +36,7 @@ export class Auth {
     logout(): void {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('userName');
+      sessionStorage.removeItem('userId');
       this.isAuthenticatedSubject.next(false);
     }
 

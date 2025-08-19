@@ -4,16 +4,17 @@
         <div>Bienvenido, {{nameOfUser}}</div>
     </div>
     <div class="main-page">
-        <h3 class="date">Julio 2025</h3>
+        <h3 class="date">{{ diasDelMes[0]?.nombre }} {{ diasDelMes.length > 0 ? diasDelMes[0]?.anio : '' }}</h3>
         <div class="flex justify-between up-table section40">
 
             <div class="block mb-6 flex">
                 <select id="producto" name="producto"
-                    class="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    [(ngModel)]="selectedProductId">
                     <option value="" disabled selected>Selecciona un producto</option>
-                    <option value="cal-granulada">Cal Granulada - Bombona</option>
-                    <option value="producto-b">Producto B - Vehículo B</option>
-                    <option value="producto-c">Producto C - Vehículo C</option>
+                    <option *ngFor="let producto of (products$ | async)" [value]="producto.id">
+                        {{ producto.name }}
+                    </option>
                 </select>
                 <button class="btn-ficha">
                     Ver ficha técnica del producto
@@ -41,12 +42,17 @@
                 </thead>
                 <tbody>
 
-                    <tr *ngFor="let item of diasDelMes">
+                    <tr *ngFor="let item of orderDates; let i = index">
                         <td class="border px-4 py-2">
-                            {{ item.dia < 10 ? '0' + item.dia : item.dia }} de {{ item.nombre }} 
+                            {{ item.delivery_date }}          
                         </td>
                         <td class="border px-4 py-2">
-                            <input type="text" class="placeholder:text-gray-300" placeholder="Ejm: 20" />
+                            <input
+                                type="number"
+                                [(ngModel)]="orderDates[i].quantity"
+                                class="placeholder:text-gray-300 w-full"
+                                placeholder="Ejm: 20"
+                            />
                         </td>
                         <td class="border px-4 py-2">Bombona</td>
                         <td class="border px-4 py-2"></td>

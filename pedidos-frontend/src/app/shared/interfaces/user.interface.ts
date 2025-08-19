@@ -30,5 +30,5 @@ export interface UserForm {
 export interface loginDate {
   identifier: string, 
   password: string,
-  userType: string
+  userType: string,
 }

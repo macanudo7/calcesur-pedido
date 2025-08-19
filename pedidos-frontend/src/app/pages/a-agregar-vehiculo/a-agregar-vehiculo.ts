@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -25,6 +25,7 @@ export class AAgregarVehiculo implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private vehicleService: Vehicle,
+    private cd: ChangeDetectorRef,
   ) {
     // Inicializar el formulario
     this.vehicleForm = this.fb.group({
@@ -92,6 +93,7 @@ export class AAgregarVehiculo implements OnInit {
 
   mostrarModalExitoso() {
     this.mostrarModalExito = true;
+    this.cd.detectChanges();
   }
 
   irAListaVehiculos() {

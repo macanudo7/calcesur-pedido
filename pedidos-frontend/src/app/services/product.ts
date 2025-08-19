@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, tap, Observable } from 'rxjs';
-import { ProductoForm } from '../shared/interfaces/productos.interface';
+import { ProductoForm, PutProductoForm } from '../shared/interfaces/productos.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class Product {
     });
   }
 
-  createProduct(payload: ProductoForm) {
+  createProduct(payload: PutProductoForm) {
     return this.http.post(this.baseUrl, payload, {
       headers: this.getHeaders()
     }).pipe(
@@ -48,7 +48,7 @@ export class Product {
     return this.http.get<ProductoForm>(`${this.baseUrl}/${id}`);
   }
 
-  updateProduct(id: number, payload: ProductoForm) {
+  updateProduct(id: number, payload: PutProductoForm) {
     return this.http.put(`${this.baseUrl}/${id}`, payload, { headers: this.getHeaders() }).pipe(
       tap(() => this.getProducts())
     );

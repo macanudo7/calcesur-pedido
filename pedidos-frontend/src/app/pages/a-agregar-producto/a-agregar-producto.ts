@@ -22,7 +22,8 @@ export class AAgregarProducto implements OnInit{
   productoForm: FormGroup;
   isEditMode = false;
   productoId?: number;
-  nameOfUser: string = sessionStorage.getItem('userName') || '';
+  nameOfUser: string | null = null;
+  // nameOfUser: string = sessionStorage.getItem('userName') || '';
   titleModalExito: string = "";
 
   typeError: string | null = null;
@@ -47,6 +48,10 @@ export class AAgregarProducto implements OnInit{
   }
 
   ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      this.nameOfUser = sessionStorage.getItem('userName');
+    }
+
     this.vehicles$ = this.vehicleService.vehicles$;
     this.vehicleService.getVehicles();
 
@@ -79,8 +84,10 @@ export class AAgregarProducto implements OnInit{
     if (this.productoForm.valid) {
       const payload = {
         name: this.productoForm.value.name,
-        type_vehicle_id: Number(this.productoForm.value.type_vehicle_id),
-        code: Number(this.productoForm.value.code),
+        type_vehicle_id: this.productoForm.value.type_vehicle_id,
+        // type_vehicle: {  
+        // },
+        code: this.productoForm.value.code,
         type_unit: this.productoForm.value.type_unit,
         spec_sheet_url: this.productoForm.value.spec_sheet_url,
       };

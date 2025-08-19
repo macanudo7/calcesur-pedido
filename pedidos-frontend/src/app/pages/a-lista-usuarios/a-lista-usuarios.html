@@ -6,10 +6,10 @@
     <div class="main-page py-1">
         <div class="flex justify-between items-center">
             <div>
-                <input type="text" class="search-input" placeholder="🔍︎ Buscar por nombre" [(ngModel)]="searchTerm"
-                    (ngModelChange)="filterUsers()">
+                <input type="text" class="search-input" placeholder="🔍︎ Buscar por nombre" [value]="searchTerm()"
+                    (input)="searchTerm.set($any($event.target).value)">
 
-                <select [(ngModel)]="selectedUserType" (ngModelChange)="filterUsers()" class="search-input">
+                <select [(ngModel)]="selectedUserType" (ngModelChange)="selectedUserType.set($event)" class="search-input">
                     <option value="">Tipo de usuario</option>
                     <option *ngFor="let type of userTypes" [value]="type.value">
                         {{ type.label }}
@@ -38,7 +38,7 @@
                 <tbody>
 
                     <!-- <tr *ngFor="let user of (users$ | async)"> -->
-                    <tr *ngFor="let user of filteredUsers">
+                    <tr *ngFor="let user of filteredUsers()">
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ userTypeMap[user.userType] || '' }}</td>

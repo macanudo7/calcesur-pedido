@@ -23,6 +23,9 @@ export class AAgregarUsuario implements OnInit {
   typeError: string | null = null;
   showError: boolean = false;
 
+  newUser: string = '';
+  newPassword: string = '';
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -59,7 +62,7 @@ export class AAgregarUsuario implements OnInit {
       }
     });
 
-    this.titleModalExito = this.isEditMode ? 'Se actualizó los datos del usuario con éxito' : 'Se agregó los datos del usuario con éxito';
+    this.titleModalExito = this.isEditMode ? 'Se actualizó los datos del usuario con éxito' : 'Se ha creado el usuario con éxito';
   }
 
 
@@ -94,6 +97,8 @@ export class AAgregarUsuario implements OnInit {
       action.subscribe({
         next: (res) => {
           console.log('guardado:', res);
+          this.newUser = this.userForm.value.username;
+          this.newPassword = this.userForm.value.password;
           this.mostrarModalExitoso();
         },
         error: (err) => {
@@ -111,10 +116,20 @@ export class AAgregarUsuario implements OnInit {
     }
   }
 
+  copyToClipboard(username: string, password: string) {
+    const textToCopy = `Usuario: ${username}\nContraseña: ${password}`;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      console.log('Texto copiado al portapapeles');
+    }).catch(err => {
+      console.error('Error al copiar al portapapeles', err);
+    });
+  }
+
   // MODAL DE ÉXITO
 
   mostrarModalExitoso() {
     this.mostrarModalExito = true;
+    this.cd.detectChanges();
   }
 
   irAListaUsuarios() {

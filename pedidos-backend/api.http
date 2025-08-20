@@ -30,8 +30,8 @@ Content-Type: application/json
 
 
 ###LISTAR USUARIOS
-GET http://localhost:3000/api/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDgwNTQzOSwiZXhwIjoxNzU0ODA5MDM5fQ.U-_VkQXu8dqah5qkbHRuYV7J02DM7uQds-gI3Uc_vEM
+GET http://localhost:3000/api/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NDk1MDIyLCJleHAiOjE3NTU0OTg2MjJ9.trDIhIUcBO9moXl8KTKkn2Ea4hBTgZSLN_vtySOUcL4
 
 
 ###EDITAR USUARIO
@@ -139,12 +139,12 @@ Content-Type: application/json
   "status": "pending",
   "orderDates": [
     {
-      "delivery_date": "2025-08-20",
+      "delivery_date": "2025-08-10",
       "quantity": 10,
       "status": "pending"
     },
     {
-      "delivery_date": "2025-08-25",
+      "delivery_date": "2025-08-12",
       "quantity": 5,
       "status": "pending"
     }
@@ -153,7 +153,12 @@ Content-Type: application/json
 
 ###LISTAR PEDIDOS
 GET http://localhost:3000/api/orders
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzIwODkyLCJleHAiOjE3NTU3MjQ0OTJ9.uSbIykXLzr0kcKEOtd-Mwfx9O3c8Ewnmv9teSacUM18
 
+
+###LISTAR PEDIDOS POR USUARIO Y MES
+GET http://localhost:3000/api/orders/by-user-and-month?user_id=2&year=2025&month=8&day=22
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzEzNTEwLCJleHAiOjE3NTU3MTcxMTB9.iRXmC8BeSODeUrR0Bv8beiy6qSX39W4hWKzCH5xBi9Q
 
 ###LISTAR PEDIDOS
 GET http://localhost:3000/api/orders

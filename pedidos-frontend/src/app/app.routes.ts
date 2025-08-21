@@ -22,6 +22,7 @@ import { APedidosConfirmadoEntregado } from './pages/a-pedidos-confirmado-entreg
 import { AListaClientes } from './pages/a-lista-clientes/a-lista-clientes';
 import { AProgramacionMes } from './pages/a-programacion-mes/a-programacion-mes';
 import { AVerDetalles } from './pages/a-ver-detalles/a-ver-detalles';
+import { CHistorialPedidosDetalle } from './pages/c-historial-pedidos-detalle/c-historial-pedidos-detalle' 
 
 export const routes: Routes = [
     {
@@ -49,6 +50,10 @@ export const routes: Routes = [
                 path: 'historial-pedidos',
                 component: CHistorialPedidos
             },
+            {   path: 'detalle-pedido/:id', 
+                component: CHistorialPedidosDetalle 
+            },
+
 
         ]
     },

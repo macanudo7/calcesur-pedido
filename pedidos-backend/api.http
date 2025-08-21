@@ -135,35 +135,55 @@ Content-Type: application/json
 
 {
   "user_id": 2,
-  "product_id": 1,
+  "product_id": 3,
   "status": "pending",
   "orderDates": [
     {
       "delivery_date": "2025-08-10",
-      "quantity": 10,
+      "quantity": 20,
       "status": "pending"
     },
     {
       "delivery_date": "2025-08-12",
-      "quantity": 5,
+      "quantity": 15,
       "status": "pending"
     }
   ]
 }
 
+# {
+#   "user_id": 2,
+#   "product_id": 1,
+#   "status": "pending",
+#   "orderDates": [
+#     {
+#       "delivery_date": "2025-08-10",
+#       "quantity": 10,
+#       "status": "pending"
+#     },
+#     {
+#       "delivery_date": "2025-08-12",
+#       "quantity": 5,
+#       "status": "pending"
+#     }
+#   ]
+# }
+
 ###LISTAR PEDIDOS
 GET http://localhost:3000/api/orders
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzIwODkyLCJleHAiOjE3NTU3MjQ0OTJ9.uSbIykXLzr0kcKEOtd-Mwfx9O3c8Ewnmv9teSacUM18
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzI2OTEyLCJleHAiOjE3NTU3MzA1MTJ9.cIl4MUFR_LnoHtaKXC5MS7hCn_FyuYfc5yYz_wqCq6U
 
 
 ###LISTAR PEDIDOS POR USUARIO Y MES
-GET http://localhost:3000/api/orders/by-user-and-month?user_id=2&year=2025&month=8&day=22
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzEzNTEwLCJleHAiOjE3NTU3MTcxMTB9.iRXmC8BeSODeUrR0Bv8beiy6qSX39W4hWKzCH5xBi9Q
+GET http://localhost:3000/api/orders/by-user-and-month?user_id=2&year=2025&month=8&day=15
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzM3NjE3LCJleHAiOjE3NTU3NDEyMTd9.THK2FiVI9DHkryNLOXxfUsjxcdmBnSegpz5LEL0dK7U
 
 ###LISTAR PEDIDOS
 GET http://localhost:3000/api/orders
 
 ###OBTENER PEDIDO POR ID
 GET http://localhost:3000/api/orders/6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzM3NjE3LCJleHAiOjE3NTU3NDEyMTd9.THK2FiVI9DHkryNLOXxfUsjxcdmBnSegpz5LEL0dK7U
+
 
 ###EDITAR PEDIDO

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject,Observable } from 'rxjs';
-import { OrderForm } from '../shared/interfaces/order.interface'; // Asegúrate de que la ruta sea correcta
+import { OrderForm, OrderHistory,OrderDetail } from '../shared/interfaces/order.interface'; // Asegúrate de que la ruta sea correcta
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +31,29 @@ export class Order {
     });
   }
 
-  
 
+
+  getOrdersByUserAndMonth(userId: number, year: number, month: number, day: number): Observable<OrderHistory[]> {
+    const token = sessionStorage.getItem('token'); // Obtén el token almacenado en el frontend
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`, // Incluye el token en los encabezados
+    });
+    const url = `${this.baseUrl}/by-user-and-month?user_id=${userId}&year=${year}&month=${month}&day=${day}`;
+    return this.http.get<OrderHistory[]>(url, { headers });
+  }
+
+  getOrderDetail(orderId: number): Observable<OrderDetail> {
+    const token = sessionStorage.getItem('token'); // Obtén el token almacenado
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`, // Incluye el token en los encabezados
+    });
+
+    const url = `${this.baseUrl}/${orderId}`;
+    return this.http.get<OrderDetail>(url, { headers });
+  }
+
+  
+ 
 
   
 }

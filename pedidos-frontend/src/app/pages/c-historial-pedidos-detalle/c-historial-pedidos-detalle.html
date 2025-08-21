@@ -1,0 +1,35 @@
+<section class="container mx-auto pb-8">
+  <div class="up-page py-2 px-6 section40">
+    <h2>Detalle del pedido</h2>
+    <div>Pedido ID: {{ orderDetail?.order_id }}</div>
+    <div *ngIf="orderDetail">
+      <div>Usuario: {{ orderDetail.user?.username }}</div>
+      <div>Producto: {{ orderDetail.product?.name }}</div>
+      <div>Tipo de vehículo: {{ orderDetail.product?.typeVehicle?.name }}</div>
+      <div>Estado: {{ orderDetail.status }}</div>
+      <div>Fecha de creación: {{ orderDetail.createdAt | date: 'shortDate' }}</div>
+    </div>
+  </div>
+  <div class="main-page">
+    <div class="main-table">
+      <table class="table-auto w-full border-collapse text-center">
+        <thead>
+          <tr class="text-white font-bold">
+            <th class="p-[15px]">Fecha de entrega</th>
+            <th class="p-[15px]">Cantidad (Tm)</th>
+            <th class="p-[15px]">Estado</th>
+            <th class="p-[15px]">Entregado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let date of orderDetail?.orderDates">
+            <td class="border px-4 py-2">{{ date.delivery_date | date: 'shortDate' }}</td>
+            <td class="border px-4 py-2">{{ date.quantity }}</td>
+            <td class="border px-4 py-2">{{ date.status }}</td>
+            <td class="border px-4 py-2">{{ date.is_delivered ? 'Sí' : 'No' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

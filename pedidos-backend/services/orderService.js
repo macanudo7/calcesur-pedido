@@ -1,4 +1,4 @@
-const { Order, User, Product, OrderDates, sequelize} = require('../models');
+const { Order, User, Product, OrderDates,TypeVehicle, sequelize} = require('../models');
 const { Op } = require('sequelize'); // Usaremos Op para búsquedas avanzadas si es necesario
 
 const orderService = {
@@ -13,21 +13,29 @@ const orderService = {
             
             const orders = await Order.findAll({
                 where: { user_id: userId },
+                attributes: ['order_id', 'user_id', 'product_id', 'status', 'createdAt', 'updatedAt'],
                 include: [
-                {
-                    model: OrderDates,
-                    as: 'orderDates',
-                    where: {
-                        delivery_date: {
-                            [Op.between]: [startDate, endDate]
+                    {
+                        model: OrderDates,
+                        as: 'orderDates',
+                        where: {
+                            delivery_date: {
+                                [Op.between]: [startDate, endDate]
+                            }
                         }
+                    },
+                    {
+                        model: Product,
+                        as: 'product',
+                        attributes: ['name', 'code'],
+                        include: [
+                        {
+                            model: TypeVehicle,
+                            as: 'typeVehicle', // Alias definido en el modelo Product
+                            attributes: ['name'] // Solo incluye el nombre del vehículo
+                        }
+                        ]
                     }
-                },
-                {
-                    model: Product,
-                    as: 'product',
-                    attributes: ['name', 'code']
-                }
                 ]
             });
 
@@ -55,10 +63,16 @@ const orderService = {
         return {
           order_id: order.order_id,
           user_id: order.user_id,
-          product: order.product,
+          product: {
+            name: order.product.name,
+            code: order.product.code,
+            typeVehicle: order.product.typeVehicle // Incluye el vehículo asociado
+          },
           status: order.status,
           cumplimiento: cumplimiento.toFixed(2), // Porcentaje con 2 decimales
           avanceCronograma: avanceCronograma.toFixed(2), // Porcentaje con 2 decimales
+          createdAt: order.createdAt,
+          updatedAt: order.updatedAt,
           orderDates: order.orderDates
         };
       });
@@ -157,17 +171,34 @@ const orderService = {
     async getOrderById(id) {
         try {
             const order = await Order.findByPk(id,{
-              include: [
-                    { model: User, as: 'user'},
-                    { model: Product, as: 'product'},
-                    { model: OrderDates, as: 'orderDates'}
-                ]  
+                include: [
+                    {
+                        model: User,
+                        as: 'user',
+                        attributes: ['user_id', 'username'] // Solo incluye user_id y username
+                    },
+                    {
+                        model: Product,
+                        as: 'product',
+                        attributes: ['product_id', 'name'], // Solo incluye product_id y name
+                        include: [
+                            {
+                                model: TypeVehicle,
+                                as: 'typeVehicle', // Alias definido en el modelo Product
+                                attributes: ['type_vehicle_id', 'name'] // Incluye id y nombre del vehículo
+                            }
+                        ]
+                    },
+                    {
+                        model: OrderDates,
+                        as: 'orderDates' // Incluye todas las fechas asociadas al pedido
+                    }
+                ] 
             })
             return order;
         } catch (error) {
             throw new Error('Error al obtener el pedido: '+ error.message);                      
         }
-
     },
     // Actualizar un pedido
     async updateOrder(id, data){

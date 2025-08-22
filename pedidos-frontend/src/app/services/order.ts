@@ -31,6 +31,16 @@ export class Order {
     });
   }
 
+  editarPedido(orderId: number, payload: OrderForm): Observable<any> {
+  const token = sessionStorage.getItem('token'); // Obtener el token de sesión
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  });
+
+  return this.http.put(`${this.baseUrl}/${orderId}`, payload, { headers });
+}
+
 
 
   getOrdersByUserAndMonth(userId: number, year: number, month: number, day: number): Observable<OrderHistory[]> {

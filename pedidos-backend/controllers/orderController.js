@@ -18,7 +18,21 @@ const orderController = {
         res.status(500).json({ message: 'Error al obtener los pedidos.' });
         }
     },
-    
+
+    async updateOrder(req, res) {
+        try {
+            const orderId = req.params.id;
+            const { orderDates, ...orderData } = req.body;
+
+            const updatedOrder = await orderService.updateOrderWithDates(orderId, orderData, orderDates);
+
+            res.status(200).json(updatedOrder);
+        } catch (error) {
+            console.error('Error al actualizar el pedido:', error);
+            res.status(500).json({ message: 'Error al actualizar el pedido.' });
+        }
+    },
+
     async create(req, res) {
         try {
             const { orderDates, ...orderData } = req.body;

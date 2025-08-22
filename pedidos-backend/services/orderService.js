@@ -227,6 +227,52 @@ const orderService = {
         } catch (error) {
             throw new Error('Error al eliminar el pedido: ' + error.message);            
         }
+    },
+    
+    async updateOrderWithDates(orderId, orderData, orderDatesData) {
+    const t = await sequelize.transaction();
+    try {
+        // 1. Actualizar el pedido principal
+        const order = await Order.findByPk(orderId);
+        if (!order) {
+            throw new Error('El pedido no existe.');
+        }
+        await order.update(orderData, { transaction: t });
+
+        // 2. Procesar los OrderDates
+        if (orderDatesData && orderDatesData.length > 0) {
+            for (const date of orderDatesData) {
+                if (date.order_date_id) {
+                    // 2.1. Editar un OrderDate existente
+                    const existingDate = await OrderDates.findByPk(date.order_date_id);
+                    if (existingDate) {
+                        await existingDate.update(date, { transaction: t });
+                    }
+                } else {
+                    // 2.2. Agregar un nuevo OrderDate
+                    await OrderDates.create({ ...date, order_id: orderId }, { transaction: t });
+                }
+            }
+
+            // 2.3. Eliminar OrderDates que no están en la lista enviada
+            const existingDates = await OrderDates.findAll({ where: { order_id: orderId } });
+            const idsToKeep = orderDatesData.map(date => date.order_date_id).filter(Boolean);
+            for (const existingDate of existingDates) {
+                if (!idsToKeep.includes(existingDate.order_date_id)) {
+                    await existingDate.destroy({ transaction: t });
+                }
+            }
+        }
+
+        // 3. Confirmar la transacción
+        await t.commit();
+        return order;
+    } catch (error) {
+        await t.rollback();
+        throw new Error('Error al actualizar el pedido y sus fechas: ' + error.message);
     }
+}
+
+
 };
 module.exports = orderService;

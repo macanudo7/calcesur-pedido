@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Order } from '../../services/order';
 import { OrderHistory } from '../../shared/interfaces/order.interface';
 import { CommonModule,DatePipe } from '@angular/common';
-import { RouterModule } from '@angular/router'; // Importa RouterModule
+import { RouterModule, Router } from '@angular/router'; // Importa RouterModule
 
 @Component({
   selector: 'app-c-historial-pedidos',
@@ -19,7 +19,7 @@ export class CHistorialPedidos implements OnInit {
   anioConsultado: number = 0;
   esMesAnterior: boolean = false; // Controla si estás viendo el mes anterior
 
-  constructor(private orderService: Order) {}
+  constructor(private orderService: Order, private router: Router) {}
 
   ngOnInit() {
     const fechaActual = new Date();
@@ -82,7 +82,7 @@ export class CHistorialPedidos implements OnInit {
   verDetalle(orderId: number) {
     console.log(`Ver detalle del pedido ${orderId}`);
     // Aquí puedes redirigir a la página de detalles del pedido
-    window.location.href = `/detalle-pedido/${orderId}`;
+    this.router.navigate([`/detalle-pedido/${orderId}`]); // Redirigir usando Router
   }
 
   editarSolicitud(orderId: number) {

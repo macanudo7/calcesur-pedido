@@ -183,7 +183,33 @@ GET http://localhost:3000/api/orders
 
 ###OBTENER PEDIDO POR ID
 GET http://localhost:3000/api/orders/6
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzgyMTcyLCJleHAiOjE3NTU3ODU3NzJ9.IjtkHgtAxdxu69zfcjVkdH8yPtw_a7kZbHrDgVXcUe8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzkzMTQ0LCJleHAiOjE3NTU3OTY3NDR9.itiwdbsjSu6tgG51-7rq0hLOzL-XexgIALq4qG7bSHo
 
 
 ###EDITAR PEDIDO CON NUEVOS ORDER DATES
+PUT http://localhost:3000/api/orders/6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzkzMTQ0LCJleHAiOjE3NTU3OTY3NDR9.itiwdbsjSu6tgG51-7rq0hLOzL-XexgIALq4qG7bSHo
+Content-Type: application/json
+
+{
+  "status": "pending",
+  "orderDates": [
+    {
+      "order_date_id": 1,
+      "delivery_date": "2025-08-20T00:00:00.000Z",
+      "quantity": 15,
+      "status": "pending"
+    },
+    {
+      "order_date_id": 2,
+      "delivery_date": "2025-08-25T00:00:00.000Z",
+      "quantity": 10,
+      "status": "pending"
+    },
+    {
+      "delivery_date": "2025-08-30T00:00:00.000Z",
+      "quantity": 20,
+      "status": "pending"
+    }
+  ]
+}

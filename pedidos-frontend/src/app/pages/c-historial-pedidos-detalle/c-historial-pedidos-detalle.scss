@@ -1,11 +1,3 @@
-.bottom-table.bottom-table.bottom-table{
-    background: #454D58;
-}
-.bottom-table.bottom-table.bottom-table td{
-    color: #fff;
-    border: none;
-}
-
 .up-page{
     background: #ECEFF6;
     display: flex;
@@ -30,13 +22,22 @@
     background: #0D3F3B;
     cursor: pointer;
 }
-
-// Filtros
-
-.search-input {
-    width: 200px;
-    padding: 10px 15px;
+.table-actions a{
+    display: block;
+    margin: 5px;
+}
+#producto{
     background: #F3F5F2;
-    border-radius: 4px;
-    margin-right: 10px;
+}
+.btn-ficha{
+    border: 1px solid #0D3F3B;
+    border-radius: 8px;
+    color: #0D3F3B;
+    margin-left: 25px;
+    padding: 5px 30px;
+    font-size: 14px;
+}
+.main-table td input{
+    border: 1px solid #0D3F3B;
+    padding: 8px;
 }

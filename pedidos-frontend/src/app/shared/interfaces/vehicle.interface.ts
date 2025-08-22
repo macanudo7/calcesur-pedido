@@ -1,5 +1,5 @@
 export interface VehicleForm {
-  name: String;
-  code: String;
+  name: string;
+  code: string;
   type_vehicle_id?: number;
 }

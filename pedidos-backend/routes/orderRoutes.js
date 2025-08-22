@@ -5,7 +5,9 @@ const { protect, restrictTo } = require('../middlewares/authMiddleware');
 
 router.post('/', orderController.create);
 router.get('/', protect, restrictTo('admin'), orderController.findAll);
-router.get('/:id', orderController.findOne);
+router.get('/by-user-and-month', protect, orderController.getOrdersByUserAndMonth);
+router.get('/:id',protect, orderController.findOne);
+router.put('/:id', protect, orderController.updateOrder);
 router.put('/:id',protect, restrictTo('admin'), orderController.update);
 router.delete('/:id', protect, restrictTo('admin'), orderController.delete);
 

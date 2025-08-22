@@ -1,6 +1,38 @@
 const orderService = require('../services/orderService');
 
 const orderController = {
+
+    async getOrdersByUserAndMonth(req, res) {
+        try {
+            const { user_id, year, month, day } = req.query;
+
+            if (!user_id || !year || !month || !day) {
+                return res.status(400).json({ 
+                    message: 'user_id, year, month y day son requeridos.' });
+            }
+
+            const orders = await orderService.getOrdersByUserAndMonth(user_id, year, month, day);
+        res.status(200).json(orders);
+        } catch (error) {
+        console.error('Error al obtener pedidos por usuario y mes:', error);
+        res.status(500).json({ message: 'Error al obtener los pedidos.' });
+        }
+    },
+
+    async updateOrder(req, res) {
+        try {
+            const orderId = req.params.id;
+            const { orderDates, ...orderData } = req.body;
+
+            const updatedOrder = await orderService.updateOrderWithDates(orderId, orderData, orderDates);
+
+            res.status(200).json(updatedOrder);
+        } catch (error) {
+            console.error('Error al actualizar el pedido:', error);
+            res.status(500).json({ message: 'Error al actualizar el pedido.' });
+        }
+    },
+
     async create(req, res) {
         try {
             const { orderDates, ...orderData } = req.body;

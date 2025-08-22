@@ -1,1 +1,66 @@
-<p>c-historial-pedidos works!</p>
+<section class="container mx-auto">
+  <div class="up-page py-2 px-6 section40">
+    <h2>Historial de pedidos</h2>
+    <div>Bienvenido, {{ nameOfUser }}</div>
+  </div>
+
+        <div class="mb-2">
+          <ng-container *ngIf="!esMesAnterior && !esMesSiguiente">
+            <button (click)="verMesAnterior($event)" class="text-blue-500 hover:underline mr-4">← Ver mes anterior</button>
+            <button (click)="verMesSiguiente($event)" class="text-blue-500 hover:underline">Ver mes siguiente →</button>
+          </ng-container>
+
+          <ng-container *ngIf="esMesAnterior">
+            <button (click)="verMesActual($event)" class="text-blue-500 hover:underline">→ Volver al mes actual</button>
+          </ng-container>
+
+          <ng-container *ngIf="esMesSiguiente">
+            <button (click)="verMesActual($event)" class="text-blue-500 hover:underline mr-4">← Volver al mes actual</button>
+          </ng-container>
+        </div>
+
+  <div class="main-page py-1" >
+
+    <h3 class="date">{{ mesConsultado | titlecase }} {{ anioConsultado }}</h3>
+
+    <div class="text-right up-table section40">
+            <div class="btn-generate">
+                <button 
+                    (click)="descargarTabla()" 
+                    class="text-white font-semibold py-2 px-6 rounded-md">
+                        Descargar
+                </button>
+            </div>
+        </div>
+
+    <div class="main-table">
+      <table class="table-auto w-full border-collapse text-center">
+        <thead>
+          <tr class="text-white font-bold">
+            <th class="p-4">Código</th>
+            <th class="p-4">Fecha de creación</th>
+            <th class="p-4">Producto</th>
+            <th class="p-4">Vehículo</th>
+            <th class="p-4">Cumplimiento a la fecha</th>
+            <th class="p-4">Avance del cronograma</th>
+            <th class="p-4">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td class="border px-4 py-2">{{ order.order_id }}</td>
+            <td class="border px-4 py-2">{{ order.createdAt | date: 'shortDate' }}</td>
+            <td class="border px-4 py-2">{{ order.product.name }}</td>
+            <td class="border px-4 py-2">{{ order.product.typeVehicle.name }}</td>
+            <td class="border px-4 py-2">{{ order.cumplimiento }}%</td>
+            <td class="border px-4 py-2">{{ order.avanceCronograma }}%</td>
+            <td class="border px-4 py-2 table-actions">
+              <a [routerLink]="['/cliente/detalle-pedido', order.order_id]">Ver detalle</a>
+              <a [routerLink]="['/editar-pedido', order.order_id]">Editar solicitud</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

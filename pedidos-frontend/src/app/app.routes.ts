@@ -22,6 +22,10 @@ import { APedidosConfirmadoEntregado } from './pages/a-pedidos-confirmado-entreg
 import { AListaClientes } from './pages/a-lista-clientes/a-lista-clientes';
 import { AProgramacionMes } from './pages/a-programacion-mes/a-programacion-mes';
 import { AVerDetalles } from './pages/a-ver-detalles/a-ver-detalles';
+import { CHistorialPedidosDetalle } from './pages/c-historial-pedidos-detalle/c-historial-pedidos-detalle' 
+import { AEditarPedidosPorConfirmar } from './pages/a-editar-pedidos-por-confirmar/a-editar-pedidos-por-confirmar';
+import { AVerPedidosConfirmados } from './pages/a-ver-pedidos-confirmados/a-ver-pedidos-confirmados';
+import { AVerPedidosPorEditarEliminar } from './pages/a-ver-pedidos-por-editar-eliminar/a-ver-pedidos-por-editar-eliminar';
 
 export const routes: Routes = [
     {
@@ -49,6 +53,10 @@ export const routes: Routes = [
                 path: 'historial-pedidos',
                 component: CHistorialPedidos
             },
+            {   path: 'detalle-pedido/:id', 
+                component: CHistorialPedidosDetalle 
+            },
+
 
         ]
     },
@@ -101,12 +109,24 @@ export const routes: Routes = [
                 component: APedidosPorEntregar
             },
             { 
+                path: 'ver-pedidos-confirmados/:id',
+                component: AVerPedidosConfirmados
+            },
+            { 
                 path: 'pedidos-por-confirmar',
                 component: APedidosPorConfirmar
             },
             { 
+                path: 'editar-pedidos-por-confirmar/:id',
+                component: AEditarPedidosPorConfirmar
+            },
+            { 
                 path: 'pedidos-por-editar-o-eliminar',
                 component: APedidosPorEditarEliminar
+            },
+            { 
+                path: 'ver-pedidos-por-editar-eliminar/:id',
+                component: AVerPedidosPorEditarEliminar
             },
             { 
                 path: 'pedidos-confirmados-entregados',

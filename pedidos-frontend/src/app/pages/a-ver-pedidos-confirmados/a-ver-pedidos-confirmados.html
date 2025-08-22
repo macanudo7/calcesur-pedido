@@ -1,0 +1,77 @@
+<section class="container mx-auto section">
+    <div class="up-page py-2 px-6 section40">
+        <h2>Pedidos aprobados de {{productName}}</h2>
+        <div>Bienvenido, {{nameOfUser}}</div>
+    </div>
+    <div class="main-page py-1">
+
+        <a (click)="gotoListOrders()" clasS="txt14">← Volver al listado de pedidos</a>
+
+        <h3 class="date">Agosto 2025</h3>
+
+        <div class="flex justify-between items-center up-table section40">
+            <div>
+                <p><strong>Cliente: </strong>{{nameOfClient}}</p>
+            </div>
+            <!-- <div class="btn-generate">
+                <button class="text-white font-semibold py-2 px-6 rounded-md">
+                    Actualizar
+                </button>
+            </div> -->
+        </div>
+        <div class="main-table">
+            <table class="table-auto w-full border-collapse text-center">
+                <thead>
+                    <tr class="text-white font-bold">
+                        <th class="p-[15px]">Fecha</th>
+                        <th class="p-[15px]">Cantidad (Tm)</th>
+                        <th class="p-[15px]">Estado del pedido</th>
+                        <th class="p-[15px]">Vehículo</th>
+                        <th class="p-[15px]">Entregado</th>
+                        <th class="p-[15px]">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor="let order of ordersPerDay">
+                        <td>{{order.delivery_date | date:'dd/MM/yyyy'}}</td>
+                        <td>{{order.quantity}}</td>
+                        <td>
+                            <span [ngClass]="{
+                            'status-pending': order.status === 'pending',
+                            'status-confirmed': order.status === 'confirmed',
+                            'status-confirmed-elimination': order.status === 'confirmed-elimination',
+                            'status-canceled': order.status === 'canceled'
+                        }">
+                                {{order.status === 'pending' ? 'Por confirmar' :
+                                order.status === 'confirmed' ? 'Confirmado' :
+                                order.status === 'confirmed-elimination' ? 'Por confirmar su cambio' :
+                                order.status === 'canceled' ? 'Cancelado' : ''}}
+                            </span>
+                        </td>
+                        <td>{{nameOfVehicle}}</td>
+                        <td class="box-status">
+                            <span [ngClass]="{
+                            'bg-blue-200': order.is_delivered === 'por_entregar',
+                            'bg-blue-500': order.is_delivered === 'entregado',
+                            'bg-red-300': order.is_delivered === 'no_entregado'
+                        }">
+                                {{order.is_delivered === 'por_entregar' ? 'Por entregar' :
+                                order.is_delivered === 'entregado' ? 'Entregado' :
+                                order.is_delivered === 'no_entregado' ? 'No entregado' :
+                                order.is_delivered === null ? '' : ''}}
+                            </span>
+                        </td>
+                        <td class="table-actions">
+                            <!-- <a *ngIf="order.status === 'pending'"
+                            (click)="goToEditOrderForConfirm( order.order_id, order.order_date_id)">
+                                Confirmar pedido
+                            </a> -->
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

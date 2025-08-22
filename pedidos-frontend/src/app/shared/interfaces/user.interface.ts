@@ -12,6 +12,9 @@ export interface UserForm {
   usualProductsNotes?: string;
   ccEmails?: string;
   leadTimeDays?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  existOrder?: boolean;
 }
 
 // "username": "cliente-mina-xyz",

@@ -22,7 +22,12 @@
     background: #0D3F3B;
     cursor: pointer;
 }
-.table-actions a{
-    display: block;
-    margin: 5px;
+// Filtros
+
+.search-input {
+    width: 200px;
+    padding: 10px 15px;
+    background: #F3F5F2;
+    border-radius: 4px;
+    margin-right: 10px;
 }

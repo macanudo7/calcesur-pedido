@@ -1,10 +1,15 @@
+import { UserForm } from "./user.interface";
+
 export interface OrderForm {
     order_id?: number;
     user_id: number; // ID del usuario que realiza el pedido
     product_id: number; // ID del producto seleccionado
     status: string; // Estado del pedido (por ejemplo, "pending")
+    createdAt?: Date; // Fecha de creación del pedido
+    user?: UserForm; // Información del usuario (opcional, para mostrar detalles)
     orderDates: OrderDate[]; // Lista de fechas de entrega
-}
+    product?: productOrder; // Información del producto (opcional, para mostrar detalles)
+  }
   
 export interface OrderDate {
   order_date_id?: number; // ID de la fecha de entrega (opcional, para actualizaciones)
@@ -76,9 +81,20 @@ export interface OrderDateDetail {
   delivery_date: string;
   quantity: number;
   rating: number | null;
-  is_delivered: boolean | null;
+  is_delivered: string;
   status: string;
   assigment_date: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface productOrder {
+  product_id: number;
+  name: string;
+  code: number;
+  type_vehicle_id: number;
+  type_unit: string;
+  spec_sheet_url: string;
   createdAt: string;
   updatedAt: string;
 }

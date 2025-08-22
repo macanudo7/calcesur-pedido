@@ -17,7 +17,12 @@ export class CHistorialPedidos implements OnInit {
   orders: OrderHistory[] = [];
   mesConsultado: string = '';
   anioConsultado: number = 0;
-  esMesAnterior: boolean = false; // Controla si estás viendo el mes anterior
+
+   // nuevo estado para controlar mes mostrado
+  displayedYear: number = 0;
+  displayedMonth: number = 0;
+  esMesAnterior: boolean = false;
+  esMesSiguiente: boolean = false;
 
   constructor(private orderService: Order, private router: Router) {}
 
@@ -27,10 +32,20 @@ export class CHistorialPedidos implements OnInit {
     const mes = fechaActual.getMonth() + 1; // Mes actual (1-indexado)
     const dia = fechaActual.getDate(); // Día actual
 
+    // inicializar estado mostrado
+    this.displayedYear = this.anioConsultado;
+    this.displayedMonth = mes;
+
     this.consultarPedidos(this.anioConsultado, mes, dia);
   }
 
   consultarPedidos(anio: number, mes: number, dia: number) {
+
+    // Actualizar el estado mostrado
+    this.displayedYear = anio;
+    this.displayedMonth = mes;
+    
+
     // Calcular el nombre del mes consultado
     const fecha = new Date(anio, mes - 1); // Restamos 1 porque Date usa 0-indexado
     this.mesConsultado = fecha.toLocaleDateString('es-ES', { month: 'long' });
@@ -49,8 +64,8 @@ export class CHistorialPedidos implements OnInit {
   verMesAnterior(event: Event) {
     event.preventDefault(); // Previene la navegación predeterminada del enlace
 
-    let mes = new Date().getMonth() + 1; // Mes actual (1-indexado)
-    let anio = this.anioConsultado;
+    let mes = this.displayedMonth;
+    let anio = this.displayedYear;
 
     if (mes === 1) {
       // Si es enero, retrocede a diciembre del año anterior
@@ -60,11 +75,30 @@ export class CHistorialPedidos implements OnInit {
       mes -= 1;
     }
 
-    this.anioConsultado = anio;
     const ultimoDia = new Date(anio, mes, 0).getDate();
+    this.consultarPedidos(anio, mes, ultimoDia);
+    this.esMesAnterior = true;
+    this.esMesSiguiente = false;
 
-    this.consultarPedidos(anio, mes, ultimoDia); // Pasa `mes` directamente
-    this.esMesAnterior = true; // Cambia el estado a "mes anterior"
+  }
+
+  verMesSiguiente(event: Event) {
+    event.preventDefault();
+
+    let mes = this.displayedMonth;
+    let anio = this.displayedYear;
+
+    if (mes === 12) {
+      mes = 1;
+      anio += 1;
+    } else {
+      mes += 1;
+    }
+
+    const ultimoDia = new Date(anio, mes, 0).getDate();
+    this.consultarPedidos(anio, mes, ultimoDia);
+    this.esMesSiguiente = true;
+    this.esMesAnterior = false;
   }
 
   verMesActual(event: Event) {
@@ -77,6 +111,7 @@ export class CHistorialPedidos implements OnInit {
 
     this.consultarPedidos(anio, mes, dia);
     this.esMesAnterior = false; // Cambia el estado a "mes actual"
+    this.esMesSiguiente = false;
   }
 
   verDetalle(orderId: number) {

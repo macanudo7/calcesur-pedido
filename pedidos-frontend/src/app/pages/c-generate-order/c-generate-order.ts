@@ -25,6 +25,8 @@ export class CGenerateOrder implements OnInit{
   orderDates: OrderDate[] = []; // Fechas de entrega para el pedido
   titleModalExito = 'Tu solicitud ha sido registrada con éxito';
   mostrarModalExito=false; // Controla la visibilidad del modal de éxito
+  confirmOrderVisible: boolean = false;
+  private pendingPayload: OrderForm | null = null;
 
 
   constructor(
@@ -97,23 +99,40 @@ export class CGenerateOrder implements OnInit{
         })), // Excluir el campo status
     };
 
-    this.orderService.createOrder(payload).subscribe({
-      next: (response) => {
-        this.mostrarModalExito = true;
-        //console.log('Pedido creado con éxito:', response);
-        //alert('Pedido creado con éxito.');
-      },
-      error: (error) => {
-        console.error('Error al crear el pedido:', error);
-        alert('Error al crear el pedido.');
-      },
-    });
+    this.pendingPayload = payload;
+    this.confirmOrderVisible = true;
 
     
+  }
+
+  // Cancelar confirmación
+  cancelConfirmOrder() {
+    this.pendingPayload = null;
+    this.confirmOrderVisible = false;
   }
 
   irAListaVehiculos() {
     this.mostrarModalExito = false;
     this.router.navigate(['/cliente/historial-pedidos']);
+  }
+
+  // Confirmar: enviar la petición y redirigir al historial
+  confirmOrder() {
+    if (!this.pendingPayload) return;
+
+    this.orderService.createOrder(this.pendingPayload).subscribe({
+      next: (response) => {
+        this.confirmOrderVisible = false;
+        this.pendingPayload = null;
+        // navegar al historial de pedidos
+        this.router.navigate(['/cliente/historial-pedidos']);
+      },
+      error: (error) => {
+        console.error('Error al crear el pedido:', error);
+        alert('Error al crear el pedido.');
+        this.confirmOrderVisible = false;
+        this.pendingPayload = null;
+      },
+    });
   }
 }

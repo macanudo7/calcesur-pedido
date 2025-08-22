@@ -4,16 +4,20 @@
     <div>Bienvenido, {{ nameOfUser }}</div>
   </div>
 
-        <!-- Enlace para regresar al mes anterior -->
-        <a *ngIf="!esMesAnterior" href="#" (click)="verMesAnterior($event)" class="text-blue-500 hover:underline">
-            ← Ver mes anterior
-        </a>
+        <div class="mb-2">
+          <ng-container *ngIf="!esMesAnterior && !esMesSiguiente">
+            <button (click)="verMesAnterior($event)" class="text-blue-500 hover:underline mr-4">← Ver mes anterior</button>
+            <button (click)="verMesSiguiente($event)" class="text-blue-500 hover:underline">Ver mes siguiente →</button>
+          </ng-container>
 
-        <!-- Enlace para regresar al mes actual -->
-        <a *ngIf="esMesAnterior" href="#" (click)="verMesActual($event)" class="text-blue-500 hover:underline">
-            → Ver mes actual
-        </a>
+          <ng-container *ngIf="esMesAnterior">
+            <button (click)="verMesActual($event)" class="text-blue-500 hover:underline">→ Volver al mes actual</button>
+          </ng-container>
 
+          <ng-container *ngIf="esMesSiguiente">
+            <button (click)="verMesActual($event)" class="text-blue-500 hover:underline mr-4">← Volver al mes actual</button>
+          </ng-container>
+        </div>
 
   <div class="main-page py-1" >
 

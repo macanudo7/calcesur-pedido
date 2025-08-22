@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject,Observable } from 'rxjs';
-import { OrderForm, OrderHistory,OrderDetail } from '../shared/interfaces/order.interface'; // Asegúrate de que la ruta sea correcta
+import { BehaviorSubject, tap, Observable, map } from 'rxjs';
+import { OrderForm, OrderHistory, OrderDetail, OrderDateDetail } from '../shared/interfaces/order.interface'; // Asegúrate de que la ruta sea correcta
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class Order {
 
 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Obtener encabezados con el token de autenticación
   private getHeaders(): HttpHeaders {
@@ -24,24 +24,39 @@ export class Order {
     });
   }
 
-   // Método para crear un pedido
-   createOrder(payload: OrderForm): Observable<OrderForm> {
+  // Método para crear un pedido
+  createOrder(payload: OrderForm): Observable<OrderForm> {
     return this.http.post<OrderForm>(this.baseUrl, payload, {
       headers: this.getHeaders(),
     });
   }
 
   editarPedido(orderId: number, payload: OrderForm): Observable<any> {
-  const token = sessionStorage.getItem('token'); // Obtener el token de sesión
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  });
+    const token = sessionStorage.getItem('token'); // Obtener el token de sesión
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
 
-  return this.http.put(`${this.baseUrl}/${orderId}`, payload, { headers });
-}
+    return this.http.put(`${this.baseUrl}/${orderId}`, payload, { headers });
+  }
 
+  getOrders() {
+    this.http.get<OrderForm[]>(this.baseUrl, { headers: this.getHeaders() }).pipe(
+      tap(orders => this.orderSource.next(orders))
+    ).subscribe();
+  }
 
+  getPendingOrders() {
+    return this.http.get<OrderForm[]>(this.baseUrl, { headers: this.getHeaders() }).pipe(
+      map(orders => orders.filter(o => o.status === 'pending'))
+    );
+  }
+
+  getOrdersById(id: number): Observable<OrderForm> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.get<OrderForm>(url, { headers: this.getHeaders() });
+  }
 
   getOrdersByUserAndMonth(userId: number, year: number, month: number, day: number): Observable<OrderHistory[]> {
     const token = sessionStorage.getItem('token'); // Obtén el token almacenado en el frontend
@@ -62,8 +77,13 @@ export class Order {
     return this.http.get<OrderDetail>(url, { headers });
   }
 
-  
- 
+  changeStatus(order: OrderDetail) {
+    return this.http.put(`${this.baseUrl}/${order.order_id}`, order, { headers: this.getHeaders() }
+    );
+  }
 
-  
+
+
+
+
 }

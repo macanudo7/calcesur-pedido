@@ -1,11 +1,43 @@
-<section class="container mx-auto">
+<section class="container mx-auto section">
     <div class="up-page py-2 px-6 section40">
         <h2>Lista de clientes</h2>
         <div>Bienvenido, {{nameOfUser}}</div>
     </div>
     <div class="main-page">
 
-    :3
+        <div class="flex justify-between items-center up-table section40">
+            <div>
+                <input type="text" class="search-input" placeholder="🔍︎ Buscar por nombre" [value]="searchTerm()"
+                    (input)="searchTerm.set($any($event.target).value)">
+
+                <!-- <select [ngModel]="selectedUserType()" (ngModelChange)="selectedUserType.set($event)"
+                    class="search-input">
+                    <option value="">Todos los Producto</option>
+                    <option *ngFor="let type of userTypes" [value]="type">
+                        {{ type }}
+                    </option>
+                </select> -->
+            </div>
+        </div>
+
+        <div class="main-table">
+            <table class="table-auto w-full border-collapse text-center">
+                <thead>
+                    <tr class="text-white font-bold">
+                        <th class="p-[15px]">Cliente</th>
+                        <th class="p-[15px]">¿Solicitó productos este mes?</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor="let user of filteredUsers()">
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.existOrder ? '✅ Sí' : '❌ No' }}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
 
     </div>
 

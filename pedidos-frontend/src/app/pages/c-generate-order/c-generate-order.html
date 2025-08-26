@@ -4,19 +4,52 @@
         <div>Bienvenido, {{nameOfUser}}</div>
     </div>
     <div class="main-page">
-        <h3 class="date">{{ diasDelMes[0].nombre }} {{ diasDelMes.length > 0 ? diasDelMes[0].anio : '' }}</h3>
+        <div class="flex items-center section40">
+            <!-- Izquierda -->
+            <div class="w-1/3">
+              <a *ngIf="activeMonthOffset === 1"
+                 href
+                 (click)="toggleMonth($event)"
+                 class="text-[#0d3f3b] underline">
+                ← Mes actual
+              </a>
+            </div>
+          
+            <!-- Centro -->
+            <h3 class="w-1/3 date justify-self-center text-center">
+              {{ diasDelMes[0]?.nombre }} {{ diasDelMes.length > 0 ? diasDelMes[0]?.anio : '' }}
+            </h3>
+          
+            <!-- Derecha -->
+            <div class="w-1/3 text-right">
+              <a *ngIf="activeMonthOffset === 0"
+                 href
+                 (click)="toggleMonth($event)"
+                 class="text-[#0d3f3b] underline">
+                Mes siguiente →
+              </a>
+            </div>
+          </div>
         <div class="flex justify-between up-table section40">
 
             <div class="block mb-6 flex">
-                <select id="producto" name="producto"
-                    class="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    [(ngModel)]="selectedProductId">
-                    <option value="" disabled selected>Selecciona un producto</option>
-                    <option *ngFor="let producto of (products$ | async)" [value]="producto.id">
-                        {{ producto.name }}
-                    </option>
-                </select>
-                <button class="btn-ficha">
+                <ng-container *ngIf="(products$ | async) as products">
+                    <select
+                        id="producto"
+                        name="producto"
+                        class="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        [(ngModel)]="selectedProductId"
+                        (ngModelChange)="onProductChange($event, products)">
+                        <option [ngValue]="null" disabled>Selecciona un producto</option>
+                        <option *ngFor="let producto of products" [ngValue]="producto.id">
+                            {{ producto.name }}
+                        </option>
+                    </select>
+                </ng-container>
+                <button
+                    class="btn-ficha"
+                    [disabled]="!selectedSpecUrl"
+                    (click)="openSpecSheet()">
                     Ver ficha técnica del producto
                 </button>
             </div>
@@ -42,25 +75,27 @@
                 </thead>
                 <tbody>
 
-                    <tr *ngFor="let item of orderDates; let i = index">
-                        <td class="border px-4 py-2">
-                            {{ item.delivery_date }}          
-                        </td>
-                        <td class="border px-4 py-2">
-                            <input
-                                type="number"
-                                [(ngModel)]="orderDates[i].quantity"
-                                class="placeholder:text-gray-300 w-full"
-                                placeholder="Ejm: 20"
-                            />
-                        </td>
-                        <td class="border px-4 py-2">Bombona</td>
-                        <td class="border px-4 py-2"></td>
-                        <td class="border px-4 py-2"></td>
-                        <td class="border px-4 py-2"></td>
-                        <td class="border px-4 py-2 table-actions"></td>
+                    <tr *ngFor="let item of orderDates; let i = index"
+                        [class.opacity-50]="isDateDisabled(item)">
+                    <td class="border px-4 py-2">
+                        {{ item.delivery_date }}
+                    </td>
+                    <td class="border px-4 py-2">
+                        <input
+                        type="number"
+                        min="0"
+                        [(ngModel)]="orderDates[i].quantity"
+                        [disabled]="isDateDisabled(item)"
+                        [placeholder]="isDateDisabled(item) ? 'No disponible' : 'Ejm: 20'"
+                        class="placeholder:text-gray-300 w-full"
+                        />
+                    </td>
+                    <td class="border px-4 py-2">{{ vehiculoSeleccionado }}</td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2 table-actions"></td>
                     </tr>
-
 
                 </tbody>
             </table>

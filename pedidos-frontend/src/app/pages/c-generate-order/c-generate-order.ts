@@ -7,11 +7,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms'; // Importar FormsModule
 import { ProductoForm } from '../../shared/interfaces/productos.interface'; // Asegúrate de que la ruta sea correcta
 import { OrderForm, OrderDate } from '../../shared/interfaces/order.interface'; // Interfaz de pedidos
+import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/modal-confirmacion';
+
 
 
 @Component({
   selector: 'app-c-generate-order',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,ModalConfirmacion],
   templateUrl: './c-generate-order.html',
   styleUrl: './c-generate-order.scss'
 })
@@ -23,13 +25,19 @@ export class CGenerateOrder implements OnInit{
   public products$: Observable<ProductoForm[]>;
   selectedProductId: number | null = null; // Producto seleccionado
   orderDates: OrderDate[] = []; // Fechas de entrega para el pedido
-  titleModalExito = 'Tu solicitud ha sido registrada con éxito';
+  titleModalExito = 'Tu pedido ha sido registrado con éxito';
   mostrarModalExito=false; // Controla la visibilidad del modal de éxito
-  confirmOrderVisible: boolean = false;
+  confirmOrderVisible: boolean = true;
   vehiculoSeleccionado: string = '';
   private pendingPayload: OrderForm | null = null;
   activeMonthOffset = 0;
   selectedSpecUrl: string | null = null;
+  productValidationError: boolean = false;
+  datesValidationError: boolean = false;
+  quantitiesValidationError: boolean = false;
+  mostrarModalConfirmacion = false;
+  errorMessage: string | null = null;
+
 
 
   constructor(
@@ -80,6 +88,9 @@ export class CGenerateOrder implements OnInit{
   toggleMonth(event?: Event) {
     event?.preventDefault();
     this.activeMonthOffset = this.activeMonthOffset === 0 ? 1 : 0;
+    // limpiar errores al cambiar mes
+    this.datesValidationError = false;
+    this.quantitiesValidationError = false;
     this.generateMonthDays(this.activeMonthOffset);
   }
 
@@ -87,21 +98,31 @@ export class CGenerateOrder implements OnInit{
 
 
   solicitarPedido() {
+    this.productValidationError = false;
+    this.datesValidationError = false;
+    this.quantitiesValidationError = false;
+
     if (!this.selectedProductId) {
-      alert('Por favor, selecciona un producto.');
+      // reemplaza el alert por mostrar el texto rojo en la UI      
+      this.productValidationError = true;
       return;
     }
+
+    
+    
 
     // Considerar solo días habilitados
     const habilitadas = this.orderDates.filter(d => !this.isDateDisabled(d));
     if (habilitadas.length === 0) {
-      alert('No hay fechas disponibles en este mes. Cambia a “Mes siguiente”.');
+      // mostrar mensaje en UI en lugar de alert
+      this.datesValidationError = true;
       return;
     }
 
     const todasEnCero = habilitadas.every((date) => date.quantity === 0);
     if (todasEnCero) {
-      alert('Por favor, llena al menos una cantidad a partir de mañana.');
+      // mostrar mensaje en UI en lugar de alert
+      this.quantitiesValidationError = true;
       return;
     }
 
@@ -118,7 +139,8 @@ export class CGenerateOrder implements OnInit{
     };
 
     this.pendingPayload = payload;
-    this.confirmOrderVisible = true;
+    this.mostrarModalConfirmacion = true;
+
 
     
   }
@@ -126,7 +148,7 @@ export class CGenerateOrder implements OnInit{
   // Cancelar confirmación
   cancelConfirmOrder() {
     this.pendingPayload = null;
-    this.confirmOrderVisible = false;
+    this.mostrarModalConfirmacion = false;
   }
 
   irAListaVehiculos() {
@@ -137,19 +159,48 @@ export class CGenerateOrder implements OnInit{
   // Confirmar: enviar la petición y redirigir al historial
   confirmOrder() {
     if (!this.pendingPayload) return;
+    console.log(this.pendingPayload);
 
     this.orderService.createOrder(this.pendingPayload).subscribe({
       next: (response) => {
-        this.confirmOrderVisible = false;
+        this.mostrarModalConfirmacion = false;
         this.pendingPayload = null;
         // navegar al historial de pedidos
-        this.router.navigate(['/cliente/historial-pedidos']);
+        this.mostrarModalExito = true;
+        this.errorMessage = null; // Limpia el mensaje de error
+
       },
       error: (error) => {
-        console.error('Error al crear el pedido:', error);
-        alert('Error al crear el pedido.');
-        this.confirmOrderVisible = false;
+
+        this.mostrarModalConfirmacion = false;
         this.pendingPayload = null;
+
+        // Manejo genérico: extraer texto de distintos formatos que pueda enviar el backend
+        let msg = 'Error al crear el pedido.';
+        try {
+          if (!error) {
+            msg = 'Error desconocido.';
+          } else if (typeof error === 'string') {
+            msg = error;
+          } else if (error.error) {
+            // error.error puede ser string o objeto { error: "...", message: "..." }
+            if (typeof error.error === 'string' && error.error.trim()) {
+              msg = error.error;
+            } else if (typeof error.error === 'object') {
+              msg = error.error.message || error.error.error || JSON.stringify(error.error);
+            }
+          } else if (error.message) {
+            msg = error.message;
+          }
+        } catch (e) {
+          console.error('Error al parsear el error del backend', e);
+        }
+
+        // asignar para mostrar en la UI (usa tu binding existente)
+        this.errorMessage = msg;
+        console.error('Error al crear el pedido:', error);
+        // no usar alert para mostrar error; la UI leerá errorMessage
+        
       },
     });
   }
@@ -159,9 +210,12 @@ export class CGenerateOrder implements OnInit{
     if (productId == null) {
       this.vehiculoSeleccionado = '';
       this.selectedSpecUrl = null;
+      this.productValidationError = true;
       return;
     }
-  
+
+    this.productValidationError = false;
+
     const prod = products.find(p => Number(p.id!) === Number(productId));  
     this.vehiculoSeleccionado = prod
       ? ((prod as any).type_vehicle?.name ?? (prod as any).type_vehicle ?? '')

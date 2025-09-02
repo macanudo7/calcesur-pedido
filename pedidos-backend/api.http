@@ -2,6 +2,24 @@
 POST http://localhost:3000/api/users
 Content-Type: application/json
 
+{
+  "username": "cliente2",
+  "ruc": "10012345678",
+  "password": "PasswordSeguro1234",
+  "email": "cliente2@example.com",
+  "name": "Mina XYZ S.A.C.",
+  "phone": "987654321",
+  "userType": "client",
+  "status": "active",
+  "observations": "Cliente potencial",
+  "usualProductsNotes": "Necesita explosivos",
+  "ccEmails": "gerencia.mina@example.com",
+  "leadTimeDays": 1,
+  "user_code": "123456"
+}
+
+
+
 # {
 #   "username": "cliente-mina-xyz",
 #   "ruc": "10012345678",
@@ -17,31 +35,32 @@ Content-Type: application/json
 #   "leadTimeDays": 1
 # }
 
-{
-  "username": "super.admin",
-  "password": "UnaContraseñaFuerte1235",
-  "email": "admin@empresa.com",
-  "name": "Juan Pérez",
-  "phone": "999888777",
-  "userType": "admin",
-  "status": "active"
-}
+# {
+#   "username": "super.admin",
+#   "password": "UnaContraseñaFuerte1235",
+#   "email": "admin@empresa.com",
+#   "name": "Juan Pérez",
+#   "phone": "999888777",
+#   "userType": "admin",
+#   "status": "active"
+# }
 
 
 
 ###LISTAR USUARIOS
 GET http://localhost:3000/api/users/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NDk1MDIyLCJleHAiOjE3NTU0OTg2MjJ9.trDIhIUcBO9moXl8KTKkn2Ea4hBTgZSLN_vtySOUcL4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU2ODI3MDk2LCJleHAiOjE3NTY4MzA2OTZ9.rKcKIYUT_xPNZBZbCqgqT0Ps80VZERsm_Ikbhbchdho
 
 
 ###EDITAR USUARIO
-PUT http://localhost:3000/api/users/9
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDgwNTQzOSwiZXhwIjoxNzU0ODA5MDM5fQ.U-_VkQXu8dqah5qkbHRuYV7J02DM7uQds-gI3Uc_vEM
+PUT http://localhost:3000/api/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU2ODI3NTU1LCJleHAiOjE3NTY4MzExNTV9.2blx_RKBdjijX6TSc_uwBdwNFHQysnT0WRcphujBvTU
 Content-Type: application/json
 
 {
   "name": "Juanjo",
-  "phone": "999888778"
+  "phone": "999888778",
+  "user_code": "123456"
 }
 
 ###ELIMINAR USUARIO

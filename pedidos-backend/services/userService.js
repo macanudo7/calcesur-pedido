@@ -30,6 +30,7 @@ const userService = {
       lead_time_days: otherData.lead_time_days || null,
       usual_products_notes: otherData.usual_products_notes || null,
       observations: otherData.observations || null,
+      user_code: otherData.userCode ?? otherData.user_code ?? null, // <-- aceptar userCode
       // created_at y updated_at se manejan automáticamente por Sequelize
     });
 
@@ -94,7 +95,13 @@ const userService = {
     if (!user) {
       return null;
     }
-    await user.update(updatedData);
+
+    // Permitir actualizar user_code
+    const updates = {
+      ...updatedData,
+      user_code: updatedData.user_code ?? updatedData.userCode ?? user.user_code
+    };
+    await user.update(updates);
     return user;
   },
 

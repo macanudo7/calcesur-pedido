@@ -74,7 +74,11 @@ module.exports = (sequelize, DataTypes) => {
     leadTimeDays: { // Propiedad en camelCase
       type: DataTypes.INTEGER,
       allowNull: true
-    }
+    },
+    user_code: {
+      type: DataTypes.STRING(10),
+      allowNull: true
+    },
   }, {
     sequelize,
     modelName: 'User',

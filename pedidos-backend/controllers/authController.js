@@ -22,7 +22,9 @@ const authController = {
         observations,
         usualProductsNotes,
         ccEmails,
-        leadTimeDays
+        leadTimeDays,
+        user_code, // Nuevo campo user_code
+        userCode
       } = req.body;
 
 
@@ -78,6 +80,7 @@ const authController = {
         usual_products_notes: usualProductsNotes || null,
         cc_emails: ccEmails || null,
         lead_time_days: userType === 'client' ? leadTimeDays : null, // Lead time solo para clientes
+        user_code: user_code || userCode || null // <-- mapear aquí
       };
 
       const newUser = await userService.createUser(userData);

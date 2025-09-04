@@ -45,16 +45,19 @@ const OrderChangeRequestsService = {
    * @param {object} responseData - Datos de la respuesta (e.g., 'status', 'admin_response_at').
    */
     async updateChangeRequest(requestId, responseData) {
+        // Inicia correctamente una transacción y usa transacción en update
+        const t = await sequelize.transaction();
         try {
-            const request = await OrderChangeRequests.findByPk(requestId);
+            const request = await OrderChangeRequests.findByPk(requestId, { transaction: t });
             if (!request) {
+                await t.rollback();
                 throw new Error('Solicitud de cambio no encontrada');
             }
-            await request.update(responseData, { transtaaction})
-            await transtaaction.commit();
+            await request.update(responseData, { transaction: t });
+            await t.commit();
             return request;
         } catch (error) {
-            await transtaaction.rollback();
+            await t.rollback();
             console.error('Error al actualizar la solicitud de cambio:', error);
             throw new Error('Error al actualizar la solicitud de cambio: ' + error.message);
         }

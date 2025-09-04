@@ -1,3 +1,5 @@
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3MDE5ODA1LCJleHAiOjE3NTcwMjM0MDV9.HVKZAdMpHrUAWCNABmGyCbvlice6X2Zneh9kPOrh7yE
+
 ###REGISTRAR USUARIO
 POST http://localhost:3000/api/users
 Content-Type: application/json
@@ -234,5 +236,34 @@ Content-Type: application/json
 }
 
 
-##CREAR ORDER CHANGE REQUEST
+###CREAR ORDER CHANGE REQUEST
+POST http://localhost:3000/api/change-requests
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
 
+{
+  "order_date_id": 6,
+  "request_type": "change_quantity",
+  "change_quantity": 5,
+  "admin_notes": "Necesitamos 5 unidades adicionales"
+}
+
+### Listar solicitudes (admin) - todas
+GET http://localhost:3000/api/change-requests
+Authorization: Bearer {{admin_token}}
+
+### Obtener una solicitud por id (admin)
+GET http://localhost:3000/api/change-requests/3
+Authorization: Bearer {{admin_token}}
+
+### Responder / actualizar solicitud (admin) - aprobar y aplicar cambio a orderDate
+PUT http://localhost:3000/api/change-requests/3
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "status": "approved",
+  "admin_notes": "Aprobado por control de stock",
+  "admin_response_at": "2025-09-04T12:00:00.000Z",
+  "apply_to_order_date": true
+}

@@ -34,7 +34,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     change_quantity: DataTypes.INTEGER,
     requested_at: DataTypes.DATE,
-    admin_response_at: DataTypes.DATE
+    admin_response_at: DataTypes.DATE,
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'pending'
+    },
+    admin_notes: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    }
   }, {
     sequelize,
     modelName: 'OrderChangeRequests',

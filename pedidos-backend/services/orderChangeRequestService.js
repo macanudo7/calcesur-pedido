@@ -9,13 +9,21 @@ const OrderChangeRequestsService = {
    */ 
 
     async createChangeRequest(requestData) {
-        try {
-            const newRequest = await OrderChangeRequests.create(requestData);
-            return newRequest;
-        } catch (error) {
-            console.error('Error al crear la solicitud de cambio:', error);
-            throw new Error('Error al crear la solicitud de cambio: ' + error.message);
+        const od = await OrderDates.findByPk(requestData.order_date_id);
+        if (!od) {
+            throw new Error('Fecha de pedido no encontrada');
         }
+
+        // opcional: prevenir duplicados (mismo tipo + pedido abierto)
+        // const exists = await OrderChangeRequests.findOne({ where: { order_date_id: requestData.order_date_id, request_type: requestData.request_type, status: 'pending' } });
+        // if (exists) throw new Error('Ya existe una solicitud pendiente para este order date y tipo');
+
+        const newRequest = await OrderChangeRequests.create({
+            ...requestData,
+            requested_at: requestData.requested_at || new Date(),
+            status: 'pending'
+        });
+        return newRequest;
     },
 
      /**
@@ -36,6 +44,20 @@ const OrderChangeRequestsService = {
         } catch (error) {
             console.error('Error al obtener las solicitudes de cambio:', error);
             throw new Error('Error al obtener las solicitudes de cambio: ' + error.message);
+        }
+    },
+
+    async getChangeRequestById(id) {
+        try {
+        const request = await OrderChangeRequests.findByPk(id, {
+            include: [
+            { model: OrderDates, as: 'orderDate' } // ajusta alias si tu asociación es distinta
+            ]
+        });
+        return request;
+        } catch (error) {
+        console.error('Error al obtener la solicitud por id:', error);
+        throw new Error('Error al obtener la solicitud: ' + (error.message || String(error)));
         }
     },
 

@@ -8,6 +8,7 @@ router.post('/', protect, OrderChangeRequestController.createChangeRequest); // 
 
 //Rutas pora los administradores (pueden ver y responder solicitudes de cambio)
 router.get('/', protect, restrictTo('admin'), OrderChangeRequestController.getAllChangeRequests); 
+router.get('/:id', protect, restrictTo('admin'), OrderChangeRequestController.getChangeRequestById); // Obtener una solicitud de cambio por ID
 router.put('/:id', protect, restrictTo('admin'), OrderChangeRequestController.respondToChangeRequest); // Responder a una solicitud de cambio
 
 module.exports = router;

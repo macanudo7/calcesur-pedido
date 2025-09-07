@@ -1,4 +1,4 @@
-@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3MDE5ODA1LCJleHAiOjE3NTcwMjM0MDV9.HVKZAdMpHrUAWCNABmGyCbvlice6X2Zneh9kPOrh7yE
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3MTk0ODc2LCJleHAiOjE3NTcxOTg0NzZ9.E-XAj9EJJV--jtiuWTVhXj6pUYojfPaLJNgsF0nYPrQ
 
 ###REGISTRAR USUARIO
 POST http://localhost:3000/api/users
@@ -203,13 +203,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c
 GET http://localhost:3000/api/orders
 
 ###OBTENER PEDIDO POR ID
-GET http://localhost:3000/api/orders/6
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzkzMTQ0LCJleHAiOjE3NTU3OTY3NDR9.itiwdbsjSu6tgG51-7rq0hLOzL-XexgIALq4qG7bSHo
+GET http://localhost:3000/api/orders/9
+Authorization: Bearer {{admin_token}}
 
 
 ###EDITAR PEDIDO CON NUEVOS ORDER DATES
 PUT http://localhost:3000/api/orders/6
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzkzMTQ0LCJleHAiOjE3NTU3OTY3NDR9.itiwdbsjSu6tgG51-7rq0hLOzL-XexgIALq4qG7bSHo
+Authorization: Bearer {{admin_token}}
 Content-Type: application/json
 
 {
@@ -266,4 +266,52 @@ Content-Type: application/json
   "admin_notes": "Aprobado por control de stock",
   "admin_response_at": "2025-09-04T12:00:00.000Z",
   "apply_to_order_date": true
+}
+
+###Apis orden Dates
+GET http://localhost:3000/api/order-dates
+Authorization: Bearer {{admin_token}}
+
+### Obtener un orden date por ID
+GET http://localhost:3000/api/order-dates/1
+Authorization: Bearer {{admin_token}}
+
+### Crear un orden date
+POST http://localhost:3000/api/order-dates
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "order_id": 9,
+  "delivery_date": "2025-09-18",
+  "quantity": 50,
+  "status": "pending"
+}
+
+### Actualizar un orden date
+PUT http://localhost:3000/api/order-dates/68
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "quantity": 25,
+  "status": "pending"
+}
+
+### Eliminar un orden date
+DELETE http://localhost:3000/api/order-dates/68
+Authorization: Bearer {{admin_token}}
+
+###Ordernet Change Requests por Id
+GET http://localhost:3000/api/order-dates/88/change-requests
+Authorization: Bearer {{admin_token}}
+
+###Consulta para obtener la ultima cr de cada order date
+POST http://localhost:3000/api/change-requests/query
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "order_date_ids": [6,88,79],
+  "limit_per_order_date": 1
 }

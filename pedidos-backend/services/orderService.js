@@ -88,6 +88,17 @@ const orderService = {
     async createOrderwithDates(orderData, orderDatesData){
         const t = await sequelize.transaction();
         try {
+            // Validar duplicados en las fechas recibidas
+            if (orderDatesData && orderDatesData.length > 0) {
+                const seen = new Set();
+                for (const od of orderDatesData) {
+                    const d = new Date(od.delivery_date).toISOString().slice(0,10); // comparar por fecha (YYYY-MM-DD)
+                    if (seen.has(d)) {
+                        throw new Error('No puede haber dos orderDates con la misma delivery_date en el mismo pedido: ' + d);
+                    }
+                    seen.add(d);
+                }
+            }
             // 1. Validar si el usuario ya tiene un pedido para ese mes
             if (orderDatesData && orderDatesData.length > 0) {
                 // Tomamos el primer orderDate como referencia

@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     delivery_date: DataTypes.DATE,
+    delivery_date: DataTypes.DATEONLY,
     quantity: DataTypes.INTEGER,
     rating: DataTypes.INTEGER,
     is_delivered: DataTypes.STRING,

@@ -51,70 +51,89 @@
         </thead>
         <tbody>
           <tr *ngFor="let date of fechasDelMes">
-            <td class="border px-4 py-2">{{ date | date: 'shortDate' }}</td>
-            <td class="border px-4 py-2">
-              <input
-                type="number"
-                [(ngModel)]="orderDatesMap[date.toDateString()].quantity"
-                class="placeholder:text-gray-300 w-full"
-                placeholder="Ejm: 20"
-                [disabled]="!modoEdicion || !esFechaEditable(date)"
-                [ngClass]="{
-                  'bg-gray-200 !important': !modoEdicion || !esFechaEditable(date),
-                  'bg-white !important': modoEdicion && esFechaEditable(date)
-                }"
-                [ngModelOptions]="{ standalone: true }"
-              />
-            </td>
-            <td class="border px-4 py-2">
-              <span
-                *ngIf="orderDatesMap[date.toDateString()]?.quantity > 0"
-                [ngClass]="{
-                  'bg-yellow-300 text-black': orderDatesMap[date.toDateString()].status === 'pending',
-                  'bg-green-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed',
-                  'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination',
-                  'bg-red-300 text-white': orderDatesMap[date.toDateString()].status === 'canceled'
-                }"
-                class="px-4 py-2 rounded"
-              >
-                {{
-                  !orderDatesMap[date.toDateString()].status
-                    ? 'Nuevo'
-                    : orderDatesMap[date.toDateString()].status === 'pending'
-                    ? 'Por confirmar'
-                    : orderDatesMap[date.toDateString()].status === 'confirmed'
-                    ? 'Confirmado'
-                    : orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
-                    ? 'Por confirmar su eliminación'
-                    : orderDatesMap[date.toDateString()].status === 'canceled'
-                    ? 'Cancelado'
-                    : ''
-                }}
-              </span>
-            </td>
-            <td class="border px-4 py-2">
-              <span
-                *ngIf="orderDatesMap[date.toDateString()]?.is_delivered !== null"
-                [ngClass]="{
-                  'bg-blue-200 text-black': orderDatesMap[date.toDateString()].is_delivered === 'por_entregar',
-                  'bg-blue-500 text-white': orderDatesMap[date.toDateString()].is_delivered === 'entregado',
-                  'bg-red-300 text-white': orderDatesMap[date.toDateString()].is_delivered === 'no-entregado'
-                }"
-                class="px-4 py-2 rounded"
-              >
-                {{
-                  orderDatesMap[date.toDateString()].is_delivered === 'por_entregar'
-                    ? 'Por entregar'
-                    : orderDatesMap[date.toDateString()].is_delivered === 'entregado'
-                    ? 'Entregado'
-                    : orderDatesMap[date.toDateString()].is_delivered === 'no-entregado'
-                    ? 'No entregado'
-                    : ''
-                }}
-              </span>
-            </td>
-            <td class="border px-4 py-2"></td>
-            <td class="border px-4 py-2"></td>
+            <ng-container *ngIf="orderDatesMap[date.toDateString()] as od">
+              <td class="border px-4 py-2">{{ date | date: 'shortDate' }}</td>
+              <td class="border px-4 py-2">
+                <input
+                  type="number"
+                  [(ngModel)]="od.quantity"
+                  class="placeholder:text-gray-300 w-full"
+                  placeholder="Ejm: 20"
+                  [disabled]="!modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending'"
+                  [ngClass]="{
+                    'bg-gray-200 !important': !modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending',
+                    'bg-white !important': modoEdicion && esFechaEditable(date) && od?.latestCR?.status !== 'pending'
+                  }"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+              </td>
+              <td class="border px-4 py-2">
+                <span
+                  *ngIf="orderDatesMap[date.toDateString()]?.quantity > 0"
+                  [ngClass]="{
+                    'bg-yellow-300 text-black': orderDatesMap[date.toDateString()].status === 'pending',
+                    'bg-green-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed',
+                    'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination',
+                    'bg-red-300 text-white': orderDatesMap[date.toDateString()].status === 'canceled'
+                  }"
+                  class="px-4 py-2 rounded"
+                >
+                  {{
+                    !orderDatesMap[date.toDateString()].status
+                      ? 'Nuevo'
+                      : orderDatesMap[date.toDateString()].status === 'pending'
+                      ? 'Por confirmar'
+                      : orderDatesMap[date.toDateString()].status === 'confirmed'
+                      ? 'Confirmado'
+                      : orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
+                      ? 'Por confirmar su eliminación'
+                      : orderDatesMap[date.toDateString()].status === 'canceled'
+                      ? 'Cancelado'
+                      : ''
+                  }}
+                </span>
+              </td>
+              <td class="border px-4 py-2">
+                <span
+                  *ngIf="orderDatesMap[date.toDateString()]?.is_delivered !== null"
+                  [ngClass]="{
+                    'bg-blue-200 text-black': orderDatesMap[date.toDateString()].is_delivered === 'por_entregar',
+                    'bg-blue-500 text-white': orderDatesMap[date.toDateString()].is_delivered === 'entregado',
+                    'bg-red-300 text-white': orderDatesMap[date.toDateString()].is_delivered === 'no-entregado'
+                  }"
+                  class="px-4 py-2 rounded"
+                >
+                  {{
+                    orderDatesMap[date.toDateString()].is_delivered === 'por_entregar'
+                      ? 'Por entregar'
+                      : orderDatesMap[date.toDateString()].is_delivered === 'entregado'
+                      ? 'Entregado'
+                      : orderDatesMap[date.toDateString()].is_delivered === 'no-entregado'
+                      ? 'No entregado'
+                      : ''
+                  }}
+                </span>
+              </td>
+              <td class="border px-4 py-2">
+                <ng-container *ngIf="orderDatesMap[date.toDateString()]?.latestCR as cr; else noObs">
+                  <div class="text-sm font-medium">{{ cr.request_type }}</div>
+                  <div class="text-xs text-gray-600">{{ cr.admin_notes }}</div>
+                </ng-container>
+                <ng-template #noObs>
+                  <span class="text-xs text-gray-400">—</span>
+                </ng-template>
+              </td>
+              <td class="border px-4 py-2">
+                <button
+                  *ngIf="modoEdicion && esFechaEditable(date) && od?.order_date_id && od?.latestCR?.status !== 'pending'"
+                  (click)="eliminarOrderDate(date)"
+                  class="text-red-600 hover:underline"
+                  type="button"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </ng-container>
           </tr>
         </tbody>
       </table>

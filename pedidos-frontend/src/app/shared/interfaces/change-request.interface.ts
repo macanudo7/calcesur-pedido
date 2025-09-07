@@ -24,3 +24,14 @@ export interface ChangeRequest {
   createdAt?: string | null;
   updatedAt?: string | null;
 }
+
+// Nuevos tipos para la query batch
+export interface ChangeRequestsQueryPayload {
+  order_date_ids: number[];
+  limit_per_order_date?: number;
+}
+
+export interface ChangeRequestsQueryResponse {
+  // El backend devuelve claves como strings (ej. "6","88"), por eso usamos Record<string, ...>
+  byOrderDate: Record<string, ChangeRequest[]>;
+}

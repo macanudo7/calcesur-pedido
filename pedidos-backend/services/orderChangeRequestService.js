@@ -1,5 +1,5 @@
 const { OrderChangeRequests, OrderDates, sequelize } = require('../models');
-
+const { Op } = require('sequelize');
 
 const OrderChangeRequestsService = {
 
@@ -84,6 +84,71 @@ const OrderChangeRequestsService = {
             throw new Error('Error al actualizar la solicitud de cambio: ' + error.message);
         }
     },
+
+    async getChangeRequestsByOrderDate(orderDateId) {
+        try {
+            const requests = await OrderChangeRequests.findAll({
+                where: { order_date_id: orderDateId },
+                order: [['requested_at', 'DESC']]
+            });
+
+            // Mapear a la estructura de respuesta esperada
+            return requests.map(r => ({
+                change_request_id: r.request_id || r.change_request_id || null,
+                order_date_id: r.order_date_id,
+                request_type: r.request_type,
+                change_quantity: r.change_quantity,
+                admin_notes: r.admin_notes || null,
+                status: r.status || null,
+                requested_by: r.requested_by || r.user_id || null,
+                requested_at: r.requested_at || r.createdAt || null,
+                createdAt: r.createdAt,
+                updatedAt: r.updatedAt
+            }));
+        } catch (error) {
+            console.error('Error getChangeRequestsByOrderDate:', error);
+            throw new Error('Error al obtener las solicitudes de cambio: ' + (error.message || String(error)));
+        }
+    },
+
+    /**
+   * Consulta batch de Change Requests por varios order_date_id.
+   * Devuelve un objeto { orderDateId: [cr,...], ... } respetando limite por order_date.
+   * @param {Array<number>} orderDateIds
+   * @param {number} limitPerOrderDate
+   */
+  async queryChangeRequests(orderDateIds = [], limitPerOrderDate = 1) {
+    try {
+      if (!Array.isArray(orderDateIds) || orderDateIds.length === 0) {
+        return {};
+      }
+      const limit = Number(limitPerOrderDate) > 0 ? Number(limitPerOrderDate) : 1;
+
+      const requests = await OrderChangeRequests.findAll({
+        where: { order_date_id: { [Op.in]: orderDateIds } },
+        order: [['requested_at', 'DESC'], ['request_id', 'DESC']]
+      });
+
+      const byOrderDate = {};
+      // initialize keys to ensure response contains all requested ids (even empty arrays)
+      for (const id of orderDateIds) byOrderDate[String(id)] = [];
+
+      for (const r of requests) {
+        const key = String(r.order_date_id);
+        if (!byOrderDate[key]) byOrderDate[key] = [];
+        if (byOrderDate[key].length < limit) {
+          byOrderDate[key].push(r.toJSON());
+        }
+      }
+
+      return byOrderDate;
+    } catch (error) {
+      console.error('Error queryChangeRequests:', error);
+      throw new Error('Error al consultar las solicitudes de cambio: ' + (error.message || String(error)));
+    }
+  },
+
+    
 
     
 

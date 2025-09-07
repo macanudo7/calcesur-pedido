@@ -10,5 +10,7 @@ router.post('/', protect, OrderChangeRequestController.createChangeRequest); // 
 router.get('/', protect, restrictTo('admin'), OrderChangeRequestController.getAllChangeRequests); 
 router.get('/:id', protect, restrictTo('admin'), OrderChangeRequestController.getChangeRequestById); // Obtener una solicitud de cambio por ID
 router.put('/:id', protect, restrictTo('admin'), OrderChangeRequestController.respondToChangeRequest); // Responder a una solicitud de cambio
+// POST /api/change-requests/query  -> batch query de CRs por order_date_ids
+router.post('/query', protect, OrderChangeRequestController.queryChangeRequests);
 
 module.exports = router;

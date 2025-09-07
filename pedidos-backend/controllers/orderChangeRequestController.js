@@ -1,7 +1,6 @@
 const OrderChangeRequestsService = require('../services/orderChangeRequestService');
 
 const OrderChangeRequestsController = {
-
     async createChangeRequest(req, res) {
         try {
             const newRequest  =  await OrderChangeRequestsService.createChangeRequest(req.body);
@@ -49,7 +48,38 @@ const OrderChangeRequestsController = {
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
-    }
+    },
+
+    async getChangeRequestsByOrderDate(req, res) {
+        try {
+            const { orderDateId } = req.params;
+            if (!orderDateId) {
+                return res.status(400).json({ message: 'orderDateId es requerido.' });
+            }
+            const list = await OrderChangeRequestsService.getChangeRequestsByOrderDate(orderDateId);
+            return res.status(200).json(list);
+        } catch (error) {
+            console.error('Error getChangeRequestsByOrderDate:', error);
+            return res.status(500).json({ error: error.message || 'Error al obtener las solicitudes.' });
+        }
+    },
+
+    async queryChangeRequests(req, res) {
+        try {
+            const { order_date_ids, limit_per_order_date } = req.body;
+            if (!Array.isArray(order_date_ids)) {
+                return res.status(400).json({ message: 'order_date_ids debe ser un arreglo de IDs.' });
+            }
+            const limit = limit_per_order_date != null ? Number(limit_per_order_date) : 1;
+            const byOrderDate = await OrderChangeRequestsService.queryChangeRequests(order_date_ids, limit);
+            return res.status(200).json({ byOrderDate });
+        } catch (error) {
+            console.error('Error queryChangeRequests controller:', error);
+            return res.status(500).json({ error: error.message || 'Error al consultar change requests.' });
+        }
+    },
+
+    
 }
 
 module.exports = OrderChangeRequestsController;

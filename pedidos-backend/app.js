@@ -45,7 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/type-vehicles', typeVehiclesRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/orders', orderRoutes);
-app.use('/api/orderDates', orderDatesRoutes);
+app.use('/api/order-dates', orderDatesRoutes);
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/change-requests', orderChangeRequestRouter)

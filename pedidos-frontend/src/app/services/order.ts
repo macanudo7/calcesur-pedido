@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, tap, Observable, map } from 'rxjs';
 import { OrderForm, OrderHistory, OrderDetail, OrderDateDetail } from '../shared/interfaces/order.interface'; // Asegúrate de que la ruta sea correcta
 
@@ -80,6 +80,27 @@ export class Order {
   changeStatus(order: OrderDetail) {
     return this.http.put(`${this.baseUrl}/${order.order_id}`, order, { headers: this.getHeaders() }
     );
+  }
+
+  // Nuevo: obtener orders que tienen al menos un OrderDate con CR pendiente (admin)
+  getOrdersWithPendingChangeRequests(year?: number, month?: number): Observable<OrderHistory[]> {
+    const token = sessionStorage.getItem('token') || '';
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    const now = new Date();
+    const y = year ?? now.getFullYear();
+    const m = month ?? (now.getMonth() + 1);
+    const monthStr = String(m).padStart(2, '0');
+
+    const params = new HttpParams()
+      .set('year', String(y))
+      .set('month', monthStr);
+
+    const url = `${this.baseUrl}/with-pending-change-requests`;
+    return this.http.get<OrderHistory[]>(url, { headers, params });
   }
 
 

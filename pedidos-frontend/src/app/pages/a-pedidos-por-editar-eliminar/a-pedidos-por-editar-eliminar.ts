@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OrderForm } from '../../shared/interfaces/order.interface';
+import { OrderHistory } from '../../shared/interfaces/order.interface';
 import { Order } from '../../services/order';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -19,18 +19,18 @@ export class APedidosPorEditarEliminar implements OnInit{
 
   nameOfUser: string | null = null;
 
-  orders$: Observable<OrderForm[]>;
   vehicles$: Observable<VehicleForm[]>;
 
   searchTerm = signal('');
   selectedUserType = signal('');
-  allOrders = signal<OrderForm[]>([]);
+  allOrders = signal<OrderHistory[]>([]);
   allVehicles = signal<VehicleForm[]>([]);
 
   userTypes: string[] = [];
 
   cumplimiento: number;
   cronograma: number;
+  today: Date = new Date(); // <- añadir
 
   pendingOrders = computed(() =>
     this.allOrders().filter(order => order.status === 'confirmed-elimination')
@@ -42,7 +42,6 @@ export class APedidosPorEditarEliminar implements OnInit{
     private cd: ChangeDetectorRef,
     private vehicleService: Vehicle
   ) {
-    this.orders$ = this.orderService.orders$;
     this.vehicles$ = this.vehicleService.vehicles$;
 
     this.cumplimiento = 0;
@@ -54,27 +53,39 @@ export class APedidosPorEditarEliminar implements OnInit{
       this.nameOfUser = sessionStorage.getItem('userName');
     }
 
-    this.orderService.getOrders();
-
-    this.orders$.subscribe(orders => {
-      this.allOrders.set(orders);
-      console.log('Orders loaded:', orders);
-      this.userTypes = Array.from(
-        new Set(
-          orders
-            .map(o => o.product?.name)
-            .filter((name): name is string => !!name)
-        )
-      );
-
-      console.log('Products:', this.userTypes);
+    // Usar la nueva API que filtra por mes/año (usa valores por defecto si no pasas params)
+    this.orderService.getOrdersWithPendingChangeRequests().subscribe({
+      next: (orders) => {
+        this.allOrders.set(orders as OrderHistory[]);
+        console.log('Orders with pending CRs loaded:', orders);
+        this.userTypes = Array.from(
+          new Set(
+            orders
+              .map(o => o.product?.name)
+              .filter((name): name is string => !!name)
+          )
+        );
+      },
+      error: (err) => {
+        console.error('Error fetching pending orders:', err);
+        // fallback: intentar cargar todos los pedidos y luego asignar a allOrders
+        // (llamamos a getOrders() para que el servicio intente poblar datos, y luego
+        // solicitamos explícitamente la lista completa vía getOrdersWithPendingChangeRequests sin filtros)
+        try {
+          this.orderService.getOrders(); // intenta rellenar cache en el servicio (si existe)
+        } catch (e) { /* noop */ }
+        // como fallback seguro, solicitar nuevamente (o podrías crear getAllOrders en el service)
+        this.orderService.getOrdersWithPendingChangeRequests().subscribe({
+          next: (orders) => this.allOrders.set(orders as OrderHistory[]),
+          error: (e) => console.error('Fallback also failed:', e)
+        });
+      }
     });
 
+    // vehiculos
     this.vehicleService.getVehicles();
-
     this.vehicles$.subscribe(vehicles => {
       this.allVehicles.set(vehicles);
-      console.log('Vehicles loaded:', vehicles);
     });
   }
 
@@ -83,12 +94,11 @@ export class APedidosPorEditarEliminar implements OnInit{
     const type = this.selectedUserType();
 
     return this.allOrders()
-      .filter(order => order.status === 'confirmed-elimination')
-      .filter(u => {
-        const matchesName = term ? u.user?.name.toLowerCase().includes(term) : true;
-        const matchesType = type ? u.product?.name === type : true;
-        return matchesName && matchesType;
-      });
+       .filter(u => {
+         const matchesName = term ? u.user?.username?.toLowerCase().includes(term) : true;
+         const matchesType = type ? u.product?.name === type : true;
+         return matchesName && matchesType;
+       });
   });
 
   getVehicleNameById(vehicleId?: number): string {

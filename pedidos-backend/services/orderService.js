@@ -1,4 +1,4 @@
-const { Order, User, Product, OrderDates,TypeVehicle, sequelize} = require('../models');
+const { Order, User, Product, OrderDates, TypeVehicle, sequelize, OrderChangeRequests } = require('../models');
 const { Op } = require('sequelize'); // Usaremos Op para búsquedas avanzadas si es necesario
 
 const orderService = {
@@ -282,8 +282,102 @@ const orderService = {
         await t.rollback();
         throw new Error('Error al actualizar el pedido y sus fechas: ' + error.message);
     }
-}
+},
+    // Obtener orders que tengan orderDates con changeRequests pendientes (opcional por año/mes)
+    async getOrdersWithPendingChangeRequests(year, month) {
+      try {
+        let startDate, endDate;
+        if (year && month) {
+          startDate = new Date(Number(year), Number(month) - 1, 1, 0, 0, 0, 0);
+          endDate = new Date(Number(year), Number(month), 0, 23, 59, 59, 999);
+        } else {
+          const now = new Date();
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+          endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+        }
 
+        const currentDate = new Date();
 
+        // 1) Buscar orders que tengan al menos un OrderDate en el rango con CR pending
+        // Nota: esta consulta sirve sólo para filtrar orders; NO usar order.orderDates para cálculos.
+        const ordersWithPending = await Order.findAll({
+          include: [
+            { model: User, as: 'user' },
+            { model: Product, as: 'product', include: [{ model: TypeVehicle, as: 'typeVehicle' }] },
+            {
+              model: OrderDates,
+              as: 'orderDates',
+              required: true,
+              where: {
+                delivery_date: { [Op.between]: [startDate, endDate] }
+              },
+              include: [
+                {
+                  model: OrderChangeRequests,
+                  as: 'changeRequests',
+                  required: true,
+                  where: { status: 'pending' }
+                }
+              ]
+            }
+          ]
+        });
+
+        // 2) Para cada order encontrada, obtener TODOS los OrderDates del pedido (dentro del mes)
+        const enriched = await Promise.all(ordersWithPending.map(async order => {
+          // obtener todos los orderDates del pedido en el mes (TODOS, no sólo los que tienen CR)
+          const allOrderDates = await OrderDates.findAll({
+            where: {
+              order_id: order.order_id,
+              delivery_date: { [Op.between]: [startDate, endDate] }
+            },
+            order: [['delivery_date', 'ASC']]
+          });
+
+          // Cálculos hechos sobre allOrderDates (no sobre order.orderDates)
+          const totalOrderDates = allOrderDates.length;
+          const orderDatesUntilNow = allOrderDates.filter(od => new Date(od.delivery_date) <= currentDate);
+          const deliveredOrderDates = orderDatesUntilNow.filter(od => od.status === 'delivered');
+
+          const cumplimiento = orderDatesUntilNow.length > 0
+            ? (deliveredOrderDates.length / orderDatesUntilNow.length) * 100
+            : 0;
+
+          const avanceCronograma = totalOrderDates > 0
+            ? (orderDatesUntilNow.length / totalOrderDates) * 100
+            : 0;
+
+          // Además incluir las orderDates que tienen CR pendientes para referencia
+          // (estas vienen de la consulta inicial: order.orderDates)
+          const pendingChangeRequestOrderDates = (order.orderDates || []).map(od => od.order_date_id || od.id || null);
+
+          return {
+            order_id: order.order_id,
+            user: {
+              user_id: order.user?.user_id ?? order.user?.id ?? null,
+              username: order.user?.username ?? order.user?.name ?? null
+            },
+            product: {
+              product_id: order.product?.product_id,
+              name: order.product?.name,
+              code: order.product?.code,
+              typeVehicle: order.product?.typeVehicle || null
+            },
+            status: order.status,
+            cumplimiento: Number(cumplimiento.toFixed(2)),
+            avanceCronograma: Number(avanceCronograma.toFixed(2)),
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+            orderDates: allOrderDates,
+            pendingChangeRequestOrderDates // ids de orderDates que tienen CR pendientes
+          };
+        }));
+
+        return enriched;
+      } catch (error) {
+        console.error('Error getOrdersWithPendingChangeRequests:', error);
+        throw new Error('Error al obtener pedidos con CR pendientes: ' + (error.message || String(error)));
+      }
+    },
 };
 module.exports = orderService;

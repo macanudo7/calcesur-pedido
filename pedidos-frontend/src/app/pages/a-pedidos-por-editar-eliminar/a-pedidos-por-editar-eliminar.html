@@ -5,7 +5,7 @@
     </div>
     <div class="main-page py-1">
 
-    <h3 class="date">Agosto 2025</h3>
+    <h3 class="date">{{ today | date:'MMMM yyyy' | titlecase }}</h3>
 
         <div class="flex justify-between items-center up-table section40">
             <div>
@@ -41,12 +41,12 @@
                 <tbody>
                     
                     <tr *ngFor="let order of filteredOrders()">
-                        <td>{{ order.createdAt | date:'dd/MM/yyyy' }}</td>
-                        <td>{{ order.user?.name }}</td>
-                        <td>{{ order.product?.name }}</td>
-                        <td>{{ getVehicleNameById(order.product?.type_vehicle_id) }}</td>
-                        <td>{{cumplimiento}} %</td>
-                        <td>{{cronograma}} %</td>
+                        <td>{{ order.order_id }}</td>
+                        <td>{{ order.createdAt | date:'dd/MM/yyyy'  }}</td>
+                        <td>{{ order.user?.username }}</td>
+                        <td>{{ order.product?.typeVehicle?.name }}</td>
+                        <td>{{ order.cumplimiento}} %</td>
+                        <td>{{ order.avanceCronograma }} %</td>
                         <td class="table-actions">
                             <a (click)="goToDetails(order.order_id)">Ver solicitud</a>
                         </td>

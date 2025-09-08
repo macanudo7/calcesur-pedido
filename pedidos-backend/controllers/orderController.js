@@ -87,6 +87,18 @@ const orderController = {
         } catch (error) {
             res.status(500).json({error: error.message});
         }
+    },
+    async getOrdersWithPendingChangeRequests(req, res) {
+      try {
+        const year = req.query.year ? Number(req.query.year) : null;
+        const month = req.query.month ? Number(req.query.month) : null;
+
+        const orders = await orderService.getOrdersWithPendingChangeRequests(year, month);
+        return res.status(200).json(orders);
+      } catch (error) {
+        console.error('Error getOrdersWithPendingChangeRequests controller:', error);
+        return res.status(500).json({ error: error.message || 'Error al obtener pedidos con CR pendientes.' });
+      }
     }
 };
 module.exports = orderController;

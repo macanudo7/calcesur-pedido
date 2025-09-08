@@ -25,6 +25,10 @@ export interface OrderDate {
 export interface OrderHistory {
   order_id: number; // ID del pedido
   user_id: number; // ID del usuario
+  user?: {
+    user_id: number;
+    username?: string;
+  };
   product: {
       name: string;
       code: number;
@@ -39,6 +43,8 @@ export interface OrderHistory {
   updatedAt: string; // Fecha de última actualización
   orderDates: OrderDateHistory[]; // Fechas asociadas al pedido
 }
+
+
 
 export interface OrderDateHistory {
   order_date_id: number; // ID de la fecha del pedido

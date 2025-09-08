@@ -1,1 +1,155 @@
-<p>a-ver-pedidos-por-editar-eliminar works!</p>
+<section class="container mx-auto pb-8">
+  <div class="up-page py-2 px-6 section40" *ngIf="orderDetail">
+    <h2>Historial del pedido de {{ orderDetail.product?.name }}</h2>
+    <div *ngIf="orderDetail.user">Bienvenido, {{ orderDetail.user?.username }}</div>
+  </div>
+
+  <a [routerLink]="['/admin/pedidos-por-editar-o-eliminar']" class="text-blue-500 hover:underline">
+  ← Solicitudes de modificación o anulación
+</a>
+  <div class="main-page">
+
+    <h3 class="date" *ngIf="mesYAnio">
+      {{ mesYAnio | titlecase }}
+    </h3>
+
+    <div class="text-right up-table section40">
+            <div class="btn-generate">
+
+              <button 
+                (click)="toggleEditar()" 
+                class="text-white font-semibold py-2 px-6 rounded-md ml-2 mr-5"
+                [ngClass]="{ 'bg-green-500': !modoEdicion, 'bg-red-500': modoEdicion }">
+                  {{ modoEdicion ? 'Cancelar' : 'Editar' }}
+              </button>
+              <button 
+                *ngIf="modoEdicion" 
+                (click)="openConfirmSave()" 
+                class="text-white font-semibold py-2 px-6 rounded-md bg-blue-500 ml-2 mr-5">
+                  Guardar
+              </button>
+              <button 
+                  (click)="descargarTabla()" 
+                  class="text-white font-semibold py-2 px-6 rounded-md">
+                      Descargar
+              </button>
+            </div>
+        </div>
+
+
+    <div class="main-table">
+      <table class="table-auto w-full border-collapse text-center">
+        <thead>
+          <tr class="text-white font-bold">
+            <th class="p-[15px]">Fecha</th>
+            <th class="p-[15px]">Cantidad (Tm)</th>
+            <th class="p-[15px]">Estado del pedido</th>
+            <th class="p-[15px]">Entregado</th>
+            <th class="p-[15px]">Observación</th>
+            <th class="p-[15px]">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let date of fechasDelMes">
+            <ng-container *ngIf="orderDatesMap[date.toDateString()] as od">
+              <td class="border px-4 py-2">{{ date | date: 'shortDate' }}</td>
+              <td class="border px-4 py-2">
+                <input
+                  type="number"
+                  [(ngModel)]="od.quantity"
+                  class="placeholder:text-gray-300 w-full"
+                  placeholder="Ejm: 20"
+                  [disabled]="!modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending'"
+                  [ngClass]="{
+                    'bg-gray-200 !important': !modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending',
+                    'bg-white !important': modoEdicion && esFechaEditable(date) && od?.latestCR?.status !== 'pending'
+                  }"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+              </td>
+              <td class="border px-4 py-2">
+                <span
+                  *ngIf="orderDatesMap[date.toDateString()]?.quantity > 0"
+                  [ngClass]="{
+                    'bg-yellow-300 text-black': orderDatesMap[date.toDateString()].status === 'pending',
+                    'bg-green-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed',
+                    'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination',
+                    'bg-red-300 text-white': orderDatesMap[date.toDateString()].status === 'canceled'
+                  }"
+                  class="px-4 py-2 rounded"
+                >
+                  {{
+
+                    !orderDatesMap[date.toDateString()].status
+                      ? 'Nuevo'
+                      : orderDatesMap[date.toDateString()].status === 'pending'
+                      ? 'Por confirmar'
+                      : orderDatesMap[date.toDateString()].status === 'confirmed'
+                      ? 'Confirmado'
+                      : orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
+                      ? 'Por confirmar su eliminación'
+                      : orderDatesMap[date.toDateString()].status === 'canceled'
+                      ? 'Cancelado'
+                      : ''
+                  }}
+                </span>
+              </td>
+              <td class="border px-4 py-2">
+                <span
+                  *ngIf="orderDatesMap[date.toDateString()]?.is_delivered !== null"
+                  [ngClass]="{
+                    'bg-blue-200 text-black': orderDatesMap[date.toDateString()].is_delivered === 'por_entregar',
+                    'bg-blue-500 text-white': orderDatesMap[date.toDateString()].is_delivered === 'entregado',
+                    'bg-red-300 text-white': orderDatesMap[date.toDateString()].is_delivered === 'no-entregado'
+                  }"
+                  class="px-4 py-2 rounded"
+                >
+                  {{
+                    orderDatesMap[date.toDateString()].is_delivered === 'por_entregar'
+                      ? 'Por entregar'
+                      : orderDatesMap[date.toDateString()].is_delivered === 'entregado'
+                      ? 'Entregado'
+                      : orderDatesMap[date.toDateString()].is_delivered === 'no-entregado'
+                      ? 'No entregado'
+                      : ''
+                  }}
+                </span>
+              </td>
+              <td class="border px-4 py-2">
+                <ng-container *ngIf="orderDatesMap[date.toDateString()]?.latestCR as cr; else noObs">
+                  <div class="text-sm font-medium">{{ cr.request_type }}</div>
+                  <div class="text-xs text-gray-600">{{ cr.admin_notes }}</div>
+                </ng-container>
+                <ng-template #noObs>
+                  <span class="text-xs text-gray-400">—</span>
+                </ng-template>
+              </td>
+              <td class="border px-4 py-2">
+                <button
+                  *ngIf="modoEdicion && esFechaEditable(date) && od?.order_date_id && od?.latestCR?.status !== 'pending'"
+                  (click)="eliminarOrderDate(date)"
+                  class="text-red-600 hover:underline"
+                  type="button"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </ng-container>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="confirmSaveVisible" class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="bg-white rounded-lg shadow-lg z-10 max-w-lg w-full p-6">
+      <h3 class="text-lg font-semibold mb-4">¿Guardar cambios?</h3>
+      <p class="mb-6">¿Está seguro que desea guardar el pedido? Al confirmar se guardarán los cambios y será enviado al historial de pedidos.</p>
+      <div class="flex justify-end space-x-3">
+        <button (click)="cancelConfirmSave()" class="px-4 py-2 rounded border">Cancelar</button>
+        <button (click)="confirmSave()" class="px-4 py-2 rounded bg-green-500 text-white">Guardar</button>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,4 +1,4 @@
-@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3MTk0ODc2LCJleHAiOjE3NTcxOTg0NzZ9.E-XAj9EJJV--jtiuWTVhXj6pUYojfPaLJNgsF0nYPrQ
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3MzAzODg0LCJleHAiOjE3NTczMDc0ODR9.I8XzqKE79hS5lm9OzMu3huKm-qtdThG_Jvm-Y3dDMJo
 
 ###REGISTRAR USUARIO
 POST http://localhost:3000/api/users
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 ###ELIMINAR USUARIO
 DELETE http://localhost:3000/api/users/10
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMSwidXNlcl90eXBlIjoiY2xpZW50IiwidXNlcm5hbWUiOiJjbGllbnRlLW1pbmEteHl6IiwiZW1haWwiOiJjbGllbnRlLnh5ekBleGFtcGxlLmNvbSIsImlhdCI6MTc1NDgwNTQzOSwiZXhwIjoxNzU0ODA5MDM5fQ.U-_VkQXu8dqah5qkbHRuYV7J02DM7uQds-gI3Uc_vEM
+Authorization: Bearer {{admin_token}}
 
 
 ###LOGEARSE
@@ -197,7 +197,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c
 
 ###LISTAR PEDIDOS POR USUARIO Y MES
 GET http://localhost:3000/api/orders/by-user-and-month?user_id=2&year=2025&month=8&day=15
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU1NzM3NjE3LCJleHAiOjE3NTU3NDEyMTd9.THK2FiVI9DHkryNLOXxfUsjxcdmBnSegpz5LEL0dK7U
+Authorization: Bearer {{admin_token}}
 
 ###LISTAR PEDIDOS
 GET http://localhost:3000/api/orders
@@ -315,3 +315,7 @@ Content-Type: application/json
   "order_date_ids": [6,88,79],
   "limit_per_order_date": 1
 }
+
+###Devuelve Orders que tienen al menos un OrderDate con una OrderChangeRequest.status = 'pending'.
+GET http://localhost:3000/api/orders/with-pending-change-requests?year=2025&month=09
+Authorization: Bearer {{admin_token}} 

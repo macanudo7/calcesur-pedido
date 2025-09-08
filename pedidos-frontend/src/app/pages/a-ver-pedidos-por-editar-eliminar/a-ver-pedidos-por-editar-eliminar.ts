@@ -8,10 +8,11 @@ import { ChangeRequestService } from '../../services/change-request';
 import { CreateChangeRequestPayload, ChangeRequest } from '../../shared/interfaces/change-request.interface';
 import { firstValueFrom } from 'rxjs';
 import { OrderDateService } from '../../services/order-date';
+import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/modal-confirmacion';
 
 @Component({
   selector: 'app-a-ver-pedidos-por-editar-eliminar',
-  imports: [CommonModule, DatePipe, FormsModule, RouterModule],
+  imports: [CommonModule, DatePipe, FormsModule, RouterModule, ModalConfirmacion],
   templateUrl: './a-ver-pedidos-por-editar-eliminar.html',
   styleUrl: './a-ver-pedidos-por-editar-eliminar.scss',
   standalone: true,
@@ -24,11 +25,22 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
   fechasDelMes: Date[] = [];
   orderDatesMap: { [key: string]: any } = {};
   mesYAnio: string | null = null;
-  modoEdicion: boolean = false;
-  confirmSaveVisible: boolean = false;
-  isSaving: boolean = false;
-  errorMessage: string | null = null;
+  // modoEdicion y confirmación de guardado eliminados: componente en solo lectura
   latestCRsByOrderDateId: Record<number, ChangeRequest | null> = {};
+
+  // Modal confirmación
+  mostrarModalConfirmacion = false;
+  modalMessage = '';
+  pendingCR: ChangeRequest | null = null;
+  pendingAction: 'approve' | 'reject' | null = null;
+
+  // Almacén para poder deshacer cambios: keyed by request_id
+  private revertStore: Record<number, {
+    odId?: number | null;
+    odPrev?: { quantity?: number; status?: string; is_delivered?: any } | null;
+    crPrevStatus?: string | null;
+    crPrevNotes?: string | null;
+  }> = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -72,14 +84,7 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
     });
   }
 
-  toggleEditar() {
-    if (this.modoEdicion) {
-      window.location.reload();
-    } else {
-      this.modoEdicion = true;
-    }
-  }
-
+  // toggleEditar eliminado (componente ya no permite editar)
   esFechaEditable(fecha: Date): boolean {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
@@ -192,22 +197,191 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
     }
   }
 
-  eliminarOrderDate(fecha: Date) {
-    const key = fecha.toDateString();
-    const od = this.orderDatesMap[key] || {};
-    if (!od) {
-      this.orderDatesMap[key] = { quantity: 0, status: 'confirmed-elimination' };
-      return;
-    }
-    od.quantity = 0;
-    od.status = 'confirmed-elimination';
-    this.orderDatesMap[key] = od;
-    console.log(`OrderDate en ${key} marcado con quantity=0`);
-  }
-
+  // Eliminadas funciones de edición/guardado/eliminación. Componente en vista-only.
   descargarTabla(){ /* noop por ahora */ }
 
-  openConfirmSave() { this.confirmSaveVisible = true; }
-  cancelConfirmSave() { this.confirmSaveVisible = false; }
-  confirmSave() { this.confirmSaveVisible = false; /* si quieres llamar guardarCambios, añade aquí */ }
+
+  confimarCambio(){
+    alert('No implementado. Contacta con el administrador del sistema.');
+  }
+
+  openConfirmModal(action: 'approve' | 'reject', cr: ChangeRequest) {
+    console.debug('[openConfirmModal] action:', action, 'cr:', cr);
+    this.pendingCR = cr;
+    this.pendingAction = action;
+
+    // guardar snapshot previo (si no existe) para poder deshacer después
+    if (cr && cr.request_id && !this.revertStore[cr.request_id]) {
+      const odId = cr.order_date_id;
+      const odEntry = odId
+        ? Object.values(this.orderDatesMap).find((o: any) => o.order_date_id === odId)
+        : undefined;
+      this.revertStore[cr.request_id] = {
+        odId: odId ?? null,
+        odPrev: odEntry
+          ? {
+              quantity: odEntry.quantity,
+              status: odEntry.status,
+              is_delivered: odEntry.is_delivered
+            }
+          : null,
+        crPrevStatus: cr.status ?? null,
+        crPrevNotes: cr.admin_notes ?? null
+      };
+      console.debug('[openConfirmModal] saved revert snapshot for req:', cr.request_id, this.revertStore[cr.request_id]);
+    }
+
+    if (action === 'approve') {
+      this.modalMessage = cr.request_type === 'change_quantity'
+        ? '¿Confirmar cambio de cantidad?'
+        : cr.request_type === 'cancel'
+        ? '¿Confirmar cancelación del pedido?'
+        : cr.request_type === 'create_order_date'
+        ? '¿Confirmar creación de pedido?'
+        : '¿Confirmar solicitud?';
+    } else {
+      this.modalMessage = '¿Rechazar esta solicitud?';
+    }
+
+    // Mostrar modal y forzar actualización de la vista
+    this.mostrarModalConfirmacion = true;
+    try { this.cd.detectChanges(); } catch (e) { /* noop */ }
+
+    // pequeña garantía extra: asegurar que el DOM aplique estilos tras el tick
+    setTimeout(() => {
+      try {
+        const el = document.getElementById('modalConfirmRoot');
+        if (el) el.style.zIndex = '99999';
+      } catch (e) { /* noop */ }
+    }, 20);
+
+    console.debug('[openConfirmModal] mostrarModalConfirmacion set to true');
+  }
+
+  async confirmarAccion() {
+    if (!this.pendingCR || !this.pendingCR.request_id) {
+      this.mostrarModalConfirmacion = false;
+      this.pendingCR = null;
+      this.pendingAction = null;
+      return;
+    }
+
+    const reqId = this.pendingCR.request_id;
+    const nowIso = new Date().toISOString();
+
+    try {
+      if (this.pendingAction === 'approve') {
+        try {
+          if (this.pendingCR.request_type === 'change_quantity') {
+            const odId = this.pendingCR.order_date_id;
+            const newQty = (this.pendingCR as any).change_quantity;
+            if (odId && typeof newQty === 'number') {
+              await firstValueFrom(this.orderDateService.update(odId, { quantity: newQty }));
+            }
+          } else if (this.pendingCR.request_type === 'cancel') {
+            const odId = this.pendingCR.order_date_id;
+            if (odId) {
+              await firstValueFrom(this.orderDateService.update(odId, { quantity: 0, status: 'canceled' }));
+            }
+          } else if (this.pendingCR.request_type === 'create_order_date') {
+            const odId = this.pendingCR.order_date_id;
+            if (odId) {
+              await firstValueFrom(this.orderDateService.update(odId, { status: 'confirmed' }));
+            }
+          }
+        } catch (err) {
+          console.error('[confirmarAccion] error aplicando cambio en order_date:', err);
+        }
+
+        // prefijo "Aprobado: " + texto previo
+        const prevNotesApprove = (this.pendingCR.admin_notes || '').trim();
+        const newNotesApprove = prevNotesApprove ? `Aprobado: ${prevNotesApprove}` : 'Aprobado';
+        const payloadForCR = {
+          status: 'approved',
+          admin_notes: newNotesApprove,
+          admin_response_at: nowIso
+        };
+        await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, payloadForCR));
+      } else {
+        const prevNotesReject = (this.pendingCR.admin_notes || '').trim();
+        const newNotesReject = prevNotesReject ? `Rechazado: ${prevNotesReject}` : 'Rechazado';
+        const payloadForCR = {
+          status: 'rejected',
+          admin_notes: newNotesReject,
+          admin_response_at: nowIso
+        };
+        await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, payloadForCR));
+      }
+
+      // refrescar estado en UI
+      await this.loadOrderDetail();
+    } catch (err) {
+      console.error('Error actualizando change request:', err);
+    } finally {
+      this.mostrarModalConfirmacion = false;
+      try { this.cd.detectChanges(); } catch (e) { /* noop */ }
+      this.pendingCR = null;
+      this.pendingAction = null;
+    }
+  }
+
+  // NUEVO: deshacer cambio revertiendo order_date y CR a valores guardados
+  async deshacerCambio(requestId: number) {
+    const snapshot = this.revertStore[requestId];
+    if (!snapshot) {
+      console.warn('[deshacerCambio] no snapshot for', requestId);
+      return;
+    }
+
+    try {
+      // revertir order_date si había snapshot
+      if (snapshot.odId) {
+        if (snapshot.odPrev) {
+          await firstValueFrom(this.orderDateService.update(snapshot.odId, {
+            quantity: snapshot.odPrev.quantity,
+            status: snapshot.odPrev.status,
+            is_delivered: snapshot.odPrev.is_delivered
+          }));
+        } else {
+          // si no existía snapshot (por ejemplo creación), intentar eliminar el order_date
+          try {
+            await firstValueFrom(this.orderDateService.delete(snapshot.odId));
+          } catch (e) {
+            console.warn('[deshacerCambio] no se pudo eliminar order_date, ignorando:', e);
+          }
+        }
+      }
+
+      // revertir CR (status y notas) al estado previo
+      const crPrevStatus = snapshot.crPrevStatus ?? 'pending';
+      const crPrevNotes = snapshot.crPrevNotes; // puede ser string | null | undefined
+      // Construir payload de forma segura para evitar error de tipos (no pasar null si la firma no lo acepta)
+      const payloadForCR: any = { status: crPrevStatus };
+      if (crPrevNotes !== undefined) {
+        // si el backend acepta null y crPrevNotes puede ser null, lo dejamos tal cual
+        payloadForCR.admin_notes = crPrevNotes;
+      }
+      // Si quieres limpiar admin_response_at, algunos tipos no aceptan null; usar undefined para omitirlo
+      payloadForCR.admin_response_at = null; // si la firma TS lo rechaza, la variable es any y evitará el error
+      await firstValueFrom(this.changeRequestService.updateChangeRequest(requestId, payloadForCR));
+
+      // limpiar snapshot y refrescar UI
+      delete this.revertStore[requestId];
+      await this.loadOrderDetail();
+    } catch (err) {
+      console.error('[deshacerCambio] error:', err);
+    }
+  }
+  async cancelarAccion() {
+    // Cerrar modal y forzar ciclo de detección para actualizar la vista inmediatamente
+    this.mostrarModalConfirmacion = false;
+    this.pendingCR = null;
+    this.pendingAction = null;
+    try { this.cd.detectChanges(); } catch (e) { /* noop */ }
+    // pequeña garantía adicional por si hay timing/animaciones
+    setTimeout(() => {
+      try { this.cd.detectChanges(); } catch (e) { /* noop */ }
+    }, 0);
+    console.log("mostrarModalConfirmacion set to false");
+  }
 }

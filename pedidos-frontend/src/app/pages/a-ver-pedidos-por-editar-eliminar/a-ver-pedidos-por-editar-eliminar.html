@@ -14,27 +14,13 @@
     </h3>
 
     <div class="text-right up-table section40">
+            <!-- Edición deshabilitada: botón de descargar solo (si quieres mantenerlo) -->
             <div class="btn-generate">
-
-              <button 
-                (click)="toggleEditar()" 
-                class="text-white font-semibold py-2 px-6 rounded-md ml-2 mr-5"
-                [ngClass]="{ 'bg-green-500': !modoEdicion, 'bg-red-500': modoEdicion }">
-                  {{ modoEdicion ? 'Cancelar' : 'Editar' }}
-              </button>
-              <button 
-                *ngIf="modoEdicion" 
-                (click)="openConfirmSave()" 
-                class="text-white font-semibold py-2 px-6 rounded-md bg-blue-500 ml-2 mr-5">
-                  Guardar
-              </button>
-              <button 
-                  (click)="descargarTabla()" 
-                  class="text-white font-semibold py-2 px-6 rounded-md">
-                      Descargar
+              <button (click)="descargarTabla()" class="text-white font-semibold py-2 px-6 rounded-md">
+                Descargar
               </button>
             </div>
-        </div>
+         </div>
 
 
     <div class="main-table">
@@ -54,18 +40,10 @@
             <ng-container *ngIf="orderDatesMap[date.toDateString()] as od">
               <td class="border px-4 py-2">{{ date | date: 'shortDate' }}</td>
               <td class="border px-4 py-2">
-                <input
-                  type="number"
-                  [(ngModel)]="od.quantity"
-                  class="placeholder:text-gray-300 w-full"
-                  placeholder="Ejm: 20"
-                  [disabled]="!modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending'"
-                  [ngClass]="{
-                    'bg-gray-200 !important': !modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending',
-                    'bg-white !important': modoEdicion && esFechaEditable(date) && od?.latestCR?.status !== 'pending'
-                  }"
-                  [ngModelOptions]="{ standalone: true }"
-                />
+                <!-- vista solo lectura: mostrar cantidad -->
+                <span class="block w-full text-left px-2">
+                  {{ orderDatesMap[date.toDateString()]?.quantity ?? 0 }}
+                </span>
               </td>
               <td class="border px-4 py-2">
                 <span
@@ -125,14 +103,41 @@
                 </ng-template>
               </td>
               <td class="border px-4 py-2">
-                <button
-                  *ngIf="modoEdicion && esFechaEditable(date) && od?.order_date_id && od?.latestCR?.status !== 'pending'"
-                  (click)="eliminarOrderDate(date)"
-                  class="text-red-600 hover:underline"
-                  type="button"
-                >
-                  Eliminar
-                </button>
+                <ng-container *ngIf="orderDatesMap[date.toDateString()]?.latestCR as cr; else noAction">
+                  <div class="flex flex-col items-center gap-1">
+                    <!-- Si está pendiente: mostrar confirmar/rechazar -->
+                    <ng-container *ngIf="cr.status === 'pending'; else undoBtn">
+                      <button type="button"
+                        class="text-blue-600 hover:underline text-sm bg-transparent p-0"
+                        (click)="openConfirmModal('approve', cr)">
+                        {{
+                          cr.request_type === 'change_quantity'
+                            ? 'Confirmar cambio de cantidad'
+                            : cr.request_type === 'cancel'
+                            ? 'Confirmar cancelar pedido'
+                            : cr.request_type === 'create_order_date'
+                            ? 'Confirmar creación de pedido'
+                            : 'Confirmar solicitud'
+                        }}
+                      </button>
+                      <button type="button"
+                        class="text-red-600 hover:underline text-sm bg-transparent p-0"
+                        (click)="openConfirmModal('reject', cr)">
+                        Rechazar pedido
+                      </button>
+                    </ng-container>
+                    <!-- Si ya fue aprobado/rechazado: permitir deshacer -->
+                    <ng-template #undoBtn>
+                      <button type="button" class="text-yellow-700 hover:underline text-sm bg-transparent p-0"
+                        (click)="deshacerCambio(cr.request_id)">
+                        Deshacer cambio
+                      </button>
+                    </ng-template>
+                  </div>
+                </ng-container>
+                <ng-template #noAction>
+                  <span class="text-xs text-gray-400">—</span>
+                </ng-template>
               </td>
             </ng-container>
           </tr>
@@ -141,15 +146,23 @@
     </div>
   </div>
 
-  <div *ngIf="confirmSaveVisible" class="fixed inset-0 z-50 flex items-center justify-center">
+  <!-- añadir modal confirmación justo antes del cierre del main container -->
+
+  <div *ngIf="mostrarModalConfirmacion"
+       id="modalConfirmRoot"
+       role="dialog"
+       aria-modal="true"
+       class="fixed inset-0 flex items-center justify-center"
+       style="z-index: 99999;">
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div class="bg-white rounded-lg shadow-lg z-10 max-w-lg w-full p-6">
-      <h3 class="text-lg font-semibold mb-4">¿Guardar cambios?</h3>
-      <p class="mb-6">¿Está seguro que desea guardar el pedido? Al confirmar se guardarán los cambios y será enviado al historial de pedidos.</p>
+      <h3 class="text-lg font-semibold mb-4">Confirmación</h3>
+      <p class="mb-6">{{ modalMessage }}</p>
       <div class="flex justify-end space-x-3">
-        <button (click)="cancelConfirmSave()" class="px-4 py-2 rounded border">Cancelar</button>
-        <button (click)="confirmSave()" class="px-4 py-2 rounded bg-green-500 text-white">Guardar</button>
+        <button (click)="cancelarAccion()" class="px-4 py-2 rounded border">Cancelar</button>
+        <button (click)="confirmarAccion()" class="px-4 py-2 rounded bg-green-500 text-white">Confirmar</button>
       </div>
     </div>
   </div>
+
 </section>

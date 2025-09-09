@@ -1,7 +1,13 @@
 <header class="header-admin">
-    <div class="container mx-auto flex justify-between">
-        <img src="/logos-bl.png">
-        <nav class="flex justify-around">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="flex justify-between items-center">
+            <img src="/logos-bl.png" class="logo" alt="Logo">
+
+            <button class="hamburger" (click)="toggleMenu()" aria-label="Abrir menú">
+                ☰
+            </button>
+        </div>
+        <nav class="flex justify-around" [class.open]="menuOpen">
             <div class="flex flex-col relative items-center text-white" (click)="togglePedidosSubmenu()">
                 <img src="/icon-historial-pedidos.png">
                 <span class="text-sm">
@@ -14,7 +20,7 @@
                 </span>
                 <!-- Submenú -->
                 @if (showPedidosSubmenu) {
-                <div class="ccc absolute top-full left-0 bg-white text-black rounded shadow-lg mt-2 z-50 min-w-[200px]">
+                <div class="ccc top-full left-0 bg-white text-black rounded shadow-lg mt-2 z-50 min-w-[200px]">
                     <a routerLink="/admin/pedidos-por-confirmar" class="block px-4 py-2 hover:bg-gray-100">Pedidos por
                         confirmar</a>
                     <hr>
@@ -58,12 +64,8 @@
                 </span>
                 <!-- Submenú -->
                 @if (showReportesSubmenu) {
-                <div class="absolute top-full left-0 bg-white text-black rounded shadow-lg mt-2 z-50 min-w-[200px]">
-                    <a routerLink="/admin/programacion-semanal" class="block px-4 py-2 hover:bg-gray-100">Programación
-                        semanal</a>
-                    <hr>
-                    <a routerLink="/admin/programacion-mes" class="block px-4 py-2 hover:bg-gray-100">Programación del
-                        mes</a>
+                <div class="ccc top-full left-0 bg-white text-black rounded shadow-lg mt-2 z-50 min-w-[200px]">
+                    <a routerLink="/admin/programacion-semanal" class="block px-4 py-2 hover:bg-gray-100">Programación</a>
                     <hr>
                     <a routerLink="/admin/efectividad-por-entrega" class="block px-4 py-2 hover:bg-gray-100">Efectividad
                         de entrega</a>

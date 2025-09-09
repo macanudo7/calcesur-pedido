@@ -33,6 +33,7 @@
                         <th class="p-[15px]">Día de solicitud</th>
                         <th class="p-[15px]">Cliente</th>
                         <th class="p-[15px]">Producto</th>
+                        <th class="p-[15px]">Vehículo</th>
                         <th class="p-[15px]">Cumplimiento a la fecha</th>
                         <th class="p-[15px]">Avance del cronograma</th>
                         <th class="p-[15px]">Acciones</th>
@@ -44,6 +45,7 @@
                         <td>{{ order.order_id }}</td>
                         <td>{{ order.createdAt | date:'dd/MM/yyyy'  }}</td>
                         <td>{{ order.user?.username }}</td>
+                        <td>{{ order.product?.name }}</td>
                         <td>{{ order.product?.typeVehicle?.name }}</td>
                         <td>{{ order.cumplimiento}} %</td>
                         <td>{{ order.avanceCronograma }} %</td>

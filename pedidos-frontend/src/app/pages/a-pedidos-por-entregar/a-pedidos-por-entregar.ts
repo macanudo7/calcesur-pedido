@@ -32,6 +32,30 @@ export class APedidosPorEntregar implements OnInit{
   cumplimiento: number;
   cronograma: number;
 
+  baseMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+  // currentMonth ya lo tienes:
+  currentMonth = signal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+
+  canGoPrev = computed(() => {
+    const cur = this.currentMonth();
+    const limit = new Date(this.baseMonth.getFullYear(), this.baseMonth.getMonth() - 1, 1);
+    return cur > limit;
+  });
+
+  canGoNext = computed(() => {
+    const cur = this.currentMonth();
+    const limit = new Date(this.baseMonth.getFullYear(), this.baseMonth.getMonth() + 1, 1);
+    return cur < limit;
+  });
+
+
+  displayMonth = computed(() => {
+    const d = this.currentMonth();
+
+    return d.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+  });
+
   pendingOrders = computed(() =>
     this.allOrders().filter(order => order.status === 'confirmed')
   );
@@ -78,18 +102,61 @@ export class APedidosPorEntregar implements OnInit{
     });
   }
 
+  // filteredOrders = computed(() => {
+  //   const term = this.searchTerm().toLowerCase();
+  //   const type = this.selectedUserType();
+
+  //   return this.allOrders()
+  //     .filter(order => order.status === 'confirmed')
+  //     .filter(u => {
+  //       const matchesName = term ? u.user?.name.toLowerCase().includes(term) : true;
+  //       const matchesType = type ? u.product?.name === type : true;
+  //       return matchesName && matchesType;
+  //     });
+  // });
+
   filteredOrders = computed(() => {
     const term = this.searchTerm().toLowerCase();
     const type = this.selectedUserType();
+    const monthDate = this.currentMonth(); // primer día del mes
+    const targetYear = monthDate.getFullYear();
+    const targetMonth = monthDate.getMonth(); // 0..11
 
     return this.allOrders()
       .filter(order => order.status === 'confirmed')
       .filter(u => {
-        const matchesName = term ? u.user?.name.toLowerCase().includes(term) : true;
+        const matchesName = term ? (u.user?.name ?? '').toLowerCase().includes(term) : true;
         const matchesType = type ? u.product?.name === type : true;
-        return matchesName && matchesType;
+        if (!matchesName || !matchesType) return false;
+
+        // filtrar por mes: comparar año y mes
+        if (!u.createdAt) return false;
+        const created = new Date(u.createdAt);
+        return created.getFullYear() === targetYear && created.getMonth() === targetMonth;
       });
   });
+
+  // ---- navegación de meses ----
+  prevMonth() {
+    if (this.canGoPrev()) {
+      const cur = this.currentMonth();
+      const prev = new Date(cur.getFullYear(), cur.getMonth() - 1, 1);
+      this.currentMonth.set(prev);
+    }
+  }
+
+  nextMonth() {
+    if (this.canGoNext()) {
+      const cur = this.currentMonth();
+      const next = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+      this.currentMonth.set(next);
+    }
+  }
+
+  goToCurrentMonth() {
+    const now = new Date();
+    this.currentMonth.set(new Date(now.getFullYear(), now.getMonth(), 1));
+  }
 
   getVehicleNameById(vehicleId?: number): string {
     if (!vehicleId) return 'Desconocido';

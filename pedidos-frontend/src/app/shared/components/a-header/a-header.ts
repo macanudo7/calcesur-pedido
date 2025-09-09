@@ -1,7 +1,8 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { Auth } from '../../../services/auth';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-a-header',
@@ -12,6 +13,8 @@ import { CommonModule } from '@angular/common';
 })
 export class AHeader {
 
+  menuOpen = false;
+
   showPedidosSubmenu = false;
   showReportesSubmenu = false;
 
@@ -19,7 +22,20 @@ export class AHeader {
     private router: Router,
     private AuthService: Auth,
     private cd: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.menuOpen = false;
+      this.cd.detectChanges();
+    });
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+    this.cd.detectChanges();
+    console.log('menuOpen:', this.menuOpen);
+  }
 
   logOut() {
     this.AuthService.logout();

@@ -43,6 +43,7 @@ export class AAgregarUsuario implements OnInit {
       phone: ['', Validators.maxLength(50)],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
       userType: ['', Validators.required],
+      user_code: [''], 
       status: ['', Validators.required],
       ruc: ['', Validators.maxLength(11)],
       leadTimeDays: [''],
@@ -86,6 +87,7 @@ export class AAgregarUsuario implements OnInit {
         email: this.userForm.value.email,
         userType: this.userForm.value.userType,
         status: this.userForm.value.status,
+        user_code: this.userForm.value.user_code,
         ruc: this.userForm.value.ruc,
         leadTimeDays: this.userForm.value.leadTimeDays,
       };

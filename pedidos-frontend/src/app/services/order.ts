@@ -11,7 +11,9 @@ export class Order {
   private orderSource = new BehaviorSubject<OrderForm[]>([]);
   orders$ = this.orderSource.asObservable();
 
-
+  private baseUrlDates = 'http://localhost:3000/api/order-dates';
+  private orderDetailSource = new BehaviorSubject<OrderDetail[]>([]);
+  ordersDetail$ = this.orderDetailSource.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -104,6 +106,13 @@ export class Order {
   }
 
 
+  getOrdersWithDates() {
+    this.http.get<OrderDetail[]>(this.baseUrlDates, { headers: this.getHeaders() })
+      .pipe(
+        tap(orderDetails => this.orderDetailSource.next(orderDetails))
+      )
+      .subscribe();
+  }
 
 
 

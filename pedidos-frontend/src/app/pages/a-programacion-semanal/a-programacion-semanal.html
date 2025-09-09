@@ -1,78 +1,72 @@
-<section class="container mx-auto">
+<section class="container mx-auto section">
     <div class="up-page py-2 px-6 section40">
-        <h2>Programación semanal</h2>
+        <h2>Programación de pedidos</h2>
         <div>Bienvenido, {{nameOfUser}}</div>
     </div>
     <div class="main-page py-1">
 
-    <h3 class="date">Agosto 2025</h3>
+        <!-- <h3 class="date">Agosto 2025</h3> -->
 
         <div class="text-right up-table section40">
+            <div class="flex gap-4 py-4 flex-col items-start">
+                <label>
+                    Desde:
+                    <input type="date" [value]="fechaInicio()"
+                        (input)="fechaInicio.set($any($event.target).value)">
+                </label>
+                <label>
+                    Hasta:
+                    <input type="date" [value]="fechaFin()"
+                        (input)="fechaFin.set($any($event.target).value)">
+                </label>
+            </div>
             <div class="btn-generate">
-                <button 
-                    (click)="descargarTabla()" 
-                    class="text-white font-semibold py-2 px-6 rounded-md">
-                        Descargar
+                <button (click)="descargarTabla()" class="text-white font-semibold py-2 px-6 rounded-md">
+                    Descargar
                 </button>
             </div>
         </div>
-        <div class="main-table">
+        <div class="main-table" *ngIf="orders$ | async as orders">
             <table class="table-auto w-full border-collapse text-center">
                 <thead>
                     <tr class="text-white font-bold">
                         <th class="p-[15px]">Código</th>
                         <th class="p-[15px]">Cliente</th>
-                        <th class="p-[15px]">Tipo de vehículo</th>                        
-                        <th class="p-[15px]">01/08/25</th>
-                        <th class="p-[15px]">02/08/25</th>
-                        <th class="p-[15px]">03/08/25</th>
-                        <th class="p-[15px]">04/08/25</th>
+                        <th class="p-[15px]" style="min-width: 200px;">Producto</th>
+                        <th class="p-[15px]">Tipo de vehículo</th>
+                        <th *ngFor="let fecha of fechasFiltradas()" class="p-[15px]">
+                            {{ fecha | date:'dd/MM/yy' }}
+                        </th>
                         <th class="p-[15px]">Total general</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    <tr>
-                        <td>0001</td>
-                        <td>Empresa A</td>
-                        <td>Bombona</td>
-                        <td>Cal granulada</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td></td>
-                        <td>2</td>
-                        
+                    <tr *ngFor="let order of orders">
+                        <td>{{ order.order_id }}</td>
+                        <td>{{ order.user?.name }}</td>
+                        <td>{{ order.product?.name }}</td>
+                        <td>{{ getVehicleNameById(order.product?.type_vehicle_id) }}</td>
+
+                        <!-- Renderizar cantidades por fecha -->
+                        <td *ngFor="let fecha of fechasFiltradas()">
+                            {{ getCantidadPorFecha(order, fecha) }}
+                        </td>
+
+                        <td>{{ getTotalOrder(order) }}</td>
                     </tr>
-                    <tr>
-                        <td>0001</td>
-                        <td>Empresa A</td>
-                        <td>Bombona</td>
-                        <td>Cal granulada</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td></td>
-                        <td>2</td>
-                    </tr>
-                    <tr>
-                        <td>0001</td>
-                        <td>Empresa A</td>
-                        <td>Bombona</td>
-                        <td>Cal granulada</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td></td>
-                        <td>2</td>
-                    </tr>
-                    <tr class="bottom-table">
+
+                    <!-- Fila de totales -->
+                    <tr class="bottom-table font-bold">
                         <td>Total general</td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>3</td>
-                        <td>3</td>
-                        <td></td>
-                        <td>6</td>
+                        <td *ngFor="let fecha of fechasFiltradas()">
+                            {{ getTotalPorFecha(orders, fecha) }}
+                        </td>
+                        <td>{{ getTotalGeneral(orders) }}</td>
                     </tr>
-                    
                 </tbody>
             </table>
         </div>

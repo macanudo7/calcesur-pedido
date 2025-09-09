@@ -1,22 +1,105 @@
-.header-client{
-    background: #0D3F3B;
-    padding: 20px;
-}
-.header-client img{
-    height: 100%;
-    width: auto;
-}
-.header-client nav{
-    column-gap: 40px;
-}
-.header-client nav a{
-    cursor: pointer;
-} 
-.header-client nav a img{
-    height: 30px;
-    width: auto;
-    margin-bottom: 8px;
-}
-.header-client hr{
-    color: #0000002e;
-}
+ @media screen and (max-width: 768px) {
+     .header-client.header-client {
+         position: fixed;
+         top: 0;
+         width: 100%;
+         z-index: 4;
+     }
+
+     .hamburger.hamburger {
+         display: block;
+     }
+
+     .header-client.header-client nav {
+         display: none;
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 20px;
+         //  margin-top: 20px;
+     }
+
+     .header-client.header-client nav.open {
+         display: flex;
+         justify-content: flex-start;
+         align-items: center;
+         row-gap: 30px;
+         top: 82px;
+         left: 0px;
+         width: 100%;
+         height: 93vh;
+         position: fixed;
+         background: #0d3f3b;
+         padding: 30px 20px;
+         z-index: 4;
+     }
+
+     .header-client.header-client>div {
+         position: relative;
+     }
+
+      .header-client.header-client.header-client.header-client .logo {
+          width: 60%;
+      }
+     .header-client .container {
+         max-width: 100%;
+     }
+
+     .header-client.header-client>div>div {
+         width: 100%;
+     }
+ }
+
+ .header-client {
+     background: #0D3F3B;
+     //  padding: 20px;
+ }
+
+ .header-client>div>div {
+     padding: 20px;
+ }
+
+ .header-client img {
+     height: 100%;
+     width: auto;
+ }
+
+ .header-client nav {
+     display: flex;
+     column-gap: 40px;
+ }
+
+ .header-client nav a {
+     cursor: pointer;
+ }
+
+ .header-client .nav-link {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     color: white;
+     text-decoration: none;
+     cursor: pointer;
+ }
+
+ .header-client nav a img {
+     height: 30px;
+     width: auto;
+     margin-bottom: 8px;
+ }
+
+ .header-client hr {
+     color: #0000002e;
+ }
+
+ .header-client .nav-link span {
+     font-size: 0.875rem;
+ }
+
+ .hamburger {
+     display: none;
+     font-size: 28px;
+     color: white;
+     background: none;
+     border: none;
+     cursor: pointer;
+ }

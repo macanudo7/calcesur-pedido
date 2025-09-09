@@ -1,4 +1,4 @@
-<section class="container mx-auto pb-8">
+<section class="container mx-auto pb-8 section">
     <div class="up-page py-2 px-6 section40">
         <h2>Generar pedidos</h2>
         <div>Bienvenido, {{nameOfUser}}</div>
@@ -30,7 +30,7 @@
               </a>
             </div>
           </div>
-        <div class="flex justify-between up-table section40">
+        <div class="flex justify-between up-table items-center section40">
 
             <div class="block mb-6 flex">
                 <ng-container *ngIf="(products$ | async) as products">
@@ -89,10 +89,10 @@
                         <th class="p-[15px]">Fecha</th>
                         <th class="p-[15px]">Cantidad (Tm)</th>
                         <th class="p-[15px]">Vehículo</th>
-                        <th class="p-[15px]">Estado del pedido</th>
-                        <th class="p-[15px]">Entregado</th>
-                        <th class="p-[15px]">Observación</th>
-                        <th class="p-[15px]">Acciones</th>
+                        <th class="p-[15px] d-none">Estado del pedido</th>
+                        <th class="p-[15px] d-none">Entregado</th>
+                        <th class="p-[15px] d-none">Observación</th>
+                        <th class="p-[15px] d-none">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -113,10 +113,10 @@
                         />
                     </td>
                     <td class="border px-4 py-2">{{ vehiculoSeleccionado }}</td>
-                    <td class="border px-4 py-2"></td>
-                    <td class="border px-4 py-2"></td>
-                    <td class="border px-4 py-2"></td>
-                    <td class="border px-4 py-2 table-actions"></td>
+                    <td class="border px-4 py-2 d-none"></td>
+                    <td class="border px-4 py-2 d-none"></td>
+                    <td class="border px-4 py-2 d-none"></td>
+                    <td class="border px-4 py-2 table-actions d-none"></td>
                     </tr>
 
                 </tbody>

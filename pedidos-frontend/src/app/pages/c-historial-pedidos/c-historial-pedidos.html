@@ -1,4 +1,4 @@
-<section class="container mx-auto">
+<section class="container mx-auto section">
   <div class="up-page py-2 px-6 section40">
     <h2>Historial de pedidos</h2>
     <div>Bienvenido, {{ nameOfUser }}</div>
@@ -56,7 +56,7 @@
             <td class="border px-4 py-2">{{ order.avanceCronograma }}%</td>
             <td class="border px-4 py-2 table-actions">
               <a [routerLink]="['/cliente/detalle-pedido', order.order_id]">Ver detalle</a>
-              <a [routerLink]="['/editar-pedido', order.order_id]">Editar solicitud</a>
+              <!-- <a [routerLink]="['/editar-pedido', order.order_id]">Editar solicitud</a> -->
             </td>
           </tr>
         </tbody>

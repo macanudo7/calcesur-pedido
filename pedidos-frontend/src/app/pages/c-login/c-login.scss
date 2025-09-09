@@ -1,3 +1,12 @@
+@media screen and (max-width: 768px){
+    .section-login.section-login .bg-login{
+        width: 0;
+    }
+    .section-login.section-login .form-login{
+        width: 100%;
+        max-width: 100%;
+    }
+}
 .section-login{
     height: 100vh;
     display: flex;

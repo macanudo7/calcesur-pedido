@@ -1,3 +1,8 @@
+@media screen and (max-width: 768px){
+    .main-table{
+        overflow-x: auto;
+    }
+}
 .up-page{
     background: #ECEFF6;
     display: flex;

@@ -1,4 +1,4 @@
-<header class="header-client">
+<!-- <header class="header-client">
     <div class="container mx-auto flex justify-between">
         <img src="/logos-bl.png">
         <nav class="flex justify-around">
@@ -18,4 +18,33 @@
             </a>
         </nav>
     </div>
+</header> -->
+
+<header class="header-client">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="flex justify-between items-center">
+            <img src="/logos-bl.png" class="logo" alt="Logo">
+
+            <button class="hamburger" (click)="toggleMenu()" aria-label="Abrir menú">
+                ☰
+            </button>
+        </div>
+
+
+        <nav [class.open]="menuOpen">
+            <a routerLink="/cliente/generar-pedido" class="nav-link">
+                <img src="/icon-generar-pedidos.png" alt="Generar pedidos">
+                <span>Generar pedidos</span>
+            </a>
+            <a routerLink="/cliente/historial-pedidos" class="nav-link">
+                <img src="/icon-historial-pedidos.png" alt="Historial">
+                <span>Historial de pedidos</span>
+            </a>
+            <a (click)="logOut()" class="nav-link">
+                <img src="/icon-cerrar-sesion.png" alt="Cerrar sesión">
+                <span>Cerrar sesión</span>
+            </a>
+        </nav>
+    </div>
+
 </header>

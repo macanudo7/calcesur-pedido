@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Auth } from '../../../services/auth';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-c-header',
@@ -11,10 +12,26 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class CHeader {
 
+  menuOpen = false;
+
   constructor(
     private router: Router,
     private AuthService: Auth,
-  ) {}
+    private cd: ChangeDetectorRef,
+  ) {
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.menuOpen = false;
+      this.cd.detectChanges();
+    });
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+    this.cd.detectChanges();
+    console.log('menuOpen:', this.menuOpen);
+  }
 
   logOut() {
     this.AuthService.logout();

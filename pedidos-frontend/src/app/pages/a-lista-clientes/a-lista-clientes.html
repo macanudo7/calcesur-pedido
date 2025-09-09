@@ -24,6 +24,7 @@
             <table class="table-auto w-full border-collapse text-center">
                 <thead>
                     <tr class="text-white font-bold">
+                        <th class="p-[15px]">Código</th>
                         <th class="p-[15px]">Cliente</th>
                         <th class="p-[15px]">¿Solicitó productos este mes?</th>
                     </tr>
@@ -31,6 +32,7 @@
                 <tbody>
 
                     <tr *ngFor="let user of filteredUsers()">
+                        <td>{{ user.user_code }}</td>
                         <td>{{ user.name }}</td>
                         <td>{{ user.existOrder ? '✅ Sí' : '❌ No' }}</td>
                     </tr>

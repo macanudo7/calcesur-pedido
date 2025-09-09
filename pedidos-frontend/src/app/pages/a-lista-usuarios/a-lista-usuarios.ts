@@ -27,13 +27,11 @@ export class AListaUsuarios implements OnInit {
   userTypes = [
     { value: 'client', label: 'Cliente' },
     { value: 'admin', label: 'Administrador' },
-    { value: 'editor', label: 'Editor' },
   ];
 
   userTypeMap: Record<string, string> = {
     client: 'Cliente',
     admin: 'Administrador',
-    editor: 'Editor'
   };
 
   constructor(
@@ -49,6 +47,7 @@ export class AListaUsuarios implements OnInit {
 
     this.users$.subscribe(users => {
       this.allUsers.set(users);
+      console.log(users);
     });
 
   }

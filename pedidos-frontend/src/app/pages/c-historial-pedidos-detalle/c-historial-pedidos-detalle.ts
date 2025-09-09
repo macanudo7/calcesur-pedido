@@ -200,6 +200,40 @@ export class CHistorialPedidosDetalle implements OnInit {
       // 2) Crear CRs para modificaciones/eliminaciones existentes (deduped)
       for (const cr of dedupedCRs) {
         try {
+          // Antes de crear el CR, actualizar el estado del order_date según el tipo de solicitud
+          // change_quantity -> status 'pending'
+          // cancel -> status 'confirmed-elimination'
+          if (cr.order_date_id) {
+            const statusToSet =
+              cr.request_type === 'change_quantity'
+                ? 'pending'
+                : cr.request_type === 'cancel'
+                ? 'confirmed-elimination'
+                : undefined;
+
+            if (statusToSet) {
+              try {
+                // actualizar en backend
+                await firstValueFrom(this.orderDateService.update(cr.order_date_id, { status: statusToSet }));
+              } catch (errUpdate) {
+                console.warn('[guardarCambios] no se pudo actualizar estado de order_date antes de crear CR:', errUpdate);
+              }
+
+              // actualizar copia local para reflejar el cambio inmediatamente en la UI
+              for (const k of Object.keys(this.orderDatesMap)) {
+                const od = this.orderDatesMap[k];
+                if (od?.order_date_id === cr.order_date_id) {
+                  od.status = statusToSet;
+                  this.orderDatesMap[k] = od;
+                }
+              }
+              // forzar cambio de referencia para Angular
+              this.orderDatesMap = { ...this.orderDatesMap };
+              try { this.cd.detectChanges(); } catch (e) { /* noop */ }
+            }
+          }
+
+          // finalmente crear el change request
           await firstValueFrom(this.changeRequestService.createChangeRequest(cr));
         } catch (err: any) {
           crErrors.push({ type: 'existing', cr, err });

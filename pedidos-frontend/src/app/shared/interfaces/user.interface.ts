@@ -15,6 +15,7 @@ export interface UserForm {
   createdAt?: Date;
   updatedAt?: Date;
   existOrder?: boolean;
+  user_code?: string;
 }
 
 // "username": "cliente-mina-xyz",

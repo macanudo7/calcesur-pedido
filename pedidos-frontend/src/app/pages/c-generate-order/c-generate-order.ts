@@ -165,6 +165,7 @@ export class CGenerateOrder implements OnInit{
       next: (response) => {
         this.mostrarModalConfirmacion = false;
         this.pendingPayload = null;
+        console.log( 'aaa', response );
         // navegar al historial de pedidos
         this.mostrarModalExito = true;
         this.errorMessage = null; // Limpia el mensaje de error

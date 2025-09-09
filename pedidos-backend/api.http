@@ -1,4 +1,4 @@
-@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3MzAzODg0LCJleHAiOjE3NTczMDc0ODR9.I8XzqKE79hS5lm9OzMu3huKm-qtdThG_Jvm-Y3dDMJo
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3NDUwMDE1LCJleHAiOjE3NTc0NTM2MTV9.vB02Ub0RBO_t9kKL0WHJCk5rsjHU08U6ma3e8rpFCQo
 
 ###REGISTRAR USUARIO
 POST http://localhost:3000/api/users
@@ -303,7 +303,7 @@ DELETE http://localhost:3000/api/order-dates/68
 Authorization: Bearer {{admin_token}}
 
 ###Ordernet Change Requests por Id
-GET http://localhost:3000/api/order-dates/88/change-requests
+GET http://localhost:3000/api/order-dates/10/change-requests
 Authorization: Bearer {{admin_token}}
 
 ###Consulta para obtener la ultima cr de cada order date

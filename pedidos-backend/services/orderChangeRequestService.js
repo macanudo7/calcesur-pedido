@@ -98,6 +98,7 @@ const OrderChangeRequestsService = {
                 order_date_id: r.order_date_id,
                 request_type: r.request_type,
                 change_quantity: r.change_quantity,
+                original_quantity: r.original_quantity || null,
                 admin_notes: r.admin_notes || null,
                 status: r.status || null,
                 requested_by: r.requested_by || r.user_id || null,

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, } from '@angular/core';
 import { Order } from '../../services/order';
 import { OrderDetail, OrderForm } from '../../shared/interfaces/order.interface';
 import { DatePipe, CommonModule } from '@angular/common';
@@ -30,6 +30,7 @@ export class CHistorialPedidosDetalle implements OnInit {
   isSaving: boolean = false; // <-- nueva prop
   errorMessage: string | null = null; // <-- nueva prop
   latestCRsByOrderDateId: Record<number, ChangeRequest | null> = {};
+  private _hasPending = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -136,6 +137,7 @@ export class CHistorialPedidosDetalle implements OnInit {
           order_date_id: originalOrderDate.order_date_id!,
           request_type: 'change_quantity',
           change_quantity: currentQty,
+          original_quantity: originalQty, // NUEVO
           admin_notes: `Solicitud de cambio desde cliente: ${originalQty} → ${currentQty}`
         });
       }
@@ -158,6 +160,7 @@ export class CHistorialPedidosDetalle implements OnInit {
           order_date_id: originalOrderDate.order_date_id!,
           request_type: 'cancel',
           change_quantity: 0,
+          original_quantity: originalQty, // NUEVO
           admin_notes: 'Solicitud de eliminación desde cliente'
         });
       }
@@ -190,6 +193,7 @@ export class CHistorialPedidosDetalle implements OnInit {
             order_date_id: created.order_date_id,
             request_type: 'create_order_date',
             change_quantity: created.quantity,
+            original_quantity: 0, 
             admin_notes: 'Pedido nuevo desde cliente'
           }));
         } catch (err: any) {
@@ -200,40 +204,33 @@ export class CHistorialPedidosDetalle implements OnInit {
       // 2) Crear CRs para modificaciones/eliminaciones existentes (deduped)
       for (const cr of dedupedCRs) {
         try {
-          // Antes de crear el CR, actualizar el estado del order_date según el tipo de solicitud
-          // change_quantity -> status 'pending'
-          // cancel -> status 'confirmed-elimination'
           if (cr.order_date_id) {
             const statusToSet =
               cr.request_type === 'change_quantity'
-                ? 'pending'
+                ? 'confirmed-modification'
                 : cr.request_type === 'cancel'
                 ? 'confirmed-elimination'
                 : undefined;
 
             if (statusToSet) {
               try {
-                // actualizar en backend
                 await firstValueFrom(this.orderDateService.update(cr.order_date_id, { status: statusToSet }));
               } catch (errUpdate) {
                 console.warn('[guardarCambios] no se pudo actualizar estado de order_date antes de crear CR:', errUpdate);
               }
 
-              // actualizar copia local para reflejar el cambio inmediatamente en la UI
               for (const k of Object.keys(this.orderDatesMap)) {
                 const od = this.orderDatesMap[k];
-                if (od?.order_date_id === cr.order_date_id) {
-                  od.status = statusToSet;
-                  this.orderDatesMap[k] = od;
-                }
+                  if (od?.order_date_id === cr.order_date_id) {
+                    od.status = statusToSet;
+                    this.orderDatesMap[k] = od;
+                  }
               }
-              // forzar cambio de referencia para Angular
               this.orderDatesMap = { ...this.orderDatesMap };
-              try { this.cd.detectChanges(); } catch (e) { /* noop */ }
+              this.cd.detectChanges();
             }
           }
 
-          // finalmente crear el change request
           await firstValueFrom(this.changeRequestService.createChangeRequest(cr));
         } catch (err: any) {
           crErrors.push({ type: 'existing', cr, err });
@@ -368,12 +365,13 @@ export class CHistorialPedidosDetalle implements OnInit {
       this.orderDatesMap = { ...this.orderDatesMap };
 
       // 2) Forzar una comprobación de cambios inmediatamente
-      try { this.cd.detectChanges(); } catch (e) { /* noop si no funciona */ }
+      this.cd.detectChanges(); 
 
       console.debug('[loadLatestCRs] assigned latestCRsByOrderDateId:', this.latestCRsByOrderDateId);
     } catch (err) {
       console.error('[loadLatestCRs] unexpected error:', err);
     }
+    this.recomputeHasPending();
   }
 
   /**
@@ -405,8 +403,6 @@ export class CHistorialPedidosDetalle implements OnInit {
     console.log(`OrderDate en ${key} marcado con quantity=0`);
   }
 
-
-
   descargarTabla(){
 
   }
@@ -423,5 +419,15 @@ export class CHistorialPedidosDetalle implements OnInit {
     this.confirmSaveVisible = false;
     // llama al método que realiza el guardado (y la navegación)
     this.guardarCambios();
+  }
+
+  get hasPendingOrderDates(): boolean {
+    return Object.values(this.orderDatesMap || {})
+      .some((od: any) => od?.status === 'pending');
+  }
+
+  private recomputeHasPending() {
+    this._hasPending = Object.values(this.orderDatesMap || {})
+      .some((od: any) => od?.status === 'pending');
   }
 }

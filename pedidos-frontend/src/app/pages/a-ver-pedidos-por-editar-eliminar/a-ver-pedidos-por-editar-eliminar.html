@@ -51,7 +51,8 @@
                   [ngClass]="{
                     'bg-yellow-300 text-black': orderDatesMap[date.toDateString()].status === 'pending',
                     'bg-green-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed',
-                    'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination',
+                    'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
+                                                   || orderDatesMap[date.toDateString()].status === 'confirmed-modification',
                     'bg-red-300 text-white': orderDatesMap[date.toDateString()].status === 'canceled'
                   }"
                   class="px-4 py-2 rounded"
@@ -66,6 +67,8 @@
                       ? 'Confirmado'
                       : orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
                       ? 'Por confirmar su eliminación'
+                      : orderDatesMap[date.toDateString()].status === 'confirmed-modification'
+                      ? 'Por confirmar su modificación'
                       : orderDatesMap[date.toDateString()].status === 'canceled'
                       ? 'Cancelado'
                       : ''
@@ -128,10 +131,18 @@
                     </ng-container>
                     <!-- Si ya fue aprobado/rechazado: permitir deshacer -->
                     <ng-template #undoBtn>
-                      <button type="button" class="text-yellow-700 hover:underline text-sm bg-transparent p-0"
-                        (click)="deshacerCambio(cr.request_id)">
-                        Deshacer cambio
+                      <button
+                        *ngIf="getCanRevert(od.latestCR)"
+                        class="text-xs px-2 py-1 rounded bg-amber-500 text-white hover:bg-amber-600"
+                        (click)="deshacerCambio(od.latestCR)">
+                        Deshacer
                       </button>
+                        <!-- <button
+                          *ngIf="getCanRevert(cr)"
+                          class="text-xs px-2 py-1 rounded bg-amber-500 text-white hover:bg-amber-600"
+                          (click)="deshacerCambio(cr)">
+                          Deshacer
+                        </button> -->
                     </ng-template>
                   </div>
                 </ng-container>

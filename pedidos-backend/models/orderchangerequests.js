@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     change_quantity: DataTypes.INTEGER,
+    original_quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null
+    },
     requested_at: DataTypes.DATE,
     admin_response_at: DataTypes.DATE,
     status: {

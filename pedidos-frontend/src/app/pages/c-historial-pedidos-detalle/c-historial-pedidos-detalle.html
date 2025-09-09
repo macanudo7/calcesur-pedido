@@ -16,11 +16,18 @@
     <div class="text-right up-table section40">
             <div class="btn-generate">
 
-              <button 
-                (click)="toggleEditar()" 
-                class="text-white font-semibold py-2 px-6 rounded-md ml-2 mr-5"
-                [ngClass]="{ 'bg-green-500': !modoEdicion, 'bg-red-500': modoEdicion }">
-                  {{ modoEdicion ? 'Cancelar' : 'Editar' }}
+              <button
+              (click)="toggleEditar()"
+              class="text-white font-semibold py-2 px-6 rounded-md ml-2 mr-5 transition
+                      disabled:opacity-50 disabled:cursor-not-allowed"
+              [disabled]="hasPendingOrderDates && !modoEdicion"
+              [ngClass]="{
+                'bg-green-500': !modoEdicion && !hasPendingOrderDates,
+                'bg-red-500':  modoEdicion,
+                'bg-gray-400': hasPendingOrderDates && !modoEdicion
+              }"
+              [title]="hasPendingOrderDates && !modoEdicion ? 'No se puede editar: hay fechas en estado pending' : (modoEdicion ? 'Cancelar edición' : 'Editar')">
+              {{ modoEdicion ? 'Cancelar' : 'Editar' }}
               </button>
               <button 
                 *ngIf="modoEdicion" 
@@ -73,7 +80,8 @@
                   [ngClass]="{
                     'bg-yellow-300 text-black': orderDatesMap[date.toDateString()].status === 'pending',
                     'bg-green-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed',
-                    'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination',
+                    'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
+                                                   || orderDatesMap[date.toDateString()].status === 'confirmed-modification',
                     'bg-red-300 text-white': orderDatesMap[date.toDateString()].status === 'canceled'
                   }"
                   class="px-4 py-2 rounded"
@@ -87,6 +95,8 @@
                       ? 'Confirmado'
                       : orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
                       ? 'Por confirmar su eliminación'
+                      : orderDatesMap[date.toDateString()].status === 'confirmed-modification'
+                      ? 'Por confirmar su modificación'
                       : orderDatesMap[date.toDateString()].status === 'canceled'
                       ? 'Cancelado'
                       : ''

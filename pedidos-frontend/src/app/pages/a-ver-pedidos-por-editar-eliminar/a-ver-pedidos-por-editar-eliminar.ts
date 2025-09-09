@@ -276,7 +276,7 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
             const odId = this.pendingCR.order_date_id;
             const newQty = (this.pendingCR as any).change_quantity;
             if (odId && typeof newQty === 'number') {
-              await firstValueFrom(this.orderDateService.update(odId, { quantity: newQty }));
+              await firstValueFrom(this.orderDateService.update(odId, { quantity: newQty, status: 'confirmed',is_delivered: 'por_entregar'  }));
             }
           } else if (this.pendingCR.request_type === 'cancel') {
             const odId = this.pendingCR.order_date_id;
@@ -286,7 +286,7 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
           } else if (this.pendingCR.request_type === 'create_order_date') {
             const odId = this.pendingCR.order_date_id;
             if (odId) {
-              await firstValueFrom(this.orderDateService.update(odId, { status: 'confirmed' }));
+              await firstValueFrom(this.orderDateService.update(odId, { status: 'confirmed', is_delivered: 'por_entregar' }));
             }
           }
         } catch (err) {
@@ -302,15 +302,15 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
           admin_response_at: nowIso
         };
         await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, payloadForCR));
-      } else {
-        const prevNotesReject = (this.pendingCR.admin_notes || '').trim();
-        const newNotesReject = prevNotesReject ? `Rechazado: ${prevNotesReject}` : 'Rechazado';
-        const payloadForCR = {
-          status: 'rejected',
-          admin_notes: newNotesReject,
-          admin_response_at: nowIso
-        };
-        await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, payloadForCR));
+      } else if (this.pendingAction === 'reject') {
+        try {
+          await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, {
+            status: 'rejected',
+            admin_notes: this.cleanNotes(this.pendingCR.admin_notes, 'Rechazado'),
+          }));
+        } catch (err) {
+          console.error('[confirmarAccion] error marcando CR rechazado:', err);
+        }
       }
 
       // refrescar estado en UI
@@ -326,52 +326,63 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
   }
 
   // NUEVO: deshacer cambio revertiendo order_date y CR a valores guardados
-  async deshacerCambio(requestId: number) {
-    const snapshot = this.revertStore[requestId];
-    if (!snapshot) {
-      console.warn('[deshacerCambio] no snapshot for', requestId);
-      return;
-    }
+  getCanRevert(cr: ChangeRequest | null | undefined): boolean {
+    if (!cr) return false;
+    if (cr.status === 'pending') return false;
+    if (cr.request_type === 'create_order_date') return false; // si no quieres revertir este tipo
+    // Ahora incluye rejected
+    return ['approved', 'accepted', 'canceled', 'rejected'].includes(cr.status);
+  }
 
+  private cleanNotes(base: string | null | undefined, prefix: string): string {
+    const b = (base || '').trim();
+    return b ? `${prefix}: ${b}` : prefix;
+  }
+
+  async deshacerCambio(cr: ChangeRequest) {
+    if (!this.getCanRevert(cr)) return;
     try {
-      // revertir order_date si había snapshot
-      if (snapshot.odId) {
-        if (snapshot.odPrev) {
-          await firstValueFrom(this.orderDateService.update(snapshot.odId, {
-            quantity: snapshot.odPrev.quantity,
-            status: snapshot.odPrev.status,
-            is_delivered: snapshot.odPrev.is_delivered
-          }));
-        } else {
-          // si no existía snapshot (por ejemplo creación), intentar eliminar el order_date
-          try {
-            await firstValueFrom(this.orderDateService.delete(snapshot.odId));
-          } catch (e) {
-            console.warn('[deshacerCambio] no se pudo eliminar order_date, ignorando:', e);
+      // Si estaba approved / accepted / canceled aplicaste cambios al order_date (solo en approve para change/cancel)
+      // En rejected NO se aplicaron cambios así que solo reabrir
+      if (cr.status === 'rejected') {
+        await firstValueFrom(this.changeRequestService.updateChangeRequest(cr.request_id, {
+          status: 'pending',
+          admin_notes: this.cleanNotes(cr.admin_notes, 'Reabierto')
+        }));
+      } else {
+        // approved / accepted / canceled -> volver a pending según tipo
+        if (cr.request_type === 'change_quantity') {
+          // Restaurar quantity y status si lo habías cambiado al aprobar
+          if (cr.order_date_id && typeof cr.original_quantity === 'number') {
+            await firstValueFrom(this.orderDateService.update(cr.order_date_id, {
+              quantity: cr.original_quantity,
+              status: 'confirmed-modification'
+            }));
+          }
+        } else if (cr.request_type === 'cancel') {
+          if (cr.order_date_id && typeof cr.original_quantity === 'number') {
+            await firstValueFrom(this.orderDateService.update(cr.order_date_id, {
+              quantity: cr.original_quantity,
+              status: 'confirmed-elimination'
+            }));
           }
         }
+        await firstValueFrom(this.changeRequestService.updateChangeRequest(cr.request_id, {
+          status: 'pending',
+          admin_notes: this.cleanNotes(cr.admin_notes, 'Reabierto')
+        }));
       }
-
-      // revertir CR (status y notas) al estado previo
-      const crPrevStatus = snapshot.crPrevStatus ?? 'pending';
-      const crPrevNotes = snapshot.crPrevNotes; // puede ser string | null | undefined
-      // Construir payload de forma segura para evitar error de tipos (no pasar null si la firma no lo acepta)
-      const payloadForCR: any = { status: crPrevStatus };
-      if (crPrevNotes !== undefined) {
-        // si el backend acepta null y crPrevNotes puede ser null, lo dejamos tal cual
-        payloadForCR.admin_notes = crPrevNotes;
-      }
-      // Si quieres limpiar admin_response_at, algunos tipos no aceptan null; usar undefined para omitirlo
-      payloadForCR.admin_response_at = null; // si la firma TS lo rechaza, la variable es any y evitará el error
-      await firstValueFrom(this.changeRequestService.updateChangeRequest(requestId, payloadForCR));
-
-      // limpiar snapshot y refrescar UI
-      delete this.revertStore[requestId];
       await this.loadOrderDetail();
-    } catch (err) {
-      console.error('[deshacerCambio] error:', err);
+    } catch (e) {
+      console.error('[deshacerCambio] error:', e);
     }
   }
+
+  private prefixNote(prev: string | null | undefined, prefix: string): string {
+    const base = (prev || '').trim();
+    return base ? `${prefix}: ${base}` : prefix;
+  }
+
   async cancelarAccion() {
     // Cerrar modal y forzar ciclo de detección para actualizar la vista inmediatamente
     this.mostrarModalConfirmacion = false;

@@ -1,8 +1,9 @@
 export interface CreateChangeRequestPayload {
   order_date_id: number;
-  request_type: 'change_quantity' | 'cancel' | string;
+  request_type: 'change_quantity' | 'cancel' | 'create_order_date'| string;
   change_quantity?: number;
   admin_notes?: string;
+  original_quantity?: number; // NUEVO
 }
 
 export interface UpdateChangeRequestPayload {
@@ -15,11 +16,12 @@ export interface UpdateChangeRequestPayload {
 export interface ChangeRequest {
   request_id: number;             // clave primaria según el modelo
   order_date_id: number;
-  request_type: string;
+  request_type: 'change_quantity' | 'cancel' | 'create_order_date' | string;
   change_quantity?: number | null;
+  original_quantity?: number; // NUEVO
   requested_at?: string | null;   // fecha en ISO (puede venir del backend)
   admin_response_at?: string | null;
-  status: string;
+  status: 'pending' | 'approved' | 'accepted' | 'rejected' | 'canceled' | string;
   admin_notes?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;

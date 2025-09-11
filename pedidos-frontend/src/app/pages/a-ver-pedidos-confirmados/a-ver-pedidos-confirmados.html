@@ -65,14 +65,37 @@
                             </span>
                         </td>
                         <td class="table-actions">
-                            <div class="flex justify-center">
-                              <button
-                                *ngIf="order.status === 'confirmed'"
-                                (click)="atenderPedido(order.order_id, order.order_date_id)"
-                                class="px-3 py-1 text-blue-600 hover:text-green-700 text-sm">
-                                Atender pedido
-                              </button>
+                          <div class="flex flex-col items-center justify-center">                                <!-- Botón Atender -->
+                                <button
+                                    *ngIf="order.status === 'confirmed' && order.is_delivered === 'por_entregar'"
+                                    (click)="atenderPedido(order.order_id, order.order_date_id)"
+                                    class="px-3 py-1 text-blue-600 hover:text-green-700 text-sm">
+                                    Atender pedido
+                                </button>
+                                
+
+                                <button
+                                    *ngIf="order.is_delivered === 'atendiendo'"
+                                    (click)="toggleDriverInfo(order.order_date_id)"
+                                    class="px-3 py-1 text-gray-700 hover:text-gray-900 text-sm mb-1">
+                                    Ver detalle
+                                </button>
+
+                                <div *ngIf="showDriverInfoMap[order.order_date_id]"
+                                    class="mt-1 text-left text-sm bg-gray-50 border rounded p-2 w-48">
+                                    <div><strong>Chofer:</strong> {{ order.driver_name || '-' }}</div>
+                                    <div><strong>Placa:</strong> {{ order.vehicle_plate || '-' }}</div>
+                                </div>
+
+                                <!-- Botón Deshacer cambio -->
+                                <button
+                                    *ngIf="order.status === 'confirmed' && order.is_delivered === 'atendiendo'"
+                                    (click)="revertirAtencion(order.order_date_id)"
+                                    class="px-3 py-1 text-orange-600 hover:text-red-700 text-sm">
+                                    Deshacer cambio
+                                </button>
                             </div>
+          
                         </td>
                     </tr>
 

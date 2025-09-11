@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, signal, computed } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, signal, computed, NgZone } from '@angular/core';
 import { Observable, firstValueFrom } from 'rxjs';
 import { OrderForm, OrderDate, OrderDetail, OrderDateDetail } from '../../shared/interfaces/order.interface';
 import { Order } from '../../services/order';
@@ -29,6 +29,8 @@ export class AVerPedidosConfirmados implements OnInit {
   attendingDriverName = '';
   attendingVehiclePlate = '';
   isSavingAtender = false;
+  showDriverInfoMap: Record<number, boolean> = {};
+
 
   constructor(
     private router: Router,
@@ -36,6 +38,8 @@ export class AVerPedidosConfirmados implements OnInit {
     private orderService: Order,
     private orderDateService: OrderDateService,
     private cd: ChangeDetectorRef,
+    private ngZone: NgZone,
+    
   ) { }
 
   ngOnInit(): void {
@@ -115,4 +119,61 @@ export class AVerPedidosConfirmados implements OnInit {
       this.cancelarAtender();
     }
   }
+
+  async revertirAtencion(orderDateId?: number | null) {
+    if (!orderDateId) return;
+    this.isSavingAtender = true;
+    try {
+      const payload: any = {
+        is_delivered: 'por_entregar',
+        driver_name: null,
+        vehicle_plate: null
+      };
+
+      // Espera la respuesta del backend
+      await firstValueFrom(this.orderDateService.update(orderDateId, payload));
+
+      // Actualización optimista INMUTABLE dentro de NgZone para garantizar re-render
+      this.ngZone.run(() => {
+        const idx = this.ordersPerDay.findIndex(o => o.order_date_id === orderDateId);
+        if (idx > -1) {
+          const updated = {
+            ...this.ordersPerDay[idx],
+            is_delivered: 'por_entregar',
+            driver_name: null,
+            vehicle_plate: null
+          };
+          this.ordersPerDay = [
+            ...this.ordersPerDay.slice(0, idx),
+            updated,
+            ...this.ordersPerDay.slice(idx + 1)
+          ];
+        }
+        // Forzar detección
+        this.cd.detectChanges();
+      });
+
+      // Opcional: recargar desde backend para asegurar consistencia (puedes comentar si no quieres)
+      await this.reloadOrderDetail();
+    } catch (err) {
+      console.error('[revertirAtencion] error:', err);
+    } finally {
+      this.isSavingAtender = false;
+    }
+  }
+
+
+  toggleDriverInfo(orderDateId?: number | null) {
+  if (orderDateId == null) return;
+  const id = Number(orderDateId);
+  this.showDriverInfoMap = { ...this.showDriverInfoMap, [id]: !this.showDriverInfoMap[id] };
+  // opcional forzar detector si hace falta
+  // this.cd.detectChanges();
+}
+
+// trackBy para el *ngFor
+trackByOrderDateId(index: number, item: OrderDateDetail) {
+  return item.order_date_id ?? index;
+}
+
 }

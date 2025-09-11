@@ -88,6 +88,8 @@ export interface OrderDateDetail {
   quantity: number;
   rating: number | null;
   is_delivered: string;
+  driver_name?: string | null;
+  vehicle_plate?: string | null;
   status: string;
   assigment_date: string | null;
   createdAt: string;

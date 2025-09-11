@@ -38,7 +38,7 @@
         <tbody>
           <tr *ngFor="let date of fechasDelMes">
             <ng-container *ngIf="orderDatesMap[date.toDateString()] as od">
-              <td class="border px-4 py-2">{{ date | date: 'shortDate' }}</td>
+              <td class="border px-4 py-2">{{ date | date:'dd/MM/yyyy' }}</td>
               <td class="border px-4 py-2">
                 <!-- vista solo lectura: mostrar cantidad -->
                 <span class="block w-full text-left px-2">
@@ -46,35 +46,36 @@
                 </span>
               </td>
               <td class="border px-4 py-2">
+                <!-- Mostrar badge si hay cantidad o si existe un status (p.e. 'canceled' con quantity=0) -->
                 <span
-                  *ngIf="orderDatesMap[date.toDateString()]?.quantity > 0"
-                  [ngClass]="{
-                    'bg-yellow-300 text-black': orderDatesMap[date.toDateString()].status === 'pending',
-                    'bg-green-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed',
-                    'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
-                                                   || orderDatesMap[date.toDateString()].status === 'confirmed-modification',
-                    'bg-red-300 text-white': orderDatesMap[date.toDateString()].status === 'canceled'
-                  }"
-                  class="px-4 py-2 rounded"
-                >
-                  {{
+                  *ngIf="orderDatesMap[date.toDateString()]?.quantity > 0 || orderDatesMap[date.toDateString()]?.status"
+                   [ngClass]="{
+                     'bg-yellow-300 text-black': orderDatesMap[date.toDateString()].status === 'pending',
+                     'bg-green-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed',
+                     'bg-orange-300 text-black': orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
+                                                    || orderDatesMap[date.toDateString()].status === 'confirmed-modification',
+                     'bg-red-600 text-white': orderDatesMap[date.toDateString()].status === 'canceled'
+                   }"
+                   class="px-4 py-2 rounded"
+                 >
+                   {{
 
-                    !orderDatesMap[date.toDateString()].status
-                      ? 'Nuevo'
-                      : orderDatesMap[date.toDateString()].status === 'pending'
-                      ? 'Por confirmar'
-                      : orderDatesMap[date.toDateString()].status === 'confirmed'
-                      ? 'Confirmado'
-                      : orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
-                      ? 'Por confirmar su eliminación'
-                      : orderDatesMap[date.toDateString()].status === 'confirmed-modification'
-                      ? 'Por confirmar su modificación'
-                      : orderDatesMap[date.toDateString()].status === 'canceled'
-                      ? 'Cancelado'
-                      : ''
-                  }}
-                </span>
-              </td>
+                     !orderDatesMap[date.toDateString()].status
+                       ? 'Nuevo'
+                       : orderDatesMap[date.toDateString()].status === 'pending'
+                       ? 'Por confirmar'
+                       : orderDatesMap[date.toDateString()].status === 'confirmed'
+                       ? 'Confirmado'
+                       : orderDatesMap[date.toDateString()].status === 'confirmed-elimination'
+                       ? 'Por confirmar su eliminación'
+                       : orderDatesMap[date.toDateString()].status === 'confirmed-modification'
+                       ? 'Por confirmar su modificación'
+                       : orderDatesMap[date.toDateString()].status === 'canceled'
+                       ? 'Cancelado'
+                       : ''
+                   }}
+                 </span>
+               </td>
               <td class="border px-4 py-2">
                 <span
                   *ngIf="orderDatesMap[date.toDateString()]?.is_delivered !== null"

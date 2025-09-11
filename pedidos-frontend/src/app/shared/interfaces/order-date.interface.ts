@@ -22,6 +22,8 @@ export interface OrderDate {
   is_delivered?: string | null;
   status: string;
   assigment_date?: string | null;
+  driver_name?: string | null;
+  vehicle_plate?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }

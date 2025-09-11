@@ -53,7 +53,12 @@ export class CHistorialPedidos implements OnInit {
     // Llamar a la API con el último día del mes
     this.orderService.getOrdersByUserAndMonth(this.userId, anio, mes, dia).subscribe({
       next: (data) => {
-        this.orders = data;
+        // ordenar de más reciente a más antiguo por createdAt
+        this.orders = (data || []).slice().sort((a, b) => {
+          const ta = new Date(a.createdAt).getTime();
+          const tb = new Date(b.createdAt).getTime();
+          return tb - ta;
+        });
       },
       error: (err) => {
         console.error('Error al obtener pedidos:', err);

@@ -49,7 +49,7 @@
         <tbody>
           <tr *ngFor="let order of orders">
             <td class="border px-4 py-2">{{ order.order_id }}</td>
-            <td class="border px-4 py-2">{{ order.createdAt | date: 'shortDate' }}</td>
+            <td class="border px-4 py-2">{{ order.createdAt | date: 'dd/MM/yyyy' }}</td>
             <td class="border px-4 py-2">{{ order.product.name }}</td>
             <td class="border px-4 py-2">{{ order.product.typeVehicle.name }}</td>
             <td class="border px-4 py-2">{{ order.cumplimiento }}%</td>

@@ -43,15 +43,13 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'pending'
     },
     assigment_date: DataTypes.DATE,
-    driverName: {
+    driver_name: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      field: 'driver_name'
     },
-    vehiclePlate: {
+    vehicle_plate: {
       type: DataTypes.STRING(20),
       allowNull: true,
-      field: 'vehicle_plate'
     }
   }, {
     sequelize,

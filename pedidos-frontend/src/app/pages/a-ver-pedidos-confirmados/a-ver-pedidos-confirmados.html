@@ -53,20 +53,26 @@
                         <td class="box-status">
                             <span [ngClass]="{
                             'bg-blue-200': order.is_delivered === 'por_entregar',
-                            'bg-blue-500': order.is_delivered === 'entregado',
+                            'bg-indigo-400 text-white': order.is_delivered === 'atendiendo',
+                            'bg-purple-500': order.is_delivered === 'entregado',
                             'bg-red-300': order.is_delivered === 'no_entregado'
                         }">
-                                {{order.is_delivered === 'por_entregar' ? 'Por entregar' :
-                                order.is_delivered === 'entregado' ? 'Entregado' :
-                                order.is_delivered === 'no_entregado' ? 'No entregado' :
-                                order.is_delivered === null ? '' : ''}}
+                                {{ order.is_delivered === 'por_entregar' ? 'Por entregar' :
+                                   order.is_delivered === 'atendiendo' ? 'Atendiendo' :
+                                   order.is_delivered === 'entregado' ? 'Entregado' :
+                                   order.is_delivered === 'no_entregado' ? 'No entregado' :
+                                   order.is_delivered === null ? '' : '' }}
                             </span>
                         </td>
                         <td class="table-actions">
-                            <!-- <a *ngIf="order.status === 'pending'"
-                            (click)="goToEditOrderForConfirm( order.order_id, order.order_date_id)">
-                                Confirmar pedido
-                            </a> -->
+                            <div class="flex justify-center">
+                              <button
+                                *ngIf="order.status === 'confirmed'"
+                                (click)="atenderPedido(order.order_id, order.order_date_id)"
+                                class="px-3 py-1 text-blue-600 hover:text-green-700 text-sm">
+                                Atender pedido
+                              </button>
+                            </div>
                         </td>
                     </tr>
 
@@ -74,4 +80,29 @@
             </table>
         </div>
     </div>
+
+    <!-- Modal de atender pedido -->
+    <div *ngIf="mostrarAtenderModal" class="fixed inset-0 z-50 flex items-center justify-center">
+      <div class="absolute inset-0 bg-black opacity-50"></div>
+      <div class="bg-white rounded-lg shadow-lg z-10 max-w-md w-full p-6">
+        <h3 class="text-lg font-semibold mb-4">Atender pedido</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-sm font-medium">Placa del vehículo</label>
+            <input type="text" [(ngModel)]="attendingVehiclePlate" class="w-full border rounded px-2 py-1" placeholder="Ej: ABC-123" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Nombre del chofer</label>
+            <input type="text" [(ngModel)]="attendingDriverName" class="w-full border rounded px-2 py-1" placeholder="Ej: Juan Pérez" />
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 mt-4">
+          <button (click)="cancelarAtender()" class="px-4 py-2 rounded border">Cancelar</button>
+          <button (click)="confirmarAtender()" [disabled]="isSavingAtender" class="px-4 py-2 rounded bg-green-600 text-white">
+            {{ isSavingAtender ? 'Guardando...' : 'Confirmar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
 </section>

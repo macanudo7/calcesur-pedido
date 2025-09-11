@@ -100,7 +100,7 @@
                     <tr *ngFor="let item of orderDates; let i = index"
                         [class.opacity-50]="isDateDisabled(item)">
                     <td class="border px-4 py-2">
-                        {{ item.delivery_date }}
+                        {{ item.delivery_date | date:'dd/MM/yyyy' }}
                     </td>
                     <td class="border px-4 py-2">
                         <input

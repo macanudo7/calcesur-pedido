@@ -154,6 +154,7 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
         latestCR: null
       };
     });
+    console.log('Mapped orderDatesMap:', this.orderDatesMap);
 
     this.loadLatestCRs();
   }
@@ -293,9 +294,8 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
           console.error('[confirmarAccion] error aplicando cambio en order_date:', err);
         }
 
-        // prefijo "Aprobado: " + texto previo
-        const prevNotesApprove = (this.pendingCR.admin_notes || '').trim();
-        const newNotesApprove = prevNotesApprove ? `Aprobado: ${prevNotesApprove}` : 'Aprobado';
+        // crear nota sin acumular prefijos
+        const newNotesApprove = this.makePrefixedNote('Aprobado', this.pendingCR?.admin_notes);
         const payloadForCR = {
           status: 'approved',
           admin_notes: newNotesApprove,
@@ -303,14 +303,35 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
         };
         await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, payloadForCR));
       } else if (this.pendingAction === 'reject') {
+        // Si rechazamos, restaurar order_date según tipo y original_quantity si está disponible
         try {
-          await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, {
-            status: 'rejected',
-            admin_notes: this.cleanNotes(this.pendingCR.admin_notes, 'Rechazado'),
-          }));
+          const odId = this.pendingCR?.order_date_id;
+          if (odId) {
+            if (this.pendingCR?.request_type === 'change_quantity' && typeof (this.pendingCR as any).original_quantity === 'number') {
+              await firstValueFrom(this.orderDateService.update(odId, {
+                quantity: (this.pendingCR as any).original_quantity,
+                status: 'confirmed' // ajustar si prefieres otro status
+              }));
+            } else if (this.pendingCR?.request_type === 'cancel' && typeof (this.pendingCR as any).original_quantity === 'number') {
+              await firstValueFrom(this.orderDateService.update(odId, {
+                quantity: (this.pendingCR as any).original_quantity,
+                status: 'confirmed' // restaurar a confirmado al rechazar la cancelación
+              }));
+            } else if (this.pendingCR?.request_type === 'create_order_date') {
+              // Rechazar creación: eliminar o marcar como canceled segun tu backend -> aquí intentamos eliminar
+              try { await firstValueFrom(this.orderDateService.delete(odId)); } catch (e) { /* si no se puede eliminar, no hacer nada */ }
+            }
+          }
         } catch (err) {
-          console.error('[confirmarAccion] error marcando CR rechazado:', err);
+          console.warn('[confirmarAccion] error al restaurar order_date al rechazar:', err);
         }
+
+        // nota de rechazo sin acumular prefijos
+        const newNotesReject = this.makePrefixedNote('Rechazado', this.pendingCR?.admin_notes);
+        await firstValueFrom(this.changeRequestService.updateChangeRequest(reqId, {
+          status: 'rejected',
+          admin_notes: newNotesReject,
+        }));
       }
 
       // refrescar estado en UI
@@ -342,40 +363,94 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
   async deshacerCambio(cr: ChangeRequest) {
     if (!this.getCanRevert(cr)) return;
     try {
-      // Si estaba approved / accepted / canceled aplicaste cambios al order_date (solo en approve para change/cancel)
-      // En rejected NO se aplicaron cambios así que solo reabrir
+      const odId = cr.order_date_id;
+
+      // Si el CR estaba rechazado: además de ponerlo pending, restaurar order_date según request_type
       if (cr.status === 'rejected') {
+        // Restaurar order_date según tipo de solicitud
+        if (odId) {
+          try {
+            if (cr.request_type === 'change_quantity') {
+              // volver la cantidad original y marcar como 'confirmed-modification'
+              const payload: any = { status: 'confirmed-modification' };
+              if (typeof (cr as any).original_quantity === 'number') {
+                payload.quantity = (cr as any).original_quantity;
+              }
+              await firstValueFrom(this.orderDateService.update(odId, payload));
+            } else if (cr.request_type === 'cancel') {
+              // rechazar la cancelación => restaurar quantity y estado 'confirmed-elimination'
+              const payload: any = { status: 'confirmed-elimination' };
+              if (typeof (cr as any).original_quantity === 'number') {
+                payload.quantity = (cr as any).original_quantity;
+              }
+              await firstValueFrom(this.orderDateService.update(odId, payload));
+            } else if (cr.request_type === 'create_order_date') {
+              // rechazado: si la order_date fue creada provisionalmente, intentar eliminarla
+              try {
+                await firstValueFrom(this.orderDateService.delete(odId));
+              } catch (err) {
+                console.warn('[deshacerCambio] no se pudo eliminar order_date creado (reject):', err);
+              }
+            } else {
+              // default: intentar poner como 'confirmed'
+              try {
+                await firstValueFrom(this.orderDateService.update(odId, { status: 'confirmed' }));
+              } catch (err) {
+                console.warn('[deshacerCambio] no se pudo restaurar order_date (reject default):', err);
+              }
+            }
+          } catch (err) {
+            console.warn('[deshacerCambio] error al restaurar order_date para CR rejected:', err);
+          }
+        }
+
+        // luego reabrir el CR (poner pending) sin duplicar prefijos
+        const reopenedNotes = this.makePrefixedNote('Reabierto', cr.admin_notes);
         await firstValueFrom(this.changeRequestService.updateChangeRequest(cr.request_id, {
           status: 'pending',
-          admin_notes: this.cleanNotes(cr.admin_notes, 'Reabierto')
+          admin_notes: reopenedNotes
         }));
       } else {
-        // approved / accepted / canceled -> volver a pending según tipo
+        // comportamiento anterior para approved/accepted/canceled: restaurar según tipo y poner pending
         if (cr.request_type === 'change_quantity') {
-          // Restaurar quantity y status si lo habías cambiado al aprobar
-          if (cr.order_date_id && typeof cr.original_quantity === 'number') {
+          if (cr.order_date_id && typeof (cr as any).original_quantity === 'number') {
             await firstValueFrom(this.orderDateService.update(cr.order_date_id, {
-              quantity: cr.original_quantity,
+              quantity: (cr as any).original_quantity,
               status: 'confirmed-modification'
             }));
           }
         } else if (cr.request_type === 'cancel') {
-          if (cr.order_date_id && typeof cr.original_quantity === 'number') {
+          if (cr.order_date_id && typeof (cr as any).original_quantity === 'number') {
             await firstValueFrom(this.orderDateService.update(cr.order_date_id, {
-              quantity: cr.original_quantity,
+              quantity: (cr as any).original_quantity,
               status: 'confirmed-elimination'
             }));
           }
         }
+        const reopenedNotes = this.makePrefixedNote('Reabierto', cr.admin_notes);
         await firstValueFrom(this.changeRequestService.updateChangeRequest(cr.request_id, {
           status: 'pending',
-          admin_notes: this.cleanNotes(cr.admin_notes, 'Reabierto')
+          admin_notes: reopenedNotes
         }));
       }
+
       await this.loadOrderDetail();
     } catch (e) {
       console.error('[deshacerCambio] error:', e);
     }
+  }
+
+  // Helpers para notas: quitar prefijos conocidos para evitar acumulación
+  private stripKnownPrefixes(text: string | null | undefined): string {
+    const s = (text || '').trim();
+    if (!s) return '';
+    // quitar prefijos repetidos al inicio (Aprobado:, Rechazado:, Reabierto:, Confirmado:)
+    return s.replace(/^(Aprobado: |Rechazado: |Reabierto: |Confirmado: )+/i, '').trim();
+  }
+
+  private makePrefixedNote(prefix: string, text: string | null | undefined): string {
+    const core = this.stripKnownPrefixes(text);
+    return core ? `${prefix}: ${core}` : prefix;
   }
 
   private prefixNote(prev: string | null | undefined, prefix: string): string {

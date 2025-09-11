@@ -1,5 +1,4 @@
-@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3NDUwMDE1LCJleHAiOjE3NTc0NTM2MTV9.vB02Ub0RBO_t9kKL0WHJCk5rsjHU08U6ma3e8rpFCQo
-
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsInVzZXJuYW1lIjoic3VwZXIuYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtcHJlc2EuY29tIiwiaWF0IjoxNzU3NTQ0OTc3LCJleHAiOjE3NTc1NDg1Nzd9.6sGe4tgOc1FIB8tks1kMz-jPD1QY-itGgBPIKVAAoWk
 ###REGISTRAR USUARIO
 POST http://localhost:3000/api/users
 Content-Type: application/json
@@ -289,13 +288,13 @@ Content-Type: application/json
 }
 
 ### Actualizar un orden date
-PUT http://localhost:3000/api/order-dates/68
+PUT http://localhost:3000/api/order-dates/2
 Authorization: Bearer {{admin_token}}
 Content-Type: application/json
 
 {
-  "quantity": 25,
-  "status": "pending"
+  "driver_name": "Juan Perez",
+  "vehicle_plate": "ABC123"
 }
 
 ### Eliminar un orden date
@@ -303,7 +302,7 @@ DELETE http://localhost:3000/api/order-dates/68
 Authorization: Bearer {{admin_token}}
 
 ###Ordernet Change Requests por Id
-GET http://localhost:3000/api/order-dates/10/change-requests
+GET http://localhost:3000/api/order-dates/88/change-requests
 Authorization: Bearer {{admin_token}}
 
 ###Consulta para obtener la ultima cr de cada order date

@@ -59,7 +59,7 @@
         <tbody>
           <tr *ngFor="let date of fechasDelMes">
             <ng-container *ngIf="orderDatesMap[date.toDateString()] as od">
-              <td class="border px-4 py-2">{{ date | date: 'shortDate' }}</td>
+              <td class="border px-4 py-2">{{ date | date: 'dd/MM/yyyy' }}</td>
               <td class="border px-4 py-2">
                 <input
                   type="number"

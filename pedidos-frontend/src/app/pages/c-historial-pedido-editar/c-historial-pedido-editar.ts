@@ -9,33 +9,28 @@ import { CreateChangeRequestPayload, ChangeRequest } from '../../shared/interfac
 import { firstValueFrom } from 'rxjs';
 import { OrderDateService } from '../../services/order-date'; // <-- añadida
 
+
 @Component({
-  selector: 'app-c-historial-pedidos-detalle',
-  templateUrl: './c-historial-pedidos-detalle.html',
-  styleUrl: './c-historial-pedidos-detalle.scss',
-  standalone: true,
+  selector: 'app-c-historial-pedido-editar',
   imports: [CommonModule, DatePipe, FormsModule, RouterModule],
-  providers: [DatePipe],
+  standalone: true,
+  templateUrl: './c-historial-pedido-editar.html',
+  styleUrl: './c-historial-pedido-editar.scss'
 })
-export class CHistorialPedidosDetalle implements OnInit {
+export class CHistorialPedidoEditar {
   private router = inject(Router);
   orderId: number = 0;
   orderDetail: OrderDetail | null = null;
   fechasDelMes: Date[] = []; // Todas las fechas del mes
   orderDatesMap: { [key: string]: any } = {}; // Mapa de fechas a orderDates
   mesYAnio: string | null = null; // Variable auxiliar para el mes y año
-  modoEdicion: boolean = false; // Variable para controlar el modo de edición
+  modoEdicion: boolean = true; // Variable para controlar el modo de edición
   estadoInicial: OrderDetail | null = null; // Copia del estado inicial
   confirmSaveVisible: boolean = false; // <-- nueva prop
   isSaving: boolean = false; // <-- nueva prop
   errorMessage: string | null = null; // <-- nueva prop
   latestCRsByOrderDateId: Record<number, ChangeRequest | null> = {};
   private _hasPending = false;
-  // Rating modal
-  mostrarRatingModal = false;
-  ratingValue = 0;
-  ratingOrderDateId: number | null = null;
-  isSavingRating = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -84,10 +79,9 @@ export class CHistorialPedidosDetalle implements OnInit {
   }
 
   toggleEditar() {
-    this.router.navigate(['/cliente/editar-pedido', this.orderId]);
     if (this.modoEdicion) {
       // Recargar la página al cancelar
-      window.location.reload();
+      this.router.navigate(['/cliente/detalle-pedido', this.orderId]);
     } else {
       // Activar el modo edición
       this.modoEdicion = true;
@@ -132,10 +126,15 @@ export class CHistorialPedidosDetalle implements OnInit {
       const currentQty = Number(current.quantity || 0);
 
       const originalOrderDate = this.estadoInicial.orderDates?.find(od =>
-        // estadoInicial.delivery_date es DATEONLY "YYYY-MM-DD", comparar por día local
         this.parseDateOnlyToLocal(od.delivery_date).toDateString() === key
       );
       const originalQty = originalOrderDate ? Number(originalOrderDate.quantity || 0) : 0;
+
+      // Si la orden ya fue entregada, no permitir editar ni crear/revertir CRs para esa fecha
+      if (originalOrderDate && originalOrderDate.is_delivered === 'entregado') {
+        // conservar tal cual y saltar procesamiento para esta fecha
+        continue;
+      }
 
       // modificación en orderDate existente -> crear CR
       if (originalOrderDate && originalQty !== currentQty) {
@@ -147,7 +146,7 @@ export class CHistorialPedidosDetalle implements OnInit {
           admin_notes: `Solicitud de cambio desde cliente: ${originalQty} → ${currentQty}`
         });
       }
-
+      
       // nueva orderDate (antes no existía o era 0) -> crear orderDate individual luego CR
       if ((!originalOrderDate || originalQty === 0) && currentQty > 0) {
         // guardamos también la fecha (obj Date) para formatear DATEONLY local y evitar shifts
@@ -309,8 +308,6 @@ export class CHistorialPedidosDetalle implements OnInit {
         delivery_date: orderDate.delivery_date,
         quantity: Number(orderDate.quantity) || 0,
         status: orderDate.status,
-        driver_name: orderDate.driver_name || null,
-        vehicle_plate: orderDate.vehicle_plate || null,
         is_delivered: orderDate.is_delivered
         , latestCR: null
       };
@@ -429,72 +426,6 @@ export class CHistorialPedidosDetalle implements OnInit {
     this.guardarCambios();
   }
 
-  openRatingModal(orderDateId: number, currentRating?: number | null) {
-    this.ratingOrderDateId = orderDateId ?? null;
-    this.ratingValue = typeof currentRating === 'number' ? currentRating : 0;
-    this.mostrarRatingModal = true;
-    try { this.cd.detectChanges(); } catch (e) {}
-  }
-
-  cancelarRating() {
-    this.mostrarRatingModal = false;
-    this.ratingOrderDateId = null;
-    this.ratingValue = 0;
-    try { this.cd.detectChanges(); } catch (e) {}
-  }
-
-  setRating(v: number) { this.ratingValue = v; }
-
-  async enviarRating() {
-    if (!this.ratingOrderDateId) {
-      console.warn('[enviarRating] no orderDateId');
-      return;
-    }
-    if (!this.ratingValue || this.ratingValue < 1) {
-      console.warn('[enviarRating] rating no seleccionado');
-      return;
-    }
-
-    this.isSavingRating = true;
-    console.debug('[enviarRating] start payload:', {
-      orderDateId: this.ratingOrderDateId,
-      rating: this.ratingValue
-    });
-
-    // validar que el servicio exista
-    if (!this.orderDateService || typeof this.orderDateService.update !== 'function') {
-      console.error('[enviarRating] orderDateService.update no disponible', this.orderDateService);
-      this.isSavingRating = false;
-      alert('Servicio no disponible. Revisa la consola.');
-      return;
-    }
-
-    const payload: any = {
-      rating: this.ratingValue,
-      is_delivered: 'entregado'
-    };
-
-    try {
-      // firstValueFrom devuelve Promise, le añadimos timeout para evitar bloqueo indefinido
-      const updatePromise = firstValueFrom(this.orderDateService.update(this.ratingOrderDateId, payload));
-      const timeoutMs = 10000; // 10s
-      await Promise.race([
-        updatePromise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs))
-      ]);
-      console.debug('[enviarRating] update ok');
-      await this.loadOrderDetail();
-    } catch (err) {
-      console.error('[enviarRating] error al guardar rating:', err);
-      alert('Error guardando la calificación. Revisa la consola y el Network.');
-    } finally {
-      this.isSavingRating = false;
-      this.cancelarRating();
-      try { this.cd.detectChanges(); } catch (e) { /* noop */ }
-      console.debug('[enviarRating] finished');
-    }
-  }
-
   get hasPendingOrderDates(): boolean {
     return Object.values(this.orderDatesMap || {})
       .some((od: any) => od?.status === 'pending');
@@ -504,4 +435,5 @@ export class CHistorialPedidosDetalle implements OnInit {
     this._hasPending = Object.values(this.orderDatesMap || {})
       .some((od: any) => od?.status === 'pending');
   }
+
 }

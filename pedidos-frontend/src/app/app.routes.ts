@@ -26,6 +26,7 @@ import { CHistorialPedidosDetalle } from './pages/c-historial-pedidos-detalle/c-
 import { AEditarPedidosPorConfirmar } from './pages/a-editar-pedidos-por-confirmar/a-editar-pedidos-por-confirmar';
 import { AVerPedidosConfirmados } from './pages/a-ver-pedidos-confirmados/a-ver-pedidos-confirmados';
 import { AVerPedidosPorEditarEliminar } from './pages/a-ver-pedidos-por-editar-eliminar/a-ver-pedidos-por-editar-eliminar';
+import { CHistorialPedidoEditar } from './pages/c-historial-pedido-editar/c-historial-pedido-editar';
 
 export const routes: Routes = [
     {
@@ -56,8 +57,10 @@ export const routes: Routes = [
             {   path: 'detalle-pedido/:id', 
                 component: CHistorialPedidosDetalle 
             },
-
-
+            {
+                path: 'editar-pedido/:id',
+                component: CHistorialPedidoEditar
+            }
         ]
     },
     {

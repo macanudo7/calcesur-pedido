@@ -35,11 +35,7 @@
                 class="text-white font-semibold py-2 px-6 rounded-md bg-blue-500 ml-2 mr-5">
                   Guardar
               </button>
-              <button 
-                  (click)="descargarTabla()" 
-                  class="text-white font-semibold py-2 px-6 rounded-md">
-                      Descargar
-              </button>
+              
             </div>
         </div>
 
@@ -66,7 +62,7 @@
                   [(ngModel)]="od.quantity"
                   class="placeholder:text-gray-300 w-full"
                   placeholder="Ejm: 20"
-                  [disabled]="!modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending'"
+                  [disabled]="!modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending' || od?.is_delivered === 'entregado'"
                   [ngClass]="{
                     'bg-gray-200 !important': !modoEdicion || !esFechaEditable(date) || od?.latestCR?.status === 'pending',
                     'bg-white !important': modoEdicion && esFechaEditable(date) && od?.latestCR?.status !== 'pending'
@@ -103,7 +99,7 @@
                   }}
                 </span>
               </td>
-              <td class="border px-4 py-2 ">
+              <td class="border px-4 py-2">
                 <span
                   *ngIf="orderDatesMap[date.toDateString()]?.is_delivered !== null"
                   [ngClass]="{
@@ -126,13 +122,6 @@
                       : ''
                   }}
                 </span>
-                <!-- Detalles del chofer cuando está ATENDIENDO -->
-                <div *ngIf="orderDatesMap[date.toDateString()]?.is_delivered === 'atendiendo'" class="mt-2">
-                  <div class="mt-1 text-left text-sm bg-gray-50 border rounded p-2 w-56">
-                    <div><strong>Chofer:</strong> {{ orderDatesMap[date.toDateString()]?.driver_name || '-' }}</div>
-                    <div class="mt-1"><strong>Placa:</strong> {{ orderDatesMap[date.toDateString()]?.vehicle_plate || '-' }}</div>
-                  </div>
-                </div>
               </td>
               <td class="border px-4 py-2">
                 <ng-container *ngIf="orderDatesMap[date.toDateString()]?.latestCR as cr; else noObs">
@@ -145,12 +134,12 @@
               </td>
               <td class="border px-4 py-2">
                 <button
-                  *ngIf="od?.is_delivered === 'atendiendo'"
-                  (click)="openRatingModal(od.order_date_id, od.rating)"
-                  class="mt-2 inline-block px-3 py-1 text-green-700 hover:underline text-sm bg-transparent"
+                  *ngIf="modoEdicion && esFechaEditable(date) && od?.order_date_id && od?.latestCR?.status !== 'pending' && od?.is_delivered !== 'entregado'"
+                  (click)="eliminarOrderDate(date)"
+                  class="text-red-600 hover:underline"
                   type="button"
                 >
-                  Confirmar carga recibida
+                  Eliminar
                 </button>
               </td>
             </ng-container>
@@ -172,37 +161,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal de rating (añadir al final del archivo, antes de cierre de sección) -->
-<div *ngIf="mostrarRatingModal" class="fixed inset-0 z-50 flex items-center justify-center">
-  <div class="absolute inset-0 bg-black opacity-50"></div>
-  <div class="bg-white rounded-lg shadow-lg z-10 max-w-lg w-full p-6">
-    <h3 class="text-lg font-semibold mb-3 text-center">Gracias por confirmar que recibió su pedido</h3>
-    <p class="text-sm mb-4 text-center text-gray-600">Por favor califica nuestro servicio</p>
-
-    <div class="flex justify-center gap-3 mb-6">
-      <button
-        *ngFor="let v of [1,2,3,4,5]"
-        type="button"
-        (click)="setRating(v)"
-        [ngClass]="{
-          'border-2 border-green-700 text-green-700': ratingValue === v,
-          'border rounded-full w-10 h-10 flex items-center justify-center': true
-        }"
-        class="w-10 h-10 rounded-full"
-      >
-        {{ v }}
-      </button>
-    </div>
-
-    <div class="flex justify-center">
-      <button (click)="cancelarRating()" class="px-4 py-2 rounded border mr-3">Cancelar</button>
-      <button (click)="enviarRating()" [disabled]="isSavingRating || ratingValue === 0" class="px-4 py-2 rounded bg-green-700 text-white">
-        {{ isSavingRating ? 'Guardando...' : 'Enviar' }}
-      </button>
-    </div>
-  </div>
-</div>
 
   
 </section>

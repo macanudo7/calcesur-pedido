@@ -127,7 +127,7 @@
                   }}
                 </span>
                 <!-- Detalles del chofer cuando está ATENDIENDO -->
-                <div *ngIf="orderDatesMap[date.toDateString()]?.is_delivered === 'atendiendo'" class="mt-2">
+                <div *ngIf="orderDatesMap[date.toDateString()]?.is_delivered === 'atendiendo' || orderDatesMap[date.toDateString()]?.is_delivered === 'entregado'" class="mt-2">
                   <div class="mt-1 text-left text-sm bg-gray-50 border rounded p-2 w-56">
                     <div><strong>Chofer:</strong> {{ orderDatesMap[date.toDateString()]?.driver_name || '-' }}</div>
                     <div class="mt-1"><strong>Placa:</strong> {{ orderDatesMap[date.toDateString()]?.vehicle_plate || '-' }}</div>

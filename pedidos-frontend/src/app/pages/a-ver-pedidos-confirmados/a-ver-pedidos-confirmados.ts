@@ -29,7 +29,7 @@ export class AVerPedidosConfirmados implements OnInit {
   attendingDriverName = '';
   attendingVehiclePlate = '';
   isSavingAtender = false;
-  showDriverInfoMap: Record<number, boolean> = {};
+  showDriverInfoMap: Record<string, boolean> = {};
 
 
   constructor(
@@ -67,6 +67,16 @@ export class AVerPedidosConfirmados implements OnInit {
       this.ordersPerDay = data.orderDates || [];
       this.ordersPerDay.sort((a, b) => new Date(a.delivery_date).getTime() - new Date(b.delivery_date).getTime());
       console.log('Orders per day:', this.ordersPerDay);
+
+      // sincronizar showDriverInfoMap para que las filas "atendiendo" se muestren al reload
+      const newMap: Record<string, boolean> = { ...this.showDriverInfoMap };
+      for (const od of this.ordersPerDay) {
+        const key = String(od.order_date_id);
+        // si ya estaba marcado lo conservamos, sino lo activamos si backend indica 'atendiendo'
+        newMap[key] = newMap[key] ?? (od.is_delivered === 'atendiendo');
+      }
+      this.showDriverInfoMap = newMap;
+      try { this.cd.detectChanges(); } catch (e) { /* noop */ }
     } catch (err) {
       console.error('Error cargando detalle de pedido:', err);
     }
@@ -107,11 +117,15 @@ export class AVerPedidosConfirmados implements OnInit {
       driver_name: this.attendingDriverName || null,
       vehicle_plate: this.attendingVehiclePlate || null
     };
+    const targetId = Number(this.attendingOrderDateId);
 
     try {
-      await firstValueFrom(this.orderDateService.update(this.attendingOrderDateId, payload));
+      await firstValueFrom(this.orderDateService.update(targetId, payload));
       // recargar datos para reflejar cambio
       await this.reloadOrderDetail();
+      // abrir inmediatamente el panel de detalles para la fecha atendida
+      this.showDriverInfoMap = { ...this.showDriverInfoMap, [targetId]: true };
+      try { this.cd.detectChanges(); } catch (e) { /* noop */ }
     } catch (err) {
       console.error('[confirmarAtender] error:', err);
     } finally {
@@ -164,12 +178,11 @@ export class AVerPedidosConfirmados implements OnInit {
 
 
   toggleDriverInfo(orderDateId?: number | null) {
-  if (orderDateId == null) return;
-  const id = Number(orderDateId);
-  this.showDriverInfoMap = { ...this.showDriverInfoMap, [id]: !this.showDriverInfoMap[id] };
-  // opcional forzar detector si hace falta
-  // this.cd.detectChanges();
-}
+    if (orderDateId == null) return;
+    const key = String(orderDateId);
+    this.showDriverInfoMap = { ...this.showDriverInfoMap, [key]: !this.showDriverInfoMap[key] };
+    try { this.cd.detectChanges(); } catch (e) { /* noop */ }
+  }
 
 // trackBy para el *ngFor
 trackByOrderDateId(index: number, item: OrderDateDetail) {

@@ -29,49 +29,137 @@ import { AVerPedidosPorEditarEliminar } from './pages/a-ver-pedidos-por-editar-e
 import { CHistorialPedidoEditar } from './pages/c-historial-pedido-editar/c-historial-pedido-editar';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'ingreso', pathMatch: 'full' },
-  
-    { path: 'ingreso', component: CLogin },
-    { path: 'ingreso-admin', component: Login },
-  
     {
-      path: 'cliente',
-      component: ClientLayout,
-      children: [
-        { path: 'generar-pedido', component: CGenerateOrder },
-        { path: 'historial-pedidos', component: CHistorialPedidos },
-        { path: 'detalle-pedido/:id', component: CHistorialPedidosDetalle, data: { renderMode: 'server' } },
-        { path: 'editar-pedido/:id', component: CHistorialPedidoEditar, data: { renderMode: 'server' } }
-      ]
+        path: '',
+        redirectTo: 'ingreso',
+        pathMatch: 'full'
     },
-  
     {
-      path: 'admin',
-      component: AdminLayout,
-      children: [
-        { path: 'lista-productos', component: ListaProductos },
-        { path: 'agregar-producto', component: AAgregarProducto },
-        { path: 'editar-producto/:id', component: AAgregarProducto, data: { renderMode: 'server' } },
-        { path: 'agregar-usuario', component: AAgregarUsuario },
-        { path: 'lista-usuarios', component: AListaUsuarios },
-        { path: 'ver-detalles-usuario/:id', component: AVerDetalles, data: { renderMode: 'server' } },
-        { path: 'editar-usuario/:id', component: AAgregarUsuario, data: { renderMode: 'server' } },
-        { path: 'lista-vehiculos', component: AListaVehiculos },
-        { path: 'agregar-vehiculo', component: AAgregarVehiculo },
-        { path: 'editar-vehiculo/:id', component: AAgregarVehiculo, data: { renderMode: 'server' } },
-        { path: 'pedidos-por-entregar', component: APedidosPorEntregar },
-        { path: 'ver-pedidos-confirmados/:id', component: AVerPedidosConfirmados, data: { renderMode: 'server' } },
-        { path: 'pedidos-por-confirmar', component: APedidosPorConfirmar },
-        { path: 'editar-pedidos-por-confirmar/:id', component: AEditarPedidosPorConfirmar, data: { renderMode: 'server' } },
-        { path: 'pedidos-por-editar-o-eliminar', component: APedidosPorEditarEliminar },
-        { path: 'ver-pedidos-por-editar-eliminar/:id', component: AVerPedidosPorEditarEliminar, data: { renderMode: 'server' } },
-        { path: 'pedidos-confirmados-entregados', component: APedidosConfirmadoEntregado },
-        { path: 'lista-clientes', component: AListaClientes },
-        { path: 'programacion-semanal', component: AProgramacionSemanal },
-        { path: 'programacion-mes', component: AProgramacionMes },
-        { path: 'efectividad-por-entrega', component: AEfectividadEntrega },
-        { path: 'otif-por-dia', component: AOtifPorDia },
-        { path: 'detalle-por-cliente', component: ADetallePorCliente }
-      ]
+        path: 'ingreso',
+        component: CLogin
     },
-  ];
+    {
+        path: 'ingreso-admin',
+        component: Login
+    },
+    {
+        path: 'cliente',
+        component: ClientLayout,
+        children: [
+            { 
+                path: 'generar-pedido',
+                component: CGenerateOrder
+            },
+            { 
+                path: 'historial-pedidos',
+                component: CHistorialPedidos
+            },
+            {   path: 'detalle-pedido/:id', 
+                component: CHistorialPedidosDetalle 
+            },
+            {
+                path: 'editar-pedido/:id',
+                component: CHistorialPedidoEditar
+            }
+        ]
+    },
+    {
+        path: 'admin',
+        component: AdminLayout,
+        children: [
+            { 
+                path: 'lista-productos',
+                component: ListaProductos
+            },
+            { 
+                path: 'agregar-producto',
+                component: AAgregarProducto
+            },
+            { 
+                path: 'editar-producto/:id', 
+                component: AAgregarProducto 
+            },
+            { 
+                path: 'agregar-usuario',
+                component: AAgregarUsuario
+            },
+            { 
+                path: 'lista-usuarios',
+                component: AListaUsuarios
+            },
+            { 
+                path: 'ver-detalles-usuario/:id', 
+                component: AVerDetalles 
+            },
+            { 
+                path: 'editar-usuario/:id', 
+                component: AAgregarUsuario 
+            },
+            { 
+                path: 'lista-vehiculos',
+                component: AListaVehiculos
+            },
+            { 
+                path: 'agregar-vehiculo',
+                component: AAgregarVehiculo
+            },
+            { 
+                path: 'editar-vehiculo/:id', 
+                component: AAgregarVehiculo 
+            },
+            { 
+                path: 'pedidos-por-entregar',
+                component: APedidosPorEntregar
+            },
+            { 
+                path: 'ver-pedidos-confirmados/:id',
+                component: AVerPedidosConfirmados
+            },
+            { 
+                path: 'pedidos-por-confirmar',
+                component: APedidosPorConfirmar
+            },
+            { 
+                path: 'editar-pedidos-por-confirmar/:id',
+                component: AEditarPedidosPorConfirmar
+            },
+            { 
+                path: 'pedidos-por-editar-o-eliminar',
+                component: APedidosPorEditarEliminar
+            },
+            { 
+                path: 'ver-pedidos-por-editar-eliminar/:id',
+                component: AVerPedidosPorEditarEliminar
+            },
+            { 
+                path: 'pedidos-confirmados-entregados',
+                component: APedidosConfirmadoEntregado
+            },
+            { 
+                path: 'lista-clientes',
+                component: AListaClientes
+            },
+            { 
+                path: 'programacion-semanal',
+                component: AProgramacionSemanal
+            },
+            { 
+                path: 'programacion-mes',
+                component: AProgramacionMes
+            },
+            { 
+                path: 'efectividad-por-entrega',
+                component: AEfectividadEntrega
+            },
+            { 
+                path: 'otif-por-dia',
+                component: AOtifPorDia
+            },
+            { 
+                path: 'detalle-por-cliente',
+                component: ADetallePorCliente
+            },
+        ]
+    },
+
+];

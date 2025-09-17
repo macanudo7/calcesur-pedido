@@ -21,13 +21,16 @@ module.exports = {
     logging: false
   },
   production: {
-    username: process.env.DB_USER_PROD || 'root',
-    password: process.env.DB_PASSWORD_PROD || null,
-    database: process.env.DB_NAME_PROD || 'calcesur_production_db',
-    host: process.env.DB_HOST_PROD || 'localhost',
-    port: process.env.DB_PORT_PROD || 5432,
+    // Usar la URL provista por Railway/Heroku
+    use_env_variable: 'postgresql://postgres:XUhe4tOIZQQNi9PO@db.hlgksgxrjcsdspcphzav.supabase.co:5432/postgres',
     dialect: 'postgres',
-    logging: false
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
   },
   
   // ... otras configuraciones de DB si las tienes aquí

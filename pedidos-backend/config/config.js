@@ -21,20 +21,20 @@ module.exports = {
     logging: false
   },
   production: {
-  username: process.env.DB_USER || 'postgres', // Usa variable de entorno, con fallback
-  password: process.env.DB_PASSWORD || 'XUhe4tOIZQQNi9PO', // Usa variable de entorno, con fallback
-  database: process.env.DB_NAME || 'postgres', // Usa variable de entorno, con fallback
-  host: process.env.DB_HOST || 'db.hlgksgxrjcsdspcphzav.supabase.co',
-  port: process.env.DB_PORT || 5432,
-  dialect: 'postgres',
-  logging: false,
-  dialectOptions: {
-      // Activar SSL solo si DB_SSL=true (por ejemplo en Railway) -- evita forzar SSL en local
-      ssl: process.env.DB_SSL === 'true'
-        ? { require: true, rejectUnauthorized: false }
-        : false
-  }
-},
+    username: process.env.DB_USER || 'postgres.hlgksgxrjcsdspcphzav', // Usa variable de entorno, con fallback
+    password: process.env.DB_PASSWORD || 'XUhe4tOIZQQNi9PO', // Usa variable de entorno, con fallback
+    database: process.env.DB_NAME || 'postgres', // Usa variable de entorno, con fallback
+    host: process.env.DB_HOST || 'aws-1-us-east-2.pooler.supabase.com',
+    port: process.env.DB_PORT || 6543,
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions: {
+        // Activar SSL solo si DB_SSL=true (por ejemplo en Railway) -- evita forzar SSL en local
+        ssl: process.env.DB_SSL === 'true'
+          ? { require: true, rejectUnauthorized: false }
+          : false
+    }
+  },
   
   // ... otras configuraciones de DB si las tienes aquí
   jwtSecret: process.env.JWT_SECRET || 'fallbackSecretForDev',

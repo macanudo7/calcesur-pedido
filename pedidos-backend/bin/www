@@ -35,9 +35,11 @@ var server = http.createServer(app);
 db.sequelize.sync({ force: false, alter: false }) // Recomendado para empezar. No fuerza ni altera.
 // db.sequelize.sync({ alter: true }) // Usa esto en desarrollo si quieres que Sequelize intente ajustar las tablas
 // db.sequelize.sync({ force: true }) // Usa esto SOLO si quieres borrar y recrear tus tablas en desarrollo
-  .then(() => {
+  db.sequelize.authenticate()     
+
+.then(() => {
     // Si la sincronización es exitosa, entonces inicia el servidor HTTP
-    server.listen(port);
+    server.listen(port, '0.0.0.0');
     server.on('error', onError);
     server.on('listening', onListening);
     console.log('Base de datos sincronizada correctamente.'); // Mensaje de éxito

@@ -22,7 +22,7 @@ module.exports = {
   },
   production: {
     // Usar la URL provista por Railway/Heroku
-    use_env_variable: 'postgresql://postgres:XUhe4tOIZQQNi9PO@db.hlgksgxrjcsdspcphzav.supabase.co:5432/postgres',
+    use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
     logging: false,
     dialectOptions: {

@@ -30,7 +30,18 @@ app.set('view engine', 'jade');
 // view engine setup
 
 // Middleware
-app.use(cors()); // Habilita CORS para todas las rutas
+const allowedOrigins = [
+  'http://localhost:4200', // para desarrollo Angular
+  'https://calcesur-pedido.vercel.app', // tu producción
+  'https://calcesur-pedido-gx820hsls-macanudos-projects.vercel.app' // preview de Vercel
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+  credentials: true
+}));
 app.use(logger('dev'));
 //app.use(bodyParser.json()); // Para parsear el body de las peticiones en JSON
 //app.use(bodyParser.urlencoded({ extended: true })); // Para parsear URLs codificadas

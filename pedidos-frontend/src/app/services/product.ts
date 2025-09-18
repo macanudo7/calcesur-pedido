@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, tap, Observable } from 'rxjs';
 import { ProductoForm, PutProductoForm } from '../shared/interfaces/productos.interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Product {
 
-  private baseUrl = 'http://localhost:3000/api/products';
+  private baseUrl = `${environment.apiUrl}/products`;
 
   private productsSource = new BehaviorSubject<ProductoForm[]>([]);
   products$ = this.productsSource.asObservable();

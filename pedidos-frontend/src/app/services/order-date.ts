@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { OrderDate, OrderDateCreatePayload, OrderDateUpdatePayload } from '../shared/interfaces/order-date.interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderDateService {
-  private baseUrl = 'http://localhost:3000/api/order-dates';
+  private baseUrl = `${environment.apiUrl}/order-dates`;
 
   constructor(private http: HttpClient) {}
 

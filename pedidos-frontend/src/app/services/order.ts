@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, tap, Observable, map } from 'rxjs';
 import { OrderForm, OrderHistory, OrderDetail, OrderDateDetail } from '../shared/interfaces/order.interface'; // Asegúrate de que la ruta sea correcta
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Order {
-  private baseUrl = 'http://localhost:3000/api/orders'; // URL base de la API
+  private baseUrl = `${environment.apiUrl}/orders`; // URL base de la API
   private orderSource = new BehaviorSubject<OrderForm[]>([]);
   orders$ = this.orderSource.asObservable();
 
-  private baseUrlDates = 'http://localhost:3000/api/order-dates';
+  private baseUrlDates = `${environment.apiUrl}/order-dates`;
   private orderDetailSource = new BehaviorSubject<OrderDetail[]>([]);
   ordersDetail$ = this.orderDetailSource.asObservable();
 

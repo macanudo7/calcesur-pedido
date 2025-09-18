@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, tap, Observable } from 'rxjs';
 import { VehicleForm } from '../shared/interfaces/vehicle.interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Vehicle {
 
-  private baseUrl = 'http://localhost:3000/api/type-vehicles';
+  private baseUrl = `${environment.apiUrl}/type-vehicles`;
 
   private vehiclesSource = new BehaviorSubject<VehicleForm[]>([]);
   vehicles$ = this.vehiclesSource.asObservable();

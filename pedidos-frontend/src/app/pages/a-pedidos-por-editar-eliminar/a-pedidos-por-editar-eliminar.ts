@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { Vehicle } from '../../services/vehicle';
 import { VehicleForm } from '../../shared/interfaces/vehicle.interface';
 import { FormsModule } from '@angular/forms';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 @Component({
   selector: 'app-a-pedidos-por-editar-eliminar',
@@ -46,7 +48,10 @@ export class APedidosPorEditarEliminar implements OnInit{
 
     this.cumplimiento = 0;
     this.cronograma = 0;
+
+    registerLocaleData(localeEs, 'es');
   }
+
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {

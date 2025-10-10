@@ -20,11 +20,19 @@
     margin-top: 40px;
     margin-bottom: 40px;
 }
+.date-container{
+    margin-bottom: 35px;
+}
+.date-container button{
+    font-size: 14px;
+    color: #0D3F3B;
+}
 .date{
     color: #0D3F3B;
     font-size: 1.4em;
     text-align: center;
     font-weight: 700;
+    text-transform: capitalize;
 }
 .btn-generate button{
     background: #0D3F3B;

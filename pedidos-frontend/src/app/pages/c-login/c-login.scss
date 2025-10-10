@@ -64,3 +64,26 @@
 .close-modal.close-modal:hover{
     background: #00E700;
 }
+.btn-seguimiento{
+    margin-top: 25px;
+    width: 100%;
+}
+.btn-seguimiento hr{
+    margin-bottom: 40px;
+    border-color: #0D3F3B;
+}
+.btn-seguimiento a{
+    background-color: transparent;
+    color: #0D3F3B;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid #0D3F3B;
+    padding: 8px 20px;
+    border-radius: 5px;
+    margin-left: 15px;
+}
+.btn-seguimiento a:hover{
+    background-color: #0D3F3B;
+    color: white;
+    transition: 300ms;
+}

@@ -70,7 +70,7 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
           const deliveryDate = this.parseDateOnlyToLocal(this.orderDetail.orderDates[0].delivery_date);
           const mes = deliveryDate.toLocaleDateString('es-ES', { month: 'long' });
           const anio = deliveryDate.getFullYear();
-          this.mesYAnio = `${mes} ${anio}`;
+          this.mesYAnio = `${mes} De ${anio}`;
         } else {
           this.mesYAnio = null;
         }

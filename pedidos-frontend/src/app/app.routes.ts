@@ -27,6 +27,8 @@ import { AEditarPedidosPorConfirmar } from './pages/a-editar-pedidos-por-confirm
 import { AVerPedidosConfirmados } from './pages/a-ver-pedidos-confirmados/a-ver-pedidos-confirmados';
 import { AVerPedidosPorEditarEliminar } from './pages/a-ver-pedidos-por-editar-eliminar/a-ver-pedidos-por-editar-eliminar';
 import { CHistorialPedidoEditar } from './pages/c-historial-pedido-editar/c-historial-pedido-editar';
+import { authGuard } from './guards/auth-guard';
+import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
     {
@@ -45,6 +47,7 @@ export const routes: Routes = [
     {
         path: 'cliente',
         component: ClientLayout,
+        canActivate: [authGuard],
         children: [
             { 
                 path: 'generar-pedido',
@@ -66,6 +69,7 @@ export const routes: Routes = [
     {
         path: 'admin',
         component: AdminLayout,
+        canActivate: [authGuard, adminGuard],
         children: [
             { 
                 path: 'lista-productos',

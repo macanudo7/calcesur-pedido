@@ -5,6 +5,9 @@ import { Order } from '../../services/order';
 import { DatePipe, NgFor, NgIf, AsyncPipe } from '@angular/common';
 import { Vehicle } from '../../services/vehicle';
 import { VehicleForm } from '../../shared/interfaces/vehicle.interface';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
 
 @Component({
   selector: 'app-a-programacion-semanal',
@@ -103,6 +106,27 @@ export class AProgramacionSemanal implements OnInit {
     if (!vehicleId) return 'Desconocido';
     const vehicle = this.allVehicles().find(v => v.type_vehicle_id === vehicleId);
     return vehicle ? vehicle.name : 'Desconocido';
+  }
+
+  descargarExcel() {
+    // Tomamos la tabla directamente del DOM
+    const element = document.querySelector('.main-table table') as HTMLElement;
+    if (!element) return;
+
+    // Convertir la tabla HTML a una hoja Excel
+    const worksheet: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    // Crear un libro de Excel y agregar la hoja
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Pedidos');
+
+    // Exportar el archivo Excel
+    const nombreArchivo = `programacion-pedidos-${new Date().toISOString().slice(0,10)}.xlsx`;
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Guardar archivo
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, nombreArchivo);
   }
 
 

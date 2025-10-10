@@ -3,6 +3,8 @@ import { Order } from '../../services/order';
 import { OrderHistory } from '../../shared/interfaces/order.interface';
 import { CommonModule,DatePipe } from '@angular/common';
 import { RouterModule, Router } from '@angular/router'; // Importa RouterModule
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-c-historial-pedidos',
@@ -131,6 +133,23 @@ export class CHistorialPedidos implements OnInit {
     
   }
   descargarTabla(){
-    console.log('Descargar tabla');
+    // Tomamos la tabla directamente del DOM
+    const element = document.querySelector('.main-table table') as HTMLElement;
+    if (!element) return;
+
+    // Convertir la tabla HTML a una hoja Excel
+    const worksheet: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    // Crear un libro de Excel y agregar la hoja
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Pedidos');
+
+    // Exportar el archivo Excel
+    const nombreArchivo = `mi-lista-pedidos-${new Date().toISOString().slice(0,10)}.xlsx`;
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Guardar archivo
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, nombreArchivo);
   }
 }

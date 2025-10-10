@@ -9,6 +9,8 @@ import { CreateChangeRequestPayload, ChangeRequest } from '../../shared/interfac
 import { firstValueFrom } from 'rxjs';
 import { OrderDateService } from '../../services/order-date';
 import { ModalConfirmacion } from '../../shared/components/modal-confirmacion/modal-confirmacion';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-a-ver-pedidos-por-editar-eliminar',
@@ -199,7 +201,26 @@ export class AVerPedidosPorEditarEliminar implements OnInit {
   }
 
   // Eliminadas funciones de edición/guardado/eliminación. Componente en vista-only.
-  descargarTabla(){ /* noop por ahora */ }
+  descargarTabla(){
+    // Tomamos la tabla directamente del DOM
+    const element = document.querySelector('.main-table table') as HTMLElement;
+    if (!element) return;
+
+    // Convertir la tabla HTML a una hoja Excel
+    const worksheet: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+
+    // Crear un libro de Excel y agregar la hoja
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Pedidos');
+
+    // Exportar el archivo Excel
+    const nombreArchivo = `pedido-para-editar-o-eliminar-${new Date().toISOString().slice(0,10)}.xlsx`;
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Guardar archivo
+    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(data, nombreArchivo);
+  }
 
 
   confimarCambio(){

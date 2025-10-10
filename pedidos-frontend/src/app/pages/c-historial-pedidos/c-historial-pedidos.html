@@ -4,18 +4,18 @@
     <div>Bienvenido, {{ nameOfUser }}</div>
   </div>
 
-        <div class="mb-2">
+        <div class="mb-2 flex justify-between items-center">
           <ng-container *ngIf="!esMesAnterior && !esMesSiguiente">
-            <button (click)="verMesAnterior($event)" class="text-blue-500 hover:underline mr-4">← Ver mes anterior</button>
-            <button (click)="verMesSiguiente($event)" class="text-blue-500 hover:underline">Ver mes siguiente →</button>
+            <button (click)="verMesAnterior($event)" class="hover:underline mr-4">← Ver mes anterior</button>
+            <button (click)="verMesSiguiente($event)" class="hover:underline">Ver mes siguiente →</button>
           </ng-container>
 
           <ng-container *ngIf="esMesAnterior">
-            <button (click)="verMesActual($event)" class="text-blue-500 hover:underline">→ Volver al mes actual</button>
+            <button (click)="verMesActual($event)" class="hover:underline">→ Volver al mes actual</button>
           </ng-container>
 
           <ng-container *ngIf="esMesSiguiente">
-            <button (click)="verMesActual($event)" class="text-blue-500 hover:underline mr-4">← Volver al mes actual</button>
+            <button (click)="verMesActual($event)" class="hover:underline mr-4">← Volver al mes actual</button>
           </ng-container>
         </div>
 

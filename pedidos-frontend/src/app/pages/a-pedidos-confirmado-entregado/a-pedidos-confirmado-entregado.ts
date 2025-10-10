@@ -29,6 +29,30 @@ export class APedidosConfirmadoEntregado implements OnInit{
 
   userTypes: string[] = [];
 
+  baseMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+  // currentMonth ya lo tienes:
+  currentMonth = signal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+
+  canGoPrev = computed(() => {
+    const cur = this.currentMonth();
+    const limit = new Date(this.baseMonth.getFullYear(), this.baseMonth.getMonth() - 1, 1);
+    return cur > limit;
+  });
+
+  canGoNext = computed(() => {
+    const cur = this.currentMonth();
+    const limit = new Date(this.baseMonth.getFullYear(), this.baseMonth.getMonth() + 1, 1);
+    return cur < limit;
+  });
+
+
+  displayMonth = computed(() => {
+    const d = this.currentMonth();
+
+    return d.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+  });
+
   cumplimiento: number;
   cronograma: number;
 
@@ -42,7 +66,7 @@ export class APedidosConfirmadoEntregado implements OnInit{
     this.vehicles$ = this.vehicleService.vehicles$;
 
     this.cumplimiento = 0;
-    this.cronograma = 0;
+    this.cronograma = 50;
   }
 
   ngOnInit(): void {
@@ -77,6 +101,9 @@ export class APedidosConfirmadoEntregado implements OnInit{
   filteredOrders = computed(() => {
     const term = this.searchTerm().toLowerCase();
     const type = this.selectedUserType();
+    const monthDate = this.currentMonth(); // primer día del mes
+    const targetYear = monthDate.getFullYear();
+    const targetMonth = monthDate.getMonth(); 
 
     return this.allOrders()
     .filter(order => order.status === 'confirmed')
@@ -84,11 +111,38 @@ export class APedidosConfirmadoEntregado implements OnInit{
       order.orderDates?.some(od => od.is_delivered === 'entregado')
     )
     .filter(u => {
-      const matchesName = term ? u.user?.name.toLowerCase().includes(term) : true;
-      const matchesType = type ? u.product?.name === type : true;
-      return matchesName && matchesType;
+      const matchesName = term ? (u.user?.name ?? '').toLowerCase().includes(term) : true;
+        const matchesType = type ? u.product?.name === type : true;
+        if (!matchesName || !matchesType) return false;
+
+        // filtrar por mes: comparar año y mes
+        if (!u.createdAt) return false;
+        const created = new Date(u.createdAt);
+        return created.getFullYear() === targetYear && created.getMonth() === targetMonth;
     });
   });
+
+  // ---- navegación de meses ----
+  prevMonth() {
+    if (this.canGoPrev()) {
+      const cur = this.currentMonth();
+      const prev = new Date(cur.getFullYear(), cur.getMonth() - 1, 1);
+      this.currentMonth.set(prev);
+    }
+  }
+
+  nextMonth() {
+    if (this.canGoNext()) {
+      const cur = this.currentMonth();
+      const next = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+      this.currentMonth.set(next);
+    }
+  }
+
+  goToCurrentMonth() {
+    const now = new Date();
+    this.currentMonth.set(new Date(now.getFullYear(), now.getMonth(), 1));
+  }
 
   getVehicleNameById(vehicleId?: number): string {
     if (!vehicleId) return 'Desconocido';

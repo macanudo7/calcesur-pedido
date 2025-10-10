@@ -5,7 +5,13 @@
     </div>
     <div class="main-page py-1">
 
-        <h3 class="date">Agosto 2025</h3>
+        <div class="flex justify-between items-center gap-2 date-container">
+            <button type="button" (click)="prevMonth()" [disabled]="!canGoPrev()" class="btn-arrow">← Ver mes anterior</button>
+
+            <h3 class="date px-4">{{ displayMonth() }}</h3>
+
+            <button type="button" (click)="nextMonth()" [disabled]="!canGoNext()" class="btn-arrow">Ver mes siguiente →</button>
+        </div>
 
         <div class="flex justify-between items-center up-table section40">
             <div>

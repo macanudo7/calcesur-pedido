@@ -3,7 +3,7 @@
     </div>
     <div class="form-login">
         <img src="/logos-calcesur-intical.png" alt="Logo de Intical y de Calcesur">
-        <div class="flex items-center justify-center w-full">
+        <div class="flex items-center justify-center w-full flex-col">
             <form [formGroup]="authForm" class="w-full space-y-5 relative" novalidate>
 
                 <!-- Campo de usuario cliente -->
@@ -74,6 +74,12 @@
                 </div>
 
             </form>
+
+            <div class="btn-seguimiento">
+                <hr>
+                Consulta el estado de tu pedido:
+                <a href="https://calcesur.oss.avanzza.io">Seguimiento de pedidos</a>
+            </div>
         </div>
     </div>
 

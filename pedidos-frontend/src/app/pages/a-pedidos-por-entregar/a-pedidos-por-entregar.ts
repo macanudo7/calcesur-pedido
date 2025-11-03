@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, signal, computed } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OrderForm } from '../../shared/interfaces/order.interface';
+import { OrderForm, OrderHistory } from '../../shared/interfaces/order.interface';
 import { Order } from '../../services/order';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';

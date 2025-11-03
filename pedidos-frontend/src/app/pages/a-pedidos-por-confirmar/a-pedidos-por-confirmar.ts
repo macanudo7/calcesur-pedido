@@ -33,7 +33,6 @@ export class APedidosPorConfirmar implements OnInit {
 
   baseMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
-  // currentMonth ya lo tienes:
   currentMonth = signal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
   canGoPrev = computed(() => {

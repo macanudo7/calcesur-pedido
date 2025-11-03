@@ -9,6 +9,8 @@ export interface OrderForm {
     user?: UserForm; // Información del usuario (opcional, para mostrar detalles)
     orderDates: OrderDate[]; // Lista de fechas de entrega
     product?: productOrder; // Información del producto (opcional, para mostrar detalles)
+    cumplimiento?: string; // Porcentaje de cumplimiento
+    avanceCronograma?: string; // Porcentaje de avance del cronograma
   }
   
 export interface OrderDate {

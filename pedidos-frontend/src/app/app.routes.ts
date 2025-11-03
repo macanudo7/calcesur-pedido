@@ -27,6 +27,7 @@ import { AEditarPedidosPorConfirmar } from './pages/a-editar-pedidos-por-confirm
 import { AVerPedidosConfirmados } from './pages/a-ver-pedidos-confirmados/a-ver-pedidos-confirmados';
 import { AVerPedidosPorEditarEliminar } from './pages/a-ver-pedidos-por-editar-eliminar/a-ver-pedidos-por-editar-eliminar';
 import { CHistorialPedidoEditar } from './pages/c-historial-pedido-editar/c-historial-pedido-editar';
+import { AVerPedidosEntregados } from './pages/a-ver-pedidos-entregados/a-ver-pedidos-entregados';
 import { authGuard } from './guards/auth-guard';
 import { adminGuard } from './guards/admin-guard';
 
@@ -138,6 +139,10 @@ export const routes: Routes = [
             { 
                 path: 'pedidos-confirmados-entregados',
                 component: APedidosConfirmadoEntregado
+            },
+            { 
+                path: 'ver-pedidos-entregados/:id',
+                component: AVerPedidosEntregados
             },
             { 
                 path: 'lista-clientes',

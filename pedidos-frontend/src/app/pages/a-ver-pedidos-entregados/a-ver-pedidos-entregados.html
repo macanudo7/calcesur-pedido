@@ -1,6 +1,6 @@
 <section class="container mx-auto section">
     <div class="up-page py-2 px-6 section40">
-        <h2>Pedido de {{productName}}</h2>
+        <h2>Pedidos entregados a {{nameOfClient}}</h2>
         <div>Bienvenido, {{nameOfUser}}</div>
     </div>
     <div class="main-page py-1">
@@ -14,9 +14,8 @@
                 <p><strong>Cliente: </strong>{{nameOfClient}}</p>
             </div>
             <div class="btn-generate">
-                <button class="text-white font-semibold py-2 px-6 rounded-md"
-                (click)="confirmAllOrders()">
-                    Confirmar pedidos
+                <button (click)="descargarTabla()" class="text-white font-semibold py-2 px-6 rounded-md">
+                    Descargar
                 </button>
             </div>
         </div>
@@ -29,7 +28,7 @@
                         <th class="p-[15px]">Estado del pedido</th>
                         <th class="p-[15px]">Vehículo</th>
                         <th class="p-[15px]">Entregado</th>
-                        <!-- <th class="p-[15px]">Acciones</th> -->
+                        <th class="p-[15px]">Calificación de entrega</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,24 +54,33 @@
                             <span [ngClass]="{
                             'bg-blue-200': order.is_delivered === 'por_entregar',
                             'bg-blue-500': order.is_delivered === 'entregado',
-                            'bg-red-300': order.is_delivered === 'no_entregado'
+                            'bg-red-300': order.is_delivered === 'no_entregado',
+                            'bg-indigo-400 text-white': order.is_delivered === 'atendiendo'
                         }">
                                 {{order.is_delivered === 'por_entregar' ? 'Por entregar' :
                                 order.is_delivered === 'entregado' ? 'Entregado' :
                                 order.is_delivered === 'no_entregado' ? 'No entregado' :
+                                order.is_delivered === 'atendiendo' ? 'Atendiendo' :
                                 order.is_delivered === null ? '' : ''}}
                             </span>
                         </td>
-                        <!-- <td class="table-actions">
-                            <a *ngIf="order.status === 'pending'"
-                            (click)="goToEditOrderForConfirm( order.order_id, order.order_date_id)">
-                                Confirmar pedido
-                            </a>
-                        </td> -->
+                        <td *ngIf="order.rating != null; else noRating">
+                            <!-- {{order.rating}} -->
+                            <ng-container *ngFor="let _ of getStars(order.rating)">
+                                ⭐
+                            </ng-container>
+                        </td>
                     </tr>
+
+                    <ng-template #noRating>
+                        <td class="txt-rating">
+                            Esperando clasificación<br>por parte del cliente
+                        </td>
+                    </ng-template>
 
                 </tbody>
             </table>
         </div>
     </div>
+
 </section>

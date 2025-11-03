@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../services/product'; // Asegúrate de que la ruta sea correcta
 import { Order } from '../../services/order'; // Asegúrate de que la ruta sea correcta
@@ -43,6 +43,7 @@ export class CGenerateOrder implements OnInit{
   constructor(
     private productService: Product, private orderService: Order, private router: Router,
     private route: ActivatedRoute, // Asegúrate de que la ruta sea correcta
+    private cd: ChangeDetectorRef,
   ) {
     this.products$ = this.productService.products$; // Asignar el observable de productos
   }
@@ -141,7 +142,7 @@ export class CGenerateOrder implements OnInit{
     this.pendingPayload = payload;
     this.mostrarModalConfirmacion = true;
 
-
+    this.cd.detectChanges();
     
   }
 

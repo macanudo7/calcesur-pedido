@@ -96,7 +96,6 @@ export class APedidosConfirmadoEntregado implements OnInit{
 
     this.vehicles$.subscribe(vehicles => {
       this.allVehicles.set(vehicles);
-      console.log('Vehicles loaded:', vehicles);
     });
   }
 

@@ -21,6 +21,7 @@ export class AVerPedidosConfirmados implements OnInit {
   ordersPerDay: OrderDateDetail[] = [];
   nameOfVehicle: string = '';
   nameOfClient: string = '';
+  dateOfOrder: string = '';
 
   // Modal / form para "Atender pedido"
   mostrarAtenderModal = false;
@@ -64,6 +65,9 @@ export class AVerPedidosConfirmados implements OnInit {
       this.productName = data.product?.name || 'Desconocido';
       this.nameOfVehicle = data.product?.typeVehicle?.name || 'Desconocido';
       this.nameOfClient = data.user?.username || 'Desconocido';
+      this.dateOfOrder = data.createdAt
+            ? new Date(data.createdAt).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+            : 'Desconocido';
       this.ordersPerDay = data.orderDates || [];
       this.ordersPerDay.sort((a, b) => new Date(a.delivery_date).getTime() - new Date(b.delivery_date).getTime());
       console.log('Orders per day:', this.ordersPerDay);
